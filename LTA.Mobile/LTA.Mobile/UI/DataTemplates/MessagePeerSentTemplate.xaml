@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<dataTemplates:BaseTemplate xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
+             xmlns:customViews="clr-namespace:LTA.Mobile.UI.CustomControls"
+             xmlns:models="clr-namespace:LTA.Mobile.Domain.Models;assembly=LTA.Mobile.Domain"
+             xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             x:Name="MessageTemplate"
+             x:Class="LTA.Mobile.UI.DataTemplates.MessagePeerSentTemplate"
+             BackgroundColor="{StaticResource PrimaryColor}"
+             Scale=".7">
+    <ContentView.Content>
+        <SwipeView BackgroundColor="{StaticResource PrimaryColor}" x:DataType="models:Message"
+                   Margin="0,0,0,2">
+            <SwipeView.Triggers>
+                <DataTrigger TargetType="SwipeView"
+                             Binding="{Binding IsSentPreviousMessage}"
+                             Value="True">
+                    <Setter Property="Margin" Value="0, 10,0,0"/>
+                </DataTrigger>
+            </SwipeView.Triggers>
+
+            <SwipeView.LeftItems>
+                <SwipeItems SwipeBehaviorOnInvoked="Close"
+                            Mode="Execute">
+                    <SwipeItemView Command="{Binding Source={x:Reference MessageTemplate}, Path=ParentContext.MessageSwippedCommand}"
+                                   CommandParameter="{Binding}">
+                        <pancakeView:PancakeView BackgroundColor="{StaticResource PrimaryColor}">
+                            <Label Style="{StaticResource FontAwesomeLabel}"
+                                   Text="{StaticResource FontAwesomeReply}"
+                                   TextColor="LightGray"
+                                   Margin="20"
+                                   FontSize="Large"/>
+                        </pancakeView:PancakeView>
+                    </SwipeItemView>
+                </SwipeItems>
+            </SwipeView.LeftItems>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Ellipse HeightRequest="40"
+                         WidthRequest="40"
+                         HorizontalOptions="Start"
+                         VerticalOptions="Center"
+                         BackgroundColor="{Binding Sender.Color}"
+                         Margin="7,0,0,0"/>
+
+                <customViews:MessageBubble Text="{Binding Content}"
+                                           HorizontalOptions="Start"
+                                           VerticalOptions="Center"
+                                           BackgroundColor="White"
+                                           Grid.Column="1"
+                                           ReplyTappedCommand="{Binding ParentContext.ReplyMessageSelectedCommand, Source={x:Reference MessageTemplate}}"
+                                           Margin="0, 10">
+                    <customViews:MessageBubble.Triggers>
+                        <DataTrigger TargetType="customViews:MessageBubble"
+                                     Binding="{Binding IsSentPreviousMessage}"
+                                     Value="True">
+                            <Setter Property="Margin" Value="0, 5"/>
+                        </DataTrigger>
+                    </customViews:MessageBubble.Triggers>
+                </customViews:MessageBubble>
+            </Grid>
+        </SwipeView>
+    </ContentView.Content>
+</dataTemplates:BaseTemplate>

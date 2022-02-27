@@ -3,15 +3,50 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
              xmlns:converters="clr-namespace:LTA.Mobile.Converters;assembly=LTA.Mobile"
+             xmlns:valueConverters="clr-namespace:LTA.Mobile.UI.Styles.ValueConverters"
              x:Class="LTA.Mobile.App">
     <Application.Resources>
-        <Color x:Key="PrimaryColor">#1B1F7B</Color>
+
+        <ResourceDictionary Source="UI/Styles/Colors.xaml"/>
+        <ResourceDictionary Source="UI/Styles/Fonts.xaml"/>
+        <ResourceDictionary Source="UI/Styles/ControlStyles.xaml"/>
+
+        <valueConverters:IsNullConverter x:Key="IsNullValueConverter"/>
+
+        <Style TargetType="Label" x:Key="TabLabelStyle">
+            <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+            <Setter Property="TextColor" Value="{StaticResource SecondaryAccentColor}" />
+            <Setter Property="Scale" Value=".9" />
+            <Setter Property="FontSize" Value="25" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="Margin" Value="0, 15, 0, 0"/>
+        </Style>
+
+        <Style x:Key="BaseStyle" TargetType="Element">
+            <Setter Property="Shell.BackgroundColor"
+                    Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Shell.NavBarHasShadow" Value="False" />
+            <Setter Property="Shell.ForegroundColor" Value="White"/>
+            <Setter Property="Shell.TitleColor" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="Shell.DisabledColor" Value="#B4FFFFFF"/>
+            <Setter Property="Shell.UnselectedColor" Value="#95FFFFFF"/>
+            <Setter Property="Shell.TabBarBackgroundColor" Value="#FFFFFF"/>
+            <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource SecondaryAccentColor}" />
+            <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource AccentColor}"/>
+        </Style>
+
+        <Style TargetType="TabBar" BasedOn="{StaticResource BaseStyle}"/>
+        <!--<Color x:Key="PrimaryColor">#1B1F7B
+        </Color>
         <Color x:Key="PurpleColor">#2B002B</Color>
         <Color x:Key="ElegantDarkColor">#2E2E2E</Color>
         <Color x:Key="WhiteColor">#FFFFFF</Color>
+        -->
         <!-- Application resource dictionary -->
 
         <!--Navigation bar-->
+        <!--
         <Style TargetType="NavigationPage">
             <Setter Property="BarBackgroundColor" Value="{StaticResource PrimaryColor}"/>
             <Setter Property="BarTextColor" Value="{StaticResource WhiteColor}"/>
@@ -31,7 +66,9 @@
             <Setter Property="TextColor" Value="Red"/>
         </Style>
 
+        -->
         <!--Button Style-->
+        <!--
         <Style x:Key="ButtonFrameStyle" TargetType="Frame">
             <Setter Property="BackgroundColor" Value="{StaticResource PurpleColor}" />
             <Setter Property="HasShadow" Value="True"/>
@@ -46,7 +83,7 @@
             <Setter Property="TextColor" Value="{StaticResource WhiteColor}"/>
             <Setter Property="HorizontalOptions" Value="FillAndExpand" />
             <Setter Property="CornerRadius" Value="15" />
-        </Style>
+        </Style>-->
 
 
 

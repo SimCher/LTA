@@ -2,46 +2,31 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
-             xmlns:converters="clr-namespace:LTA.Mobile.Converters;assembly=LTA.Mobile"
+             xmlns:b="clr-namespace:Prism.Behaviors;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
-             x:Class="LTA.Mobile.Pages.TopicListPage"
-             NavigationPage.HasNavigationBar="False">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:ItemTappedEventArgsConverter x:Key="itemTappedEventArgsConverter"/>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-    <ContentPage.Content>
-        <ListView ItemsSource="{Binding TopicList}" HasUnevenRows="True">
-            <ListView.Behaviors>
-                <prism:EventToCommandBehavior EventName="ItemTapped"
-                                              Command="{Binding ItemTappedCommand}"
-                                              EventArgsConverter="{StaticResource itemTappedEventArgsConverter}"/>
-            </ListView.Behaviors>
+             x:Class="LTA.Mobile.Pages.TopicListPage">
+    <StackLayout>
+        <Label Text="{Binding PageMessage}"/>
+        <ListView ItemsSource="{Binding TopicList}" SelectedItem="{Binding Topic}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <StackLayout>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="1.5*"/>
-                                    <RowDefinition Height="1.5*"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1.5*"/>
-                                    <ColumnDefinition Width="2.5*"/>
-                                    <ColumnDefinition Width="1.5*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Label Grid.Column="1" Text="{Binding Name}" FontAttributes="Bold" VerticalOptions="Center"></Label>
-                                <ListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Categories}"/>
-                                <Label Text="{Binding MaxUsersNumber}" Grid.Row="2" Grid.Column="1" VerticalOptions="Start" FontAttributes="Italic"></Label>
-                            </Grid>
-                        </StackLayout>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{Binding Name}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <CollectionView Grid.Column="1" ItemsSource="{Binding Categories}"/>
+                            <Label Grid.Column="2" Text="{Binding CountUsersPresentation}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Grid>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.Behaviors>
+                <b:EventToCommandBehavior EventName="ItemTapped" Command="{Binding ItemTappedCommand}"/>
+            </ListView.Behaviors>
         </ListView>
-    </ContentPage.Content>
+    </StackLayout>
 </ContentPage>

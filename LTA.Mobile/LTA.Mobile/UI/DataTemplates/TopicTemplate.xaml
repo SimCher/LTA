@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="SimpleTopicTemplate"
+             xmlns:lottie="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
+             x:Class="LTA.Mobile.UI.DataTemplates.TopicTemplate">
+    <ContentView.Content>
+        <Grid Margin="0, 15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid WidthRequest="70"
+                  Margin="10,0,5,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+            </Grid>
+
+            <StackLayout Grid.Column="1" Spacing="5"
+                         VerticalOptions="Center">
+                <StackLayout.Triggers>
+                    <MultiTrigger TargetType="StackLayout">
+                        <MultiTrigger.Conditions>
+                            <BindingCondition Binding="{Binding IsInTitle, Source={x:Reference SimpleTopicTemplate}}"
+                                              Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                            <Setter Property="VerticalOptions" Value="End"/>
+                        </MultiTrigger.Setters>
+                    </MultiTrigger>
+                    <DataTrigger TargetType="StackLayout"
+                                 Binding="{Binding IsInTitle, Source={x:Reference SimpleTopicTemplate}}"
+                                 Value="True">
+                        <Setter Property="Margin" Value="-10,0,0,0"/>
+                    </DataTrigger>
+                </StackLayout.Triggers>
+
+                <Label FontFamily="{StaticResource QuickSandBold}"
+                       LineBreakMode="TailTruncation">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding Name}"/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label FontFamily="{StaticResource QuickSandRegular}"
+                       TextColor="{StaticResource SecondaryTextColor}"
+                       LineBreakMode="TailTruncation">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding CountPresentation}"/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <ContentView>
+                    <ContentView.Triggers>
+                        <MultiTrigger TargetType="ContentView">
+                            <MultiTrigger.Conditions>
+                                <BindingCondition Binding="{Binding IsInTitle, Source={x:Reference SimpleTopicTemplate}}"
+                                                  Value="True"/>
+                                <BindingCondition Binding="{Binding IsUsersTyping, Source={x:Reference SimpleTopicTemplate}}"
+                                                  Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <Label TextColor="{StaticResource SecondaryTextColor}"
+                                               FontFamily="{StaticResource QuickSandRegular}">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label"
+                                                             Value="True">
+                                                    <Setter Property="Text" Value="Online"/>
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                    </Setter.Value>
+                                </Setter>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+
+                        <MultiTrigger TargetType="ContentView">
+                            <MultiTrigger.Conditions>
+                                <BindingCondition Binding="{Binding IsInTitle, Source={x:Reference SimpleTopicTemplate}}"
+                                                  Value="True"/>
+                                <BindingCondition Binding="{Binding IsUsersTyping, Source={x:Reference SimpleTopicTemplate}}"
+                                                  Value="True"/>
+                            </MultiTrigger.Conditions>
+
+                            <MultiTrigger.Setters>
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <lottie:AnimationView Grid.Row="1"
+                                                              Loop="True" Margin="-10,0,0,0"
+                                                              HorizontalOptions="Start"
+                                                              VerticalOptions="Center"
+                                                              IsPlaying="{Binding IsUsersTyping, Source={x:Reference SimpleTopicTemplate}}"
+                                                              IsVisible="{Binding IsUsersTyping, Source={x:Reference SimpleTopicTemplate}}"
+                                                              HeightRequest="20"
+                                                              WidthRequest="70"
+                                                              Animation="typing.json"
+                                                              BackgroundColor="Transparent"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                    </ContentView.Triggers>
+
+                    <Label Text="{Binding LastMessage.Content}"
+                           TextColor="{StaticResource SecondaryTextColor}"
+                           LineBreakMode="TailTruncation"
+                           FontFamily="{StaticResource QuickSandRegular}"/>
+                </ContentView>
+            </StackLayout>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

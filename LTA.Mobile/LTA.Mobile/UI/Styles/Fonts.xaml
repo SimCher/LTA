@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d"
+                    x:Class="LTA.Mobile.UI.Styles.Fonts">
+
+    <ResourceDictionary Source="Colors.xaml" />
+
+    <x:String x:Key="FontAwesomeSearch">&#xf002;</x:String>
+    <x:String x:Key="FontAwesomeHome">&#xf015;</x:String>
+    <x:String x:Key="FontAwesomeCog">&#xf013;</x:String>
+    <x:String x:Key="FontAwesomeComment">&#xf27a;</x:String>
+    <x:String x:Key="FontAwesomeChevronLeft">&#xf053;</x:String>
+    <x:String x:Key="FontAwesomePhone">&#xf095;</x:String>
+    <x:String x:Key="FontAwesomeVideo">&#xf03d;</x:String>
+    <x:String x:Key="FontAwesomePaperClip">&#xf0c6;</x:String>
+    <x:String x:Key="FontAwesomePaperPlane">&#xf1d8;</x:String>
+    <x:String x:Key="FontAwesomeTimes">&#xf00d;</x:String>
+    <x:String x:Key="FontAwesomeReply">&#xf3e5;</x:String>
+    <x:String x:Key="FontAwesomeCircle">&#xf111;</x:String>
+    <x:String x:Key="FontAwesome">Font Awesome 5 Free-Solid-900.otf#Font Awesome 5 Free Solid</x:String>
+    <x:String x:Key="QuickSandBold">Quicksand-Bold.ttf#Quicksand</x:String>
+    <x:String x:Key="QuickSandLight">Quicksand-Light.ttf#Quicksand</x:String>
+    <x:String x:Key="QuickSandRegular">Quicksand-Regular.ttf#Quicksand</x:String>
+
+    <Style x:Key="FontAwesomeLabel" TargetType="{x:Type Label}">
+        <Setter Property="FontFamily"
+                Value="{StaticResource FontAwesome}" />
+        <Setter Property="TextColor" Value="{StaticResource AccentColor}" />
+    </Style>
+</ResourceDictionary>

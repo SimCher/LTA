@@ -1,65 +1,126 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:model="clr-namespace:LTA.Mobile.Models"
+             xmlns:viewmodel="clr-namespace:LTA.Mobile.PageModels"
+             Title="{Binding Title}"
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="LTA.Mobile.Pages.ChatRoomPage"
-             NavigationPage.HasNavigationBar="false">
-    <Grid RowDefinitions="*, auto"
-          Margin="10">
-        <ListView ItemsSource="{Binding MessageList}"
-                  SeparatorVisibility="None"
-                  HasUnevenRows="True">
-            <ListView.ItemTemplate>
+             xmlns:helpers="clr-namespace:LTA.Mobile.Helpers"
+             NavigationPage.HasNavigationBar="false"
+             mc:Ignorable="d">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="ToolbarDone" Text="Done"/>
+    </ContentPage.ToolbarItems>
+    <Grid ColumnSpacing="0" RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="70"/>
+        </Grid.RowDefinitions>
+
+        <Frame Grid.ColumnSpan="2"
+               Margin="0"
+               Padding="0"
+               HasShadow="True"
+               HorizontalOptions="FillAndExpand"
+               Visual="Material">
+            <CollectionView
+                ItemsLayout="HorizontalList"
+                ItemsSource="{Binding UserList}">
+                <d:CollectionView.ItemsSource>
+                    <x:Array Type="{x:Type model:User}">
+                        <model:User Code="Some" FirstLetter="S" Color="Red"/>
+                        <model:User Code="Dmitry" FirstLetter="D" Color="Pink"/>
+                        <model:User Code="Motz" FirstLetter="M" Color="Orange"/>
+                    </x:Array>
+                </d:CollectionView.ItemsSource>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Padding="10"
+                                     Orientation="Vertical"
+                                     Spacing="0">
+                            <Frame Grid.Column="0"
+                                   Padding="0"
+                                   BackgroundColor="{Binding Color}"
+                                   CornerRadius="20"
+                                   HasShadow="True"
+                                   HeightRequest="40"
+                                   VerticalOptions="CenterAndExpand"
+                                   Visual="Material"
+                                   WidthRequest="40">
+                                <Label HorizontalOptions="Center"
+                                       Text="{Binding FirstLetter}"
+                                       VerticalOptions="Center"/>
+
+                            </Frame>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Frame>
+        <CollectionView
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            ItemsSource="{Binding MessageList}"
+            Rotation="180">
+            <d:CollectionView.ItemsSource>
+                <x:Array Type="{x:Type model:Message}">
+                    <model:Message FirstLetter="S" Content="Hello world from SignalR!"
+                                   UserCode="Some" Color="Red"/>
+                </x:Array>
+            </d:CollectionView.ItemsSource>
+            <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <ViewCell>
-                        <Grid RowDefinitions="auto, auto">
-                            <Grid ColumnDefinitions="40, *" IsVisible="{Binding IsOwner}">
-                                <!--<Label Text="{Binding UserName}"/>-->
-                                <Frame CornerRadius="30"
-                                       Grid.Column="1"
-                                       HorizontalOptions="End"
-                                       HasShadow="True"
-                                       Margin="0"
-                                       BackgroundColor="{StaticResource PrimaryColor}"
-                                       Padding="10">
-                                    <Label Text="{Binding Content}"
-                                           Margin="10"
-                                           TextColor="{StaticResource WhiteColor}"
-                                           LineBreakMode="WordWrap"/>
-                                </Frame>
-                            </Grid>
-                            <Grid ColumnDefinitions="*, 40"
-                                  Grid.Row="1"
-                                  IsVisible="{Binding IsOwner, Converter={StaticResource  BoolToVisibility}, ConverterParameter=Inverse}">
-                                <!--<Label Text="{Binding UserName}"/>-->
-                                <Frame CornerRadius="30"
-                                       HasShadow="True"
-                                       Margin="0"
-                                       BackgroundColor="{StaticResource ElegantDarkColor}"
-                                       Padding="10">
-                                    <Label Text="{Binding Content}"
-                                           Margin="10"
-                                           TextColor="{StaticResource WhiteColor}"
-                                           LineBreakMode="WordWrap"/>
-                                </Frame>
-                            </Grid>
-                            <!--<Grid RowDefinitions="auto, auto"  >
-                                <Label Text="{Binding UserName}"/>
-                                <Label Text="{Binding Message}"/>
-                            </Grid>-->
-                        </Grid>
-                    </ViewCell>
+                    <Grid Padding="10"
+                          ColumnSpacing="0"
+                          Rotation="180">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Frame Grid.Column="0"
+                               Padding="0"
+                               BackgroundColor="{Binding Color}"
+                               CornerRadius="20"
+                               HasShadow="True"
+                               HeightRequest="40"
+                               VerticalOptions="CenterAndExpand"
+                               Visual="Material"
+                               WidthRequest="40">
+                            <Label HorizontalOptions="Center"
+                                   Text="{Binding FirstLetter}"
+                                   VerticalOptions="Center"/>
+                            
+                        </Frame>
+                        <Frame Grid.Column="1"
+                               Margin="5, 0, 20, 0"
+                               Padding="5"
+                               BackgroundColor="{Binding BackgroundColor}"
+                               CornerRadius="20"
+                               Visual="Material">
+                            <Label Margin="10, 5"
+                                   Text="{Binding Content}"
+                                   TextColor="White"/>
+                        </Frame>
+                    </Grid>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <StackLayout Grid.Row="1"
-                     Orientation="Horizontal">
-            <Entry Text="{Binding Message}"
-                   
-                   HorizontalOptions="FillAndExpand"></Entry>
-            <Button Text="Send" Command="{Binding SendMsgCommand}"/>
-        </StackLayout>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <ActivityIndicator Grid.ColumnSpan="2"
+                           Grid.RowSpan="3"
+                           d:IsRunning="True"
+                           d:IsVisible="True"
+                           Color="Black"
+                           HorizontalOptions="CenterAndExpand"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           VerticalOptions="CenterAndExpand"/>
     </Grid>
+   
 
 </ContentPage>

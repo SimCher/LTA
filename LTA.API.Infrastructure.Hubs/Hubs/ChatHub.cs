@@ -53,12 +53,76 @@ public class ChatHub : Hub
         }
     }
 
+    //public async Task<ICollection<string>?> LogInChat(string userCode, int topicId)
+    //{
+    //    try
+    //    {
+    //        var topic = _topicService.GetTopic(topicId) ??
+    //                    throw new System.NullReferenceException($"Topic is unavailable");
+    //        if (topic.ContainsUser(userCode))
+    //            throw new ArgumentException($"User {userCode} in topic {topic.Name} already.");
 
-    public async Task SendMessage(string userId, string message)
+    //        await Groups.AddToGroupAsync(Context.ConnectionId, $"{topic.Id}");
+
+    //        if (!topic.TryAddUser(userCode)) throw new ArgumentException($"{nameof(userCode)} was null or empty.");
+    //        await Clients.OthersInGroup($"{topic.Id}").SendAsync("NewUserMessage");
+
+    //        return topic.UsersIn;
+
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _loggerService.LogError($"{ex.Source}: {ex.Message}");
+    //        await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
+    //        return null;
+    //    }
+    //}
+
+    public async Task LogInChatAsync(string userCode, int topicId)
     {
-        await Clients.Others.SendAsync("ReceiveMessage", userId, message);
+        try
+        {
+            var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"{topic.Id}");
+
+            await Clients.OthersInGroup($"{topic.Id}").SendAsync("NewUserMessage");
+
+            await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UserNumber, topic.LastEntryDate);
+        }
+        catch (Exception ex)
+        {
+            _loggerService.LogError($"{ex.Source}: {ex.Message}");
+            await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
+        }
+    }
+
+    public async Task LogOutFromChatAsync(string userCode, int topicId)
+    {
+        try
+        {
+            var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userCode);
+
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{topic.Id}");
+
+            await Clients.OthersInGroup($"{topic.Id}").SendAsync("UserOutMessage");
+
+            await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UserNumber, topic.LastEntryDate);
+        }
+        catch (Exception ex)
+        {
+            _loggerService.LogError($"{ex.Source}: {ex.Message}");
+            await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
+        }
+    }
+
+    public async Task SendMessage(dynamic message)
+    {
+        await Clients.OthersInGroup($"{message.topicId}").SendAsync("ReceiveMessage", new { message });
     }
 
     public IEnumerable<dynamic> LoadTopics()
-        => _topicService.GetTopicsDynamic();
+    {
+        return _topicService.GetTopicsDynamic();
+    }
 }

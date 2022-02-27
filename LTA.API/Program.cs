@@ -2,7 +2,6 @@ using LTA.API.Infrastructure.Ioc;
 using LTA.API.Infrastructure.Data.Context;
 using LTA.API.Infrastructure.Data.Migrations;
 using LTA.API.Infrastructure.Hubs.Hubs;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using NLog;
@@ -26,6 +25,7 @@ builder.Services.AddDbContext<LtaApiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("LtaApiContext"));
 });
 
+
 DependencyContainer.RegisterServices(builder.Services);
 
 var app = await CreateDatabaseIfNotExistsAsync(builder);
@@ -38,7 +38,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LTA.API v1"));
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseRouting();
 

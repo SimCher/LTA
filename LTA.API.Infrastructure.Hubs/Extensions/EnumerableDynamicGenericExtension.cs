@@ -2,7 +2,7 @@
 
 namespace LTA.API.Infrastructure.Hubs.Extensions;
 
-public static class EnumerableDynamicGenericExtension
+public static class CollectopnDynamicGenericExtension
 {
     public static IEnumerable<dynamic> ToDynamicEnumerable(this IEnumerable<Topic> topicList) =>
         topicList.Select(topic => GetNewDynamicTopic(topic)).ToList();
@@ -17,6 +17,7 @@ public static class EnumerableDynamicGenericExtension
             topic.Rating,
             topic.MaxUsersNumber,
             topic.LastEntryDate,
+            topic.UserNumber,
             Categories = topic.GetCategoryNames()
         };
 

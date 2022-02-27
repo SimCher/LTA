@@ -6,7 +6,7 @@ namespace LTA.Mobile.Services;
 
 public class UserService : IUserService
 {
-    private string _userCode;
+    private string _userCode = Guid.NewGuid().ToString("D");
     private readonly IChatService _chatService;
 
     public UserService(IChatService chatService)
@@ -24,18 +24,18 @@ public class UserService : IUserService
                 throw new System.ArgumentException(
                     "Value for user code was null or value's length is less or equal 15");
             }
-            
+
             _userCode = value;
         }
     }
 
+    public string GetUserCode() => UserCode;
 
     public async Task<bool> LoginAsync(string phoneOrEmail, string password, Action<string> setMessage)
     {
         try
         {
             _chatService.SetErrorMessage(setMessage);
-            await _chatService.Connect();
 
             UserCode = await _chatService.LoginAsync(phoneOrEmail, password);
             return true;

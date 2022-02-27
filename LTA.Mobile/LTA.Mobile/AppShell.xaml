@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Shell xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pages="clr-namespace:LTA.Mobile.Pages"
+             xmlns:resources="clr-namespace:LTA.Mobile.Resources"
+             x:Class="LTA.Mobile.AppShell"
+             Title="Let's Talk About">
+
+    <TabBar Route="LetsTalkAbout">
+        <Tab Icon="{FontImage Glyph={StaticResource FontAwesomeComment}, FontFamily={StaticResource FontAwesome}}"
+             Title="{x:Static resources:TextResources.Messages}" Route="topics">
+            <ShellContent ContentTemplate="{DataTemplate pages:TopicsPage}"/>
+        </Tab>
+        <!--<Tab Icon="{FontImage Glyph={StaticResource FontAwesomeCog}, FontFamily={StaticResource FontAwesome}}"
+             Title="{x:Static resources:TextResources.Settings}" Route="settings">
+            <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}"/>
+        </Tab>-->
+    </TabBar>
+</Shell>

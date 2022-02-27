@@ -2,14 +2,14 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:mvvm="http://prismlibrary.com" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels" x:DataType="pagemodels:LoginPageViewModel"
+             xmlns:mvvm="http://prismlibrary.com" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels" x:DataType="pagemodels:LoginPageModel"
              mvvm:ViewModelLocator.AutowireViewModel="True"
              x:Class="LTA.Mobile.Pages.LoginPage"
              Title="Log in"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.Content>
         <StackLayout Style="{StaticResource RegLayout}">
-            <Label Text="{Binding Message}"/>
+            <Label Text="{Binding PageMessage}"/>
 
             <Label Text="Enter your phone number or E-Mail"/>
             <Entry Style="{StaticResource RegEntry}" Text="{Binding PhoneOrEmail}" Keyboard="Email"/>
