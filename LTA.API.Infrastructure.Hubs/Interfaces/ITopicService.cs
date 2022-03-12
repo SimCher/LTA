@@ -8,6 +8,6 @@ public interface ITopicService
 
     public Topic? GetTopic(int id);
 
-    public Task<Topic> AddUserAndReturnTopic(int topicId, string userCode);
-    public Task<Topic> RemoveUserAndReturnTopic(int topicId, string userCode);
+    public Task<Topic> AddUserAndReturnTopic(int topicId, int userId);
+    public Task<Topic> RemoveUserAndReturnTopic(int topicId, int userId);
 }

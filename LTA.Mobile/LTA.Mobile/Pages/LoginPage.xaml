@@ -3,22 +3,31 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mvvm="http://prismlibrary.com" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels" x:DataType="pagemodels:LoginPageModel"
+             xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
              mvvm:ViewModelLocator.AutowireViewModel="True"
              x:Class="LTA.Mobile.Pages.LoginPage"
              Title="Log in"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.Content>
-        <StackLayout Style="{StaticResource RegLayout}">
+        <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="0">
             <Label Text="{Binding PageMessage}"/>
 
             <Label Text="Enter your phone number or E-Mail"/>
-            <Entry Style="{StaticResource RegEntry}" Text="{Binding PhoneOrEmail}" Keyboard="Email"/>
+            <Editor Placeholder="Phone or E-Mail" Margin="10,5,5,10" VerticalOptions="Center"
+                   FontFamily="{StaticResource QuickSandRegular}" FontAttributes="Bold" Text="{Binding PhoneOrEmail}" Keyboard="Email"/>
 
             <Label Text="Enter your password"/>
-            <Entry Style="{StaticResource RegEntry}" IsPassword="True" Text="{Binding Password}"/>
+            <Entry Placeholder="Phone or E-Mail" Margin="10,5,5,10" VerticalOptions="Center"
+                    FontFamily="{StaticResource QuickSandRegular}" FontAttributes="Bold" IsPassword="True" Text="{Binding Password}"/>
 
-            <Button Style="{StaticResource ButtonStyle}" Text="Sign In"
-                    Command="{Binding TryLoginCommand}"/>
+            <customControls:FloatingButton WidthRequest="60" HeightRequest="60"
+                                           HorizontalOptions="Center" VerticalOptions="Center"
+                                           BackgroundColor="{StaticResource AccentColor}"
+                                           PressedCommand="{Binding TryLoginCommand}"
+                                           Icon="{StaticResource FontAwesomePaperPlane}"
+                                           IconColor="{StaticResource PrimaryColor}"
+                                           Style="{StaticResource LightShadowPancakeViewStyle}"
+                                           Margin="5,0,10,0"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

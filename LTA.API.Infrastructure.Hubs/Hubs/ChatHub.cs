@@ -1,7 +1,6 @@
 ﻿using LTA.API.Infrastructure.Hubs.Interfaces;
 using LTA.API.Infrastructure.Loggers.Interfaces;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
 
 namespace LTA.API.Infrastructure.Hubs.Hubs;
 
@@ -78,17 +77,17 @@ public class ChatHub : Hub
     //    }
     //}
 
-    public async Task LogInChatAsync(string userCode, int topicId)
+    public async Task LogInChatAsync(int userId, int topicId)
     {
         try
         {
-            var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
+            var topic = await _topicService.AddUserAndReturnTopic(topicId, userId);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{topic.Id}");
 
             await Clients.OthersInGroup($"{topic.Id}").SendAsync("NewUserMessage");
 
-            await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UserNumber, topic.LastEntryDate);
+            await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UsersIn, topic.LastEntryDate);
         }
         catch (Exception ex)
         {
@@ -97,17 +96,17 @@ public class ChatHub : Hub
         }
     }
 
-    public async Task LogOutFromChatAsync(string userCode, int topicId)
+    public async Task LogOutFromChatAsync(int userId, int topicId)
     {
         try
         {
-            var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userCode);
+            var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userId);
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{topic.Id}");
 
             await Clients.OthersInGroup($"{topic.Id}").SendAsync("UserOutMessage");
 
-            await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UserNumber, topic.LastEntryDate);
+            await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UsersIn);
         }
         catch (Exception ex)
         {
@@ -118,7 +117,8 @@ public class ChatHub : Hub
 
     public async Task SendMessage(dynamic message)
     {
-        await Clients.OthersInGroup($"{message.topicId}").SendAsync("ReceiveMessage", new { message });
+        var a = new { m = message };
+        await Clients.Others/*($"{message.topicId}")*/.SendAsync("ReceiveMessage", a);
     }
 
     public IEnumerable<dynamic> LoadTopics()

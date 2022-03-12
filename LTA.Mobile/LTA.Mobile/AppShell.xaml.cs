@@ -11,7 +11,7 @@ namespace LTA.Mobile
         {
             InitializeComponent();
             SetTabBarIsVisible(this, false);
-            //Routing.RegisterRoute("TopicsPage", typeof(TopicsPage));
+            Routing.RegisterRoute("TopicsPage", typeof(TopicsPage));
         }
     }
 }

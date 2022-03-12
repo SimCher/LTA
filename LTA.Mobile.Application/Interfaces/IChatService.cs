@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LTA.Mobile.Application.EventHandlers;
 using LTA.Mobile.Domain.Models;
-using LTA.Mobile.EventHandlers;
 
-namespace LTA.Mobile.Interfaces
+namespace LTA.Mobile.Application.Interfaces
 {
     public interface IChatService
     {
@@ -22,8 +22,8 @@ namespace LTA.Mobile.Interfaces
         Task<string> LoginAsync(string phoneOrEmail, string password);
         Task<IEnumerable<dynamic>> LoadTopicsAsync();
 
-        Task LogInChatAsync(string userCode, int topicId);
-        Task LogOutFromChatAsync(string userCode, int topicId);
+        Task LogInChatAsync(int userId, int topicId);
+        Task LogOutFromChatAsync(int userId, int topicId);
 
         void NewUserMessage(Action<string> showNewUserMessage);
         void UserOutMessage(Action<string> showUserOutMessage);

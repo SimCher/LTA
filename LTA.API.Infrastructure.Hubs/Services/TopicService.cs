@@ -30,31 +30,22 @@ public class TopicService : ITopicService
 
             return topic;
         }
-        catch (System.NullReferenceException ex)
+        catch (NullReferenceException ex)
         {
             _loggerService.LogError($"{ex.Source}: {ex.Message}");
             return null;
         }
     }
 
-    public async Task<Topic> AddUserAndReturnTopic(int topicId, string userCode)
+    public async Task<Topic> AddUserAndReturnTopic(int topicId, int userId)
     {
-        var topicToUpdate = GetTopicOrThrow(topicId);
-
-        return await _topicRepository.UpdateAndReturnAsync(topicId, topicToUpdate.UserNumber + 1)
-            ?? throw new ArgumentException("Something went wrong with adding a user to the topic"); ;
-
-
+        return await _topicRepository.UpdateAndReturnAsync(topicId, userId, true)
+            ?? throw new ArgumentException("Something went wrong with adding a user to the topic");
     }
 
-    public async Task<Topic> RemoveUserAndReturnTopic(int topicId, string userCode)
+    public async Task<Topic> RemoveUserAndReturnTopic(int topicId, int userId)
     {
-        var topicToUpdate = GetTopicOrThrow(topicId);
-
-        return await _topicRepository.UpdateAndReturnAsync(topicId, topicToUpdate.UserNumber - 1)
+        return await _topicRepository.UpdateAndReturnAsync(topicId, userId, false)
                ?? throw new ArgumentException("Something went wrong with removing a user from the topic");
     }
-
-    private Topic GetTopicOrThrow(int topicId) =>
-        GetTopic(topicId) ?? throw new NullReferenceException($"There is no topic with id: {topicId}");
 }

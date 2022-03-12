@@ -1,4 +1,4 @@
-﻿namespace LTA.Mobile.Enums;
+﻿namespace LTA.Mobile.Application.Attributes;
 
 public enum PhoneOrEmail
 {

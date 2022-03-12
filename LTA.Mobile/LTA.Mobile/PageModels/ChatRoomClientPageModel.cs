@@ -32,7 +32,7 @@ public partial class ChatRoomPageModel
         ReplyMessageSelectedCommand = ReactiveCommand.Create<Message>(ReplyMessageSelected);
         MessageSwippedCommand = ReactiveCommand.Create<Message>(MessageSwiped);
         SendMsgCommand = ReactiveCommand.CreateFromTask(SendMsg,
-            this.WhenAnyValue(vm => vm.Message, curm => !string.IsNullOrEmpty(curm)));
+            this.WhenAnyValue<ChatRoomPageModel, bool, string>(vm => vm.Message, curm => !string.IsNullOrEmpty(curm)));
         CancelReplyCommand = ReactiveCommand.Create(CancelReply);
     }
 

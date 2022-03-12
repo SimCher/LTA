@@ -1,5 +1,7 @@
-﻿using System.Windows.Input;
-using LTA.Mobile.Interfaces;
+﻿using System;
+using System.Windows.Input;
+using LTA.Mobile.Application.Interfaces;
+using LTA.Mobile.Helpers;
 using LTA.Mobile.Pages;
 using Prism.Commands;
 using Prism.Navigation;
@@ -45,7 +47,8 @@ public class LoginPageModel : BasePageModel
         ShowMessage("Logging in...");
         if (await _userService.LoginAsync(PhoneOrEmail, Password, SetErrorMessage))
         {
-            await NavigationService.NavigateAsync($"NavigationPage/{nameof(TopicListPage)}");
+            Settings.UserId = new Random().Next(1, 1000);
+            await NavigationService.NavigateAsync(Settings.TopicsPageNavigation);
         }
 
         PhoneOrEmail = string.Empty;

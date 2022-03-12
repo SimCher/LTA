@@ -1,4 +1,4 @@
-﻿namespace LTA.Mobile.EventHandlers;
+﻿namespace LTA.Mobile.Application.EventHandlers.Interfaces;
 
 public interface IMessageEventArgs
 {

@@ -1,4 +1,7 @@
-﻿namespace LTA.API.Domain.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Xamarin.Forms;
+
+namespace LTA.API.Domain.Models;
 
 public class User
 {
@@ -7,7 +10,10 @@ public class User
     public bool IsAuth { get; set; }
     public DateTime LastEntryDate { get; set; }
 
+    [NotMapped]
+    public Color Color { get; set; }
+
     public Profile Profile { get; set; }
-    
+
     public ICollection<Topic> Topics { get; set; }
 }

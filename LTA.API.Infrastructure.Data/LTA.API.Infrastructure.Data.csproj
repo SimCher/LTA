@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.1" />
+      <PackageReference Include="Xamarin.Forms" Version="5.0.0.2337" />
     </ItemGroup>
 
     <ItemGroup>

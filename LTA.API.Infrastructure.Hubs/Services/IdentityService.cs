@@ -2,7 +2,6 @@
 using LTA.API.Domain.Interfaces;
 using LTA.API.Infrastructure.Hubs.Interfaces;
 using LTA.API.Infrastructure.Loggers.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace LTA.API.Infrastructure.Hubs.Services;
 

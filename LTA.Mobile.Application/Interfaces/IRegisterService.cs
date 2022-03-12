@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using LTA.Mobile.ViewModels;
 
-namespace LTA.Mobile.Interfaces
+namespace LTA.Mobile.Application.Interfaces
 {
     public interface IRegisterService
     {

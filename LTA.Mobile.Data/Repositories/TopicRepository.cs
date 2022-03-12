@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Domain.Annotations;
+using LTA.Mobile.Domain.Interfaces;
 using LTA.Mobile.Domain.Models;
-using LTA.Mobile.Interfaces;
-using LTA.Mobile.ViewModels;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace LTA.Mobile.Repositories;
+namespace LTA.Mobile.Data.Repositories;
 
 public class TopicRepository : ITopicRepository
 {

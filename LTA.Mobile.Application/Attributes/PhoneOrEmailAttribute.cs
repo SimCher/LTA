@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using LTA.Mobile.Enums;
+﻿#nullable enable
+using System.ComponentModel.DataAnnotations;
 
-namespace LTA.Mobile.Attributes;
+namespace LTA.Mobile.Application.Attributes;
 
 public class PhoneOrEmailAttribute : ValidationAttribute
 {

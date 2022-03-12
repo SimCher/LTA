@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using LTA.Mobile.Domain.Models.BaseModels;
 
 namespace LTA.Mobile.Domain.Models
@@ -10,8 +12,6 @@ namespace LTA.Mobile.Domain.Models
 
         private string _name;
 
-        private int _ownerUserId;
-
         private float _rating;
 
         private int _maxUsersNumber;
@@ -19,6 +19,11 @@ namespace LTA.Mobile.Domain.Models
         private DateTime _lastEntryDate;
 
         private int _currentUsersNumber;
+
+        public Topic()
+        {
+            UsersIn = new ObservableCollection<User>();
+        }
 
         public string Name
         {
@@ -60,6 +65,9 @@ namespace LTA.Mobile.Domain.Models
         public ICollection<string> Categories { get; set; }
 
         public ICollection<Message> Messages { get; set; }
+
+        [NotMapped]
+        public ICollection<User> UsersIn { get; set; }
 
 
     }

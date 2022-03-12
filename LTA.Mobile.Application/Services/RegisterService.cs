@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using LTA.Mobile.Attributes;
-using LTA.Mobile.Interfaces;
-using LTA.Mobile.ViewModels;
+using LTA.Mobile.Application.Attributes;
+using LTA.Mobile.Application.Interfaces;
 
-namespace LTA.Mobile.Services;
+namespace LTA.Mobile.Application.Services;
 
 public class RegisterService : IRegisterService
 {

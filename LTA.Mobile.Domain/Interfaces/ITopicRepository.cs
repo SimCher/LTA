@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LTA.Mobile.Domain.Models;
-using LTA.Mobile.ViewModels;
 
-namespace LTA.Mobile.Interfaces;
+namespace LTA.Mobile.Domain.Interfaces;
 
 public interface ITopicRepository
 {

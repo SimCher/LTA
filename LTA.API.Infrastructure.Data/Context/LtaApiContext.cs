@@ -7,7 +7,6 @@ public class LtaApiContext : DbContext
 {
 #pragma warning disable CS8618
     public LtaApiContext(DbContextOptions<LtaApiContext> options) : base(options)
-
     {
     }
 
@@ -29,8 +28,6 @@ public class LtaApiContext : DbContext
         modelBuilder.Entity<Topic>().ToTable("Topics")
             .HasMany(c => c.Categories)
             .WithMany(c => c.Topics);
-
-
     }
 }
 #pragma warning restore CS8618

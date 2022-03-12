@@ -2,7 +2,7 @@
 using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using LTA.Mobile.Interfaces;
+using LTA.Mobile.Application.Interfaces;
 using Prism.Navigation;
 using ReactiveUI;
 

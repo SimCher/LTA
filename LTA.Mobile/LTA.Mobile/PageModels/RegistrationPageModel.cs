@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
-using LTA.Mobile.Interfaces;
+using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Pages;
-using LTA.Mobile.ViewModels;
 using Prism.Commands;
 using Prism.Navigation;
 using ReactiveUI;

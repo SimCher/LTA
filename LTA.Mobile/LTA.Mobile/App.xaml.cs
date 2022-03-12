@@ -1,8 +1,11 @@
-﻿using LTA.Mobile.Interfaces;
+﻿using LTA.Mobile.Application.Interfaces;
+using LTA.Mobile.Application.Services;
+using LTA.Mobile.Data.Context;
+using LTA.Mobile.Data.Repositories;
+using LTA.Mobile.Domain.Interfaces;
 using LTA.Mobile.PageModels;
 using LTA.Mobile.Pages;
-using LTA.Mobile.Repositories;
-using LTA.Mobile.Services;
+using Microsoft.EntityFrameworkCore;
 using Prism;
 using Prism.Ioc;
 using Prism.Services;
@@ -24,21 +27,28 @@ namespace LTA.Mobile
         {
             InitializeComponent();
 
+            //MainPage = new AppShell();
+
             await NavigationService.NavigateAsync("NavigationPage/TopicsPage");
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
+
+
+
+            containerRegistry.Register<DbContext, LtaClientContext>();
             containerRegistry.RegisterSingleton<IUserService, UserService>();
             containerRegistry.RegisterSingleton<ITopicRepository, TopicRepository>();
             containerRegistry.RegisterSingleton<IMessageRepository, MessageRepository>();
             containerRegistry.RegisterSingleton<IChatService, ChatService>();
 
-            containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.Register<IRegisterService, RegisterService>();
             containerRegistry.Register<IPageDialogService, PageDialogService>();
 
+            containerRegistry.RegisterForNavigation<NavigationPage>();
+            containerRegistry.RegisterForNavigation<BaseTabbedPage, TopicsPage>();
             containerRegistry.RegisterForNavigation<MessagesPage, MessagesPageModel>();
             //containerRegistry.RegisterForNavigation<ChatRoomPage, TestChatRoomPageModel>();
             containerRegistry.RegisterForNavigation<RegistrationPage, RegistrationPageModel>();

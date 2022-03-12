@@ -7,10 +7,13 @@
              xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects"
              xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
              xmlns:dataTemplateSelector="clr-namespace:LTA.Mobile.UI.TemplateSelectors"
+             BindingContext="pageModels:MessagesPageModel"
              xmlns:local="clr-namespace:LTA.Mobile.Pages"
-             x:Class="LTA.Mobile.Pages.MessagesPage"
+                x:Class="LTA.Mobile.Pages.MessagesPage"
              NavigationPage.HasBackButton="False"
              BackgroundColor="{StaticResource PrimaryColor}"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
              x:Name="MessagePage">
     <ContentPage.Content>
 

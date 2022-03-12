@@ -5,12 +5,12 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using LTA.Mobile.Application.EventHandlers;
+using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Domain.Models;
-using LTA.Mobile.EventHandlers;
-using LTA.Mobile.Interfaces;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace LTA.Mobile.Services
+namespace LTA.Mobile.Application.Services
 {
     public class ChatService : IChatService
     {
@@ -25,6 +25,7 @@ namespace LTA.Mobile.Services
         public ChatService()
         {
             //_hubConnection = new HubConnectionBuilder().WithUrl($"http://192.168.0.107:8082/lta").Build();
+            //_hubConnection = new HubConnectionBuilder().WithUrl("http://192.168.117.1:8082/lta").Build();
             _hubConnection = new HubConnectionBuilder().WithUrl($"http://10.0.2.2:5240/lta").Build();
             _hubConnection.Closed += async (error) =>
             {
@@ -40,11 +41,6 @@ namespace LTA.Mobile.Services
                     Debug.WriteLine(ex);
                 }
             };
-
-            _hubConnection.On<string, string>("ReceiveMessage", (topic, message) =>
-            {
-                OnReceivedMessage?.Invoke(this, new MessageEventArgs(message, topic));
-            });
 
             _hubConnection.On<string>("Entered", (user) =>
             {
@@ -92,23 +88,7 @@ namespace LTA.Mobile.Services
             if (!IsConnected)
                 await ConnectIfNotAsync();
 
-            var messageForRetrieve = new
-            {
-                message.Id,
-                message.Topic,
-                message.Sender,
-                message.UserId,
-                message.IsOwner,
-                message.IsSent,
-                message.Content,
-                message.SentAt,
-                message.CreationDate,
-                message.TopicId,
-                message.IsSentPreviousMessage,
-                message.ReplyTo
-            };
-
-            await _hubConnection.InvokeAsync("SendMessage", messageForRetrieve);
+            await _hubConnection.InvokeAsync("SendMessage", message);
         }
 
         public void ReceiveMessage(Action<dynamic> getMessageAndUser)
@@ -135,25 +115,35 @@ namespace LTA.Mobile.Services
         }
 
 
-        public async Task LogInChatAsync(string userCode, int topicId)
-        {
-            if (!IsConnected || ActiveTopics.ContainsKey(topicId.ToString())) return;
+        //public async Task LogInChatAsync(string userCode, int topicId)
+        //{
+        //    if (!IsConnected)
+        //    {
+        //        await ConnectIfNotAsync();
+        //    }
 
-            await _hubConnection.SendAsync("AddToTopic", topicId, userCode);
-            ActiveTopics.Add(topicId.ToString(), userCode);
-            //await ConnectIfNotAsync();
-            //await _hubConnection.InvokeAsync("LogInChatAsync", userCode, topicId);
+        //    await _hubConnection.SendAsync("AddToTopic", topicId, userCode);
+        //    ActiveTopics.Add(topicId.ToString(), userCode);
+        //    //await ConnectIfNotAsync();
+        //    //await _hubConnection.InvokeAsync("LogInChatAsync", userCode, topicId);
+        //}
+
+        public async Task LogInChatAsync(int userId, int topicId)
+        {
+            if (!IsConnected)
+            {
+                await ConnectIfNotAsync();
+            }
+
+            await _hubConnection.SendAsync("LogInChatAsync", userId, topicId);
+
         }
 
-        public async Task LogOutFromChatAsync(string userCode, int topicId)
+        public async Task LogOutFromChatAsync(int userId, int topicId)
         {
             if (!IsConnected || !ActiveTopics.ContainsKey(topicId.ToString())) return;
 
-            await _hubConnection.SendAsync("RemoveFromTopic", topicId, userCode);
-
-            ActiveTopics.Remove(topicId.ToString());
-            //await ConnectIfNotAsync();
-            //await _hubConnection.InvokeAsync("LogOutFromChatAsync", userCode, topicId);
+            await _hubConnection.SendAsync("LogOutFromChatAsync", topicId, userId);
         }
 
         public void SetErrorMessage(Action<string> getErrorMessage)

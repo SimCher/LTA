@@ -1,25 +1,23 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using LTA.Mobile.Domain.Models.BaseModels;
-using Xamarin.Forms;
 
 namespace LTA.Mobile.Domain.Models
 {
     public class Message : BaseModel
     {
-        [NotMapped]
-        private static readonly Random Random;
-
         private string _content;
         private int _userId;
         private int _topicId;
         private bool _isOwner;
         private bool _isSent;
         private DateTime _sentAt;
-        private Color _color;
+        private Message _replyTo;
 
+        [NotMapped]
         public Topic Topic { get; set; }
 
+        [NotMapped]
         public User Sender { get; set; }
 
         public int UserId
@@ -60,6 +58,10 @@ namespace LTA.Mobile.Domain.Models
 
         public bool IsSentPreviousMessage { get; set; }
 
-        public Message ReplyTo { get; set; }
+        public Message ReplyTo
+        {
+            get => _replyTo;
+            set => SetProperty(ref _replyTo, value);
+        }
     }
 }

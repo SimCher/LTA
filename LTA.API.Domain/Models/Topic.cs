@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using Xamarin.Forms;
 
 namespace LTA.API.Domain.Models;
 
@@ -18,30 +19,64 @@ public class Topic
     public ICollection<Report> Reports { get; set; }
     public ICollection<Category> Categories { get; set; }
 
+    private Dictionary<Color, bool> AvailableColors { get; }
 
-    [NotMapped] public ICollection<string> UsersIn { get; set; }
+
+    [NotMapped] public ICollection<User> UsersIn { get; set; }
     [NotMapped] public bool IsMultiuser => MaxUsersNumber > 2;
 
     public Topic()
     {
-        UsersIn = new HashSet<string>();
+        UsersIn = new HashSet<User>();
+
+        AvailableColors = new Dictionary<Color, bool>
+        {
+            {Color.Blue, true},
+            {Color.Red, true},
+            {Color.Green, true},
+            {Color.Purple, true},
+            {Color.Black, true},
+            {Color.Pink, true},
+            {Color.Yellow, true},
+            {Color.Orange, true},
+            {Color.White, true},
+            {Color.Brown, true},
+            {Color.Cyan, true},
+            {Color.Gray, true},
+            {Color.Magenta, true},
+            {Color.Salmon, true},
+            {Color.Teal, true},
+            {Color.Tomato, true}
+        };
     }
 
-    public bool ContainsUser(string userCode) => UsersIn.Contains(userCode);
-
-    public bool TryAddUser(string userCode)
+    public bool UserContains(User user)
     {
-        if (string.IsNullOrEmpty(userCode)) return false;
-        UsersIn.Add(userCode);
-        return true;
-
+        return UsersIn.Contains(user);
     }
 
-    public bool TryRemoveUser(string userCode)
+    public void AddUser(User user)
     {
-        if (string.IsNullOrEmpty(userCode) || !ContainsUser(userCode))
+        if (UserContains(user))
+        {
+            throw new InvalidOperationException($"User with id: {user.Id} is already in topic with id: {Id}.");
+        }
+
+        user.Color = GetAvailableColor();
+        UsersIn.Add(user);
+    }
+
+    public bool RemoveUser(User user)
+    {
+        if (!UserContains(user))
+        {
             return false;
-        return UsersIn.Remove(userCode);
+        }
+
+        user.Color = default;
+        ReleaseColor(user.Color);
+        UsersIn.Remove(user);
+        return true;
     }
 
     public string GetCategoryNames()
@@ -56,5 +91,17 @@ public class Topic
         builder.Remove(builder.Length - 1, 1);
 
         return builder.ToString();
+    }
+
+    public Color GetAvailableColor()
+    {
+        var availableColor = AvailableColors.First(ac => ac.Value).Key;
+        AvailableColors[availableColor] = false;
+        return availableColor;
+    }
+
+    public void ReleaseColor(Color color)
+    {
+        AvailableColors[color] = true;
     }
 }
