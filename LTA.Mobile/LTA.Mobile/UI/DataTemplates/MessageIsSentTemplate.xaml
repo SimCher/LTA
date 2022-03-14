@@ -59,7 +59,6 @@
                         </DataTrigger>
                     </customViews:MessageBubble.Triggers>
                 </customViews:MessageBubble>
-
             </Grid>
         </SwipeView>
     </ContentView.Content>

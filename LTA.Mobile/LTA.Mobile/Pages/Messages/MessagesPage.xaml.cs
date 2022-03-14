@@ -4,7 +4,7 @@ using LTA.Mobile.PageModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace LTA.Mobile.Pages
+namespace LTA.Mobile.Pages.Messages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MessagesPage

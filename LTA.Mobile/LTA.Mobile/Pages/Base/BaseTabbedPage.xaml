@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<pages:BasePage xmlns="http://xamarin.com/schemas/2014/forms" 
+<base:BasePage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,8 +7,9 @@
              xmlns:pages="clr-namespace:LTA.Mobile.Pages"
              xmlns:xe="clr-namespace:XamEffects;assembly=XamEffects"
              xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             xmlns:base="clr-namespace:LTA.Mobile.Pages.Base;assembly=LTA.Mobile"
              x:Name="TabbedPage"
-             x:Class="LTA.Mobile.Pages.BaseTabbedPage">
+             x:Class="LTA.Mobile.Pages.Base.BaseTabbedPage">
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>
@@ -96,4 +97,4 @@
             </pancakeView:PancakeView>
         </Grid>
     </ContentPage.Content>
-</pages:BasePage>
+</base:BasePage>

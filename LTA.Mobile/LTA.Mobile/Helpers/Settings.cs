@@ -7,6 +7,7 @@ public static class Settings
 {
     public const string TopicsPageNavigation = "NavigationPage/TopicsPage";
     public const string MessagesPageNavigation = "NavigationPage/MessagesPage";
+    public const string AddTopicNavigation = "NavigationPage/Add";
 
     public static int UserId
     {

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Shell xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:pages="clr-namespace:LTA.Mobile.Pages"
+             xmlns:pages="clr-namespace:LTA.Mobile.Pages.Topics"
              xmlns:resources="clr-namespace:LTA.Mobile.Resources"
              x:Class="LTA.Mobile.AppShell"
              Title="Let's Talk About">

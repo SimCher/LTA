@@ -5,7 +5,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Prism.Navigation;
 
-namespace LTA.Mobile.Pages
+namespace LTA.Mobile.Pages.Base
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class BaseTabbedPage

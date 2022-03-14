@@ -5,7 +5,7 @@
              xmlns:mvvm="http://prismlibrary.com" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels" x:DataType="pagemodels:LoginPageModel"
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
              mvvm:ViewModelLocator.AutowireViewModel="True"
-             x:Class="LTA.Mobile.Pages.LoginPage"
+             x:Class="LTA.Mobile.Pages.Identity.LoginPage"
              Title="Log in"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.Content>

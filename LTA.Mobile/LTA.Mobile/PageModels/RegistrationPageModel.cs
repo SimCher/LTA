@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Pages;
+using LTA.Mobile.Pages.Identity;
 using Prism.Commands;
 using Prism.Navigation;
 using ReactiveUI;

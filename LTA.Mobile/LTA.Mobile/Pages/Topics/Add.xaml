@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<base:BasePage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:LTA.Mobile.Pages"
+             xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects"
+             xmlns:base="clr-namespace:LTA.Mobile.Pages.Base;assembly=LTA.Mobile"
+             xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
+             x:Class="LTA.Mobile.Pages.Topics.Add">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label FontFamily="{StaticResource QuickSandBold}"
+                   LineBreakMode="TailTruncation"
+                   Margin="0,0,0,5" Text="Name"/>
+            <Editor Placeholder="Name"
+                    Margin="10,5,5,10"
+                    AutoSize="TextChanges"
+                    MaxLength="30"
+                    HorizontalOptions="StartAndExpand"
+                    VerticalOptions="Center"
+                    FontFamily="{StaticResource QuickSandRegular}">
+                <Editor.Effects>
+                    <effects:BorderlessEntryEffect/>
+                </Editor.Effects>
+            </Editor>
+            <Label FontFamily="{StaticResource QuickSandBold}"
+                   LineBreakMode="TailTruncation"
+                   Margin="0,0,0,5" Text="Maximum Users"/>
+            <Editor Placeholder="Name"
+                    Margin="10,5,5,10"
+                    AutoSize="TextChanges"
+                    MaxLength="2"
+                    HorizontalOptions="StartAndExpand"
+                    VerticalOptions="Center"
+                    Keyboard="Numeric"
+                    FontFamily="{StaticResource QuickSandRegular}">
+                <Editor.Effects>
+                    <effects:BorderlessEntryEffect/>
+                </Editor.Effects>
+            </Editor>
+            <customControls:FloatingButton HorizontalOptions="CenterAndExpand"
+                                           BackgroundColor="{StaticResource AccentColor}"
+                                           PressedCommand="{Binding NavigateToAddCommand}"
+                Icon="{StaticResource FontAwesomePlus}"
+                                           IconColor="{StaticResource PrimaryColor}"
+                                           Style="{StaticResource LightShadowPancakeViewStyle}"
+                                           Margin="5,0,10,0"/>
+
+        </StackLayout>
+    </ContentPage.Content>
+</base:BasePage>

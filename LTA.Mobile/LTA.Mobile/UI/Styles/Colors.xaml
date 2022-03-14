@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="LTA.Mobile.UI.Styles.Colors">
 
-    <Color x:Key="AccentColor">#5A89FF</Color>
+    <Color x:Key="AccentColor">#A865C9</Color>
     <Color x:Key="SecondaryAccentColor">#BFD0FB</Color>
     <Color x:Key="PrimaryColor">#F4F5F9</Color>
     <Color x:Key="LightDarkWhite">#F4F5F9</Color>

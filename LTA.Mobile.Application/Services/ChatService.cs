@@ -25,8 +25,8 @@ namespace LTA.Mobile.Application.Services
         public ChatService()
         {
             //_hubConnection = new HubConnectionBuilder().WithUrl($"http://192.168.0.107:8082/lta").Build();
-            //_hubConnection = new HubConnectionBuilder().WithUrl("http://192.168.117.1:8082/lta").Build();
-            _hubConnection = new HubConnectionBuilder().WithUrl($"http://10.0.2.2:5240/lta").Build();
+            _hubConnection = new HubConnectionBuilder().WithUrl("http://192.168.2.1:8082/lta").Build();
+            //_hubConnection = new HubConnectionBuilder().WithUrl($"http://10.0.2.2:5240/lta").Build();
             _hubConnection.Closed += async (error) =>
             {
                 OnConnectionClosed?.Invoke(this, new MessageEventArgs("Connection closed...", string.Empty));

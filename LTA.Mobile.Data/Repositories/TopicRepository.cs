@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LTA.Mobile.Application.Interfaces;
-using LTA.Mobile.Domain.Annotations;
 using LTA.Mobile.Domain.Interfaces;
 using LTA.Mobile.Domain.Models;
+using LTA.Mobile.Domain.Properties;
 using Newtonsoft.Json;
 
 namespace LTA.Mobile.Data.Repositories;

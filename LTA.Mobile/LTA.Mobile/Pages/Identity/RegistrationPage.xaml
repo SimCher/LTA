@@ -2,7 +2,7 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels" x:DataType="pagemodels:RegistrationPageModel"
-             x:Class="LTA.Mobile.Pages.RegistrationPage"
+             x:Class="LTA.Mobile.Pages.Identity.RegistrationPage"
              xmlns:mvvm="http://prismlibrary.com"
              xmlns:pages="clr-namespace:LTA.Mobile.Pages;assembly=LTA.Mobile"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"

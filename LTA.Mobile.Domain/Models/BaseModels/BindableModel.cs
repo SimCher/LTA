@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using LTA.Mobile.Domain.Annotations;
+using LTA.Mobile.Domain.Properties;
 
 namespace LTA.Mobile.Domain.Models.BaseModels
 {

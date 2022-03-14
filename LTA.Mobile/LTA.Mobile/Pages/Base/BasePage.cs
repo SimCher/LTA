@@ -1,7 +1,6 @@
-﻿using LTA.Mobile.PageModels;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
-namespace LTA.Mobile.Pages;
+namespace LTA.Mobile.Pages.Base;
 
 public class BasePage : ContentPage
 {

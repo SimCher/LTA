@@ -80,6 +80,18 @@
     <AndroidAsset Include="Assets\Quicksand-Regular.ttf" />
     <AndroidAsset Include="Assets\typing.json" />
     <AndroidAsset Include="Assets\Font Awesome 5 Brands-Regular-400.otf" />
+    <AndroidAsset Include="Assets\segoeui.ttf" />
+    <AndroidAsset Include="Assets\segoeuib.ttf" />
+    <AndroidAsset Include="Assets\segoeuii.ttf" />
+    <AndroidAsset Include="Assets\segoeuil.ttf" />
+    <AndroidAsset Include="Assets\segoeuisl.ttf" />
+    <AndroidAsset Include="Assets\segoeuiz.ttf" />
+    <AndroidAsset Include="Assets\seguibl.ttf" />
+    <AndroidAsset Include="Assets\seguibli.ttf" />
+    <AndroidAsset Include="Assets\seguili.ttf" />
+    <AndroidAsset Include="Assets\seguisb.ttf" />
+    <AndroidAsset Include="Assets\seguisbi.ttf" />
+    <AndroidAsset Include="Assets\seguisli.ttf" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />
@@ -110,4 +122,9 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties XamarinHotReloadDebuggerTimeoutExceptionLTAMobileAndroidHideInfoBar="True" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

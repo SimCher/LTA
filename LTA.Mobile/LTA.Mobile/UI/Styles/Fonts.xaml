@@ -17,13 +17,14 @@
     <x:String x:Key="FontAwesomeVideo">&#xf03d;</x:String>
     <x:String x:Key="FontAwesomePaperClip">&#xf0c6;</x:String>
     <x:String x:Key="FontAwesomePaperPlane">&#xf1d8;</x:String>
+    <x:String x:Key="FontAwesomePlus">&#xf055;</x:String>
     <x:String x:Key="FontAwesomeTimes">&#xf00d;</x:String>
     <x:String x:Key="FontAwesomeReply">&#xf3e5;</x:String>
     <x:String x:Key="FontAwesomeCircle">&#xf111;</x:String>
     <x:String x:Key="FontAwesome">Font Awesome 5 Free-Solid-900.otf#Font Awesome 5 Free Solid</x:String>
-    <x:String x:Key="QuickSandBold">Quicksand-Bold.ttf#Quicksand</x:String>
-    <x:String x:Key="QuickSandLight">Quicksand-Light.ttf#Quicksand</x:String>
-    <x:String x:Key="QuickSandRegular">Quicksand-Regular.ttf#Quicksand</x:String>
+    <x:String x:Key="QuickSandBold">segoeuib.ttf#Segoe</x:String>
+    <x:String x:Key="QuickSandLight">segoeuil.ttf#Segoe</x:String>
+    <x:String x:Key="QuickSandRegular">segoeui.ttf#Segoe</x:String>
 
     <Style x:Key="FontAwesomeLabel" TargetType="{x:Type Label}">
         <Setter Property="FontFamily"

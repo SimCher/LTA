@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<local:BaseTabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+<base:BaseTabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:LTA.Mobile.Resources"
-             xmlns:local="clr-namespace:LTA.Mobile.Pages"
+             xmlns:base="clr-namespace:LTA.Mobile.Pages.Base"
              xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
              Title="{x:Static resources:TextResources.Messages}"
              xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects"
@@ -11,7 +11,7 @@
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
              xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
              BackgroundColor="{StaticResource PrimaryColor}"
-             x:Class="LTA.Mobile.Pages.TopicsPage"
+             x:Class="LTA.Mobile.Pages.Topics.TopicsPage"
              TabSelectedIndex="0">
     <Shell.TitleView>
         <Grid>
@@ -20,8 +20,9 @@
         </Grid>
     </Shell.TitleView>
 
-    <local:BaseTabbedPage.ViewContent>
+    <base:BaseTabbedPage.ViewContent>
         <Grid>
+
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
@@ -47,7 +48,7 @@
                                          Margin="15,10,15,10"
                                          HeightRequest="60"
                                          Style="{StaticResource LightShadowPancakeViewStyle}"
-                                         BackgroundColor="White">
+                                         BackgroundColor="{StaticResource PrimaryColor}">
 
                     <Grid Margin="20,10">
                         <Grid.ColumnDefinitions>
@@ -69,7 +70,7 @@
                                Text="{StaticResource FontAwesomeSearch}"
                                Grid.Column="1"
                                FontSize="Large"
-                               TextColor="LightGray"
+                               TextColor="{StaticResource SecondaryTextColor}"
                                HorizontalOptions="Center"
                                VerticalOptions="Center"/>
                     </Grid>
@@ -81,15 +82,25 @@
                                              ToggleOptionTitle="All"
                                              Grid.Row="1"
                                              ToggleCommand="{Binding FilterOptionChangedCommand}"
-                                             NotToggledOptionTitle="Online (1)"/>
+                                             NotToggledOptionTitle="Saved"/>
+
+                <customControls:FloatingButton Grid.Row= "1" WidthRequest="60" HeightRequest="25"
+                                               HorizontalOptions="End" VerticalOptions="Center"
+                                               BackgroundColor="{StaticResource AccentColor}"
+                                               PressedCommand="{Binding NavigateToAddCommand}"
+                                               Icon="{StaticResource FontAwesomePlus}"
+                                               IconColor="{StaticResource PrimaryColor}"
+                                               Style="{StaticResource LightShadowPancakeViewStyle}"
+                                               Margin="15,10,15,10"/>
 
                 <CollectionView ItemsSource="{Binding TopicList}"
                                 Grid.Row="2"
                                 VerticalOptions="FillAndExpand"
                                 HorizontalOptions="FillAndExpand">
+
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Grid xe:TouchEffect.Color="LightGray"
+                            <Grid xe:TouchEffect.Color="{StaticResource SecondaryAccentColor}"
                                   xe:Commands.Tap="{Binding BindingContext.ItemTappedCommand, Source={x:Reference TopicPage}}"
                                   xe:Commands.TapParameter="{Binding}">
                                 <Grid.RowDefinitions>
@@ -126,5 +137,5 @@
                                      BackgroundColor="White"
                                      Margin="0,0,0,-15"/>
         </Grid>
-    </local:BaseTabbedPage.ViewContent>
-</local:BaseTabbedPage>
+    </base:BaseTabbedPage.ViewContent>
+</base:BaseTabbedPage>

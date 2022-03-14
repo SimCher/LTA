@@ -3,8 +3,12 @@ using LTA.Mobile.Application.Services;
 using LTA.Mobile.Data.Context;
 using LTA.Mobile.Data.Repositories;
 using LTA.Mobile.Domain.Interfaces;
+using LTA.Mobile.Helpers;
 using LTA.Mobile.PageModels;
-using LTA.Mobile.Pages;
+using LTA.Mobile.Pages.Base;
+using LTA.Mobile.Pages.Identity;
+using LTA.Mobile.Pages.Messages;
+using LTA.Mobile.Pages.Topics;
 using Microsoft.EntityFrameworkCore;
 using Prism;
 using Prism.Ioc;
@@ -29,14 +33,12 @@ namespace LTA.Mobile
 
             //MainPage = new AppShell();
 
-            await NavigationService.NavigateAsync("NavigationPage/TopicsPage");
+            await NavigationService.NavigateAsync(Settings.TopicsPageNavigation);
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
-
-
 
             containerRegistry.Register<DbContext, LtaClientContext>();
             containerRegistry.RegisterSingleton<IUserService, UserService>();
@@ -54,6 +56,7 @@ namespace LTA.Mobile
             containerRegistry.RegisterForNavigation<RegistrationPage, RegistrationPageModel>();
             containerRegistry.RegisterForNavigation<LoginPage, LoginPageModel>();
             containerRegistry.RegisterForNavigation<TopicsPage, TopicListPageModel>();
+            containerRegistry.RegisterForNavigation<Add, AddTopicPageModel>();
         }
     }
 }

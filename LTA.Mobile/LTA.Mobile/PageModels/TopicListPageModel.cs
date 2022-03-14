@@ -29,6 +29,7 @@ public class TopicListPageModel : BasePageModel
         _topicRepository = topicRepository;
 
         //ItemTappedCommand = new DelegateCommand(OnItemTappedAsync);
+        NavigateToAddCommand = ReactiveCommand.CreateFromTask(NavigateToAdd);
         ItemTappedCommand = ReactiveCommand.CreateFromTask<Topic>(OnItemTappedAsync);
         FilterOptionChangedCommand = ReactiveCommand.CreateFromTask<bool>(FilterOptionChanged, NotBusyObservable);
         DialogService = pageDialogService;
@@ -50,6 +51,7 @@ public class TopicListPageModel : BasePageModel
     }
 
     public ICommand ItemTappedCommand { get; set; }
+    public ICommand NavigateToAddCommand { get; private set; }
     public ICommand FilterOptionChangedCommand { get; private set; }
 
     public override async void Initialize(INavigationParameters parameters)
@@ -103,6 +105,13 @@ public class TopicListPageModel : BasePageModel
         }
 
         ShowMessage("This room is filled. Choose an another room or create your own room! :)", 2000);
+    }
+
+    private async Task NavigateToAdd()
+    {
+        if (IsNavigate) return;
+        IsNavigate = true;
+        await NavigationService.NavigateAsync(Settings.AddTopicNavigation, null, true);
     }
 
     public override async void OnNavigatedTo(INavigationParameters parameters)

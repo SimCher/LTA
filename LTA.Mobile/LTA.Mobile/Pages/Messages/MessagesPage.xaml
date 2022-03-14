@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<local:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+<base:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              Shell.PresentationMode="ModalAnimated"
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
@@ -9,10 +9,11 @@
              xmlns:dataTemplateSelector="clr-namespace:LTA.Mobile.UI.TemplateSelectors"
              BindingContext="pageModels:MessagesPageModel"
              xmlns:local="clr-namespace:LTA.Mobile.Pages"
-                x:Class="LTA.Mobile.Pages.MessagesPage"
+                x:Class="LTA.Mobile.Pages.Messages.MessagesPage"
              NavigationPage.HasBackButton="False"
              BackgroundColor="{StaticResource PrimaryColor}"
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             xmlns:base="clr-namespace:LTA.Mobile.Pages.Base;assembly=LTA.Mobile"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Name="MessagePage">
     <ContentPage.Content>
@@ -184,4 +185,4 @@
             </Grid>
         </Grid>
     </ContentPage.Content>
-</local:BasePage>
+</base:BasePage>

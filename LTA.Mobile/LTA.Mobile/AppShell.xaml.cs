@@ -1,6 +1,6 @@
-﻿using LTA.Mobile.Pages;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using LTA.Mobile.Pages.Topics;
 
 namespace LTA.Mobile
 {
