@@ -17,6 +17,7 @@ public static class DependencyContainer
         services.AddScoped<IProfileRepository, ProfileRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITopicRepository, TopicRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         services.AddTransient<ITopicService, TopicService>();
         services.AddTransient<IIdentityService, IdentityService>();

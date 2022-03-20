@@ -16,8 +16,8 @@ public class Topic
     public int UserId { get; set; }
 
     public User? User { get; set; }
-    public ICollection<Report> Reports { get; set; }
-    public ICollection<Category> Categories { get; set; }
+    public ICollection<Report>? Reports { get; set; }
+    public ICollection<Category>? Categories { get; set; }
 
     private Dictionary<Color, bool> AvailableColors { get; }
 

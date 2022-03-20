@@ -5,45 +5,79 @@
              xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects"
              xmlns:base="clr-namespace:LTA.Mobile.Pages.Base;assembly=LTA.Mobile"
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
+             x:Name="AddTopicPage"
              x:Class="LTA.Mobile.Pages.Topics.Add">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Margin="15,10,0,0">
+            <customControls:FloatingButton Margin="5,0,0,0"
+                                           HorizontalOptions="Start"
+                                           VerticalOptions="Center"
+                                           CornerRadius="90"
+                                           HeightRequest="40" WidthRequest="40"
+                                           IconSize="25"
+                                           PressedCommand="{Binding Source={x:Reference AddTopicPage}, Path=BackCommand}"
+                                           Icon="{StaticResource FontAwesomeChevronLeft}"
+                                           BackgroundColor="{StaticResource PrimaryColor}"
+                                           IconColor="{StaticResource AccentColor}"/>
+            <Label FontFamily="{StaticResource QuickSandBold}"
+                   HorizontalOptions="StartAndExpand"
+                   LineBreakMode="TailTruncation">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Add New Topic"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
             <Label FontFamily="{StaticResource QuickSandBold}"
                    LineBreakMode="TailTruncation"
-                   Margin="0,0,0,5" Text="Name"/>
-            <Editor Placeholder="Name"
-                    Margin="10,5,5,10"
-                    AutoSize="TextChanges"
-                    MaxLength="30"
-                    HorizontalOptions="StartAndExpand"
-                    VerticalOptions="Center"
-                    FontFamily="{StaticResource QuickSandRegular}">
-                <Editor.Effects>
-                    <effects:BorderlessEntryEffect/>
-                </Editor.Effects>
-            </Editor>
+                   Margin="10,0,0,5" Text="Name"/>
+            <Entry Placeholder="Name"
+                   Margin="10,5,5,10"
+                   Text="{Binding TopicName}"
+                   MaxLength="50"
+                   Keyboard="Text"
+                   HorizontalOptions="StartAndExpand"
+                   VerticalOptions="Center"
+                   FontFamily="{StaticResource QuickSandRegular}">
+            </Entry>
             <Label FontFamily="{StaticResource QuickSandBold}"
                    LineBreakMode="TailTruncation"
-                   Margin="0,0,0,5" Text="Maximum Users"/>
-            <Editor Placeholder="Name"
+                   Margin="10,0,0,5" Text="Maximum Users"/>
+            <Entry Placeholder="Maximum Users"
                     Margin="10,5,5,10"
-                    AutoSize="TextChanges"
                     MaxLength="2"
+                    Text="{Binding MaxNumbers}"
                     HorizontalOptions="StartAndExpand"
                     VerticalOptions="Center"
                     Keyboard="Numeric"
                     FontFamily="{StaticResource QuickSandRegular}">
-                <Editor.Effects>
-                    <effects:BorderlessEntryEffect/>
-                </Editor.Effects>
-            </Editor>
-            <customControls:FloatingButton HorizontalOptions="CenterAndExpand"
+            </Entry>
+            <Label FontFamily="{StaticResource QuickSandBold}"
+                   LineBreakMode="TailTruncation"
+                   Margin="10,0,0,5" Text="Categories"/>
+            <Entry Placeholder="Categories (use space)"
+                   Margin="10,5,5,10"
+                   Text="{Binding Categories}"
+                   MaxLength="50"
+                   HorizontalOptions="StartAndExpand"
+                   VerticalOptions="Center"
+                   Keyboard="Text"
+                   FontFamily="{StaticResource QuickSandRegular}"/>
+            <customControls:FloatingButton MinimumHeightRequest="65"
+                                           HeightRequest="65"
                                            BackgroundColor="{StaticResource AccentColor}"
-                                           PressedCommand="{Binding NavigateToAddCommand}"
-                Icon="{StaticResource FontAwesomePlus}"
+                                           PressedCommand="{Binding AddTopicCommand}"
+                                           Icon="{StaticResource FontAwesomePlus}"
                                            IconColor="{StaticResource PrimaryColor}"
                                            Style="{StaticResource LightShadowPancakeViewStyle}"
-                                           Margin="5,0,10,0"/>
+                                           Margin="5,0,10,0">
+                <customControls:FloatingButton.Triggers>
+                    <DataTrigger TargetType="customControls:FloatingButton"
+                                 Binding="{Binding IsValidate}">
+                        <Setter Property="IsEnabled" Value="True"/>
+                    </DataTrigger>
+                </customControls:FloatingButton.Triggers>
+            </customControls:FloatingButton>
 
         </StackLayout>
     </ContentPage.Content>

@@ -6,6 +6,8 @@ public interface ITopicRepository
 {
     IEnumerable<Topic> GetAll();
 
+    Task<Topic> AddAsync(string name, int maxUsers, string[] categories, string code);
+
     Task UpdateAsync(int id, int usersCount, bool isUserBeingAdded);
 
     Task<Topic> UpdateAndReturnAsync(int id, int userId, bool isUserBeingAdded);

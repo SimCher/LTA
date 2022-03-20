@@ -23,10 +23,8 @@ public class LtaApiContext : DbContext
             .WithOne(u => u.Profile)
             .HasForeignKey<User>(u => u.Id);
 
-        modelBuilder.Entity<Category>().ToTable("Categories");
-
-        modelBuilder.Entity<Topic>().ToTable("Topics")
-            .HasMany(c => c.Categories)
+        modelBuilder.Entity<Topic>()
+            .HasMany(t => t.Categories)
             .WithMany(c => c.Topics);
     }
 }

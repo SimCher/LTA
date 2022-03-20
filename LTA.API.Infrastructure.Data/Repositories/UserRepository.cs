@@ -16,7 +16,10 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetAsync(int id)
         => await _context.Users.FindAsync(id);
-        
+
+    public async Task<int?> GetIdAsync(string code)
+        => ((await _context.Users.FirstOrDefaultAsync(u => u.Code.Equals(code))))?.Id;
+
 
     public async Task CreateAsync(Profile profile)
     {

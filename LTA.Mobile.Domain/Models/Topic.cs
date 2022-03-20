@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using LTA.Mobile.Domain.Models.BaseModels;
+using Xamarin.Forms;
 
 namespace LTA.Mobile.Domain.Models
 {
@@ -19,6 +20,7 @@ namespace LTA.Mobile.Domain.Models
         private DateTime _lastEntryDate;
 
         private int _currentUsersNumber;
+        private bool? _isFull;
 
         public Topic()
         {
@@ -54,6 +56,34 @@ namespace LTA.Mobile.Domain.Models
             get => _currentUsersNumber;
             set => SetProperty(ref _currentUsersNumber, value);
         }
+
+        public bool? IsFull
+        {
+            get
+            {
+                return CurrentUsersNumber switch
+                {
+                    0 => null,
+                    > 0 when CurrentUsersNumber != MaxUsersNumber => false,
+                    _ => true
+                };
+            }
+        }
+
+        private Color _onlineColor;
+
+        public Color OnlineColor
+        {
+            get => CurrentUsersNumber switch
+            {
+                0 => Color.Transparent,
+                > 0 when CurrentUsersNumber != MaxUsersNumber => Color.Green,
+                _ => Color.Red
+            };
+            set => SetProperty(ref _onlineColor, value);
+        }
+
+
 
         public int OwnerUserId { get; set; }
 

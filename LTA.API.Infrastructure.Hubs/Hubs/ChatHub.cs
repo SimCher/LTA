@@ -34,6 +34,20 @@ public class ChatHub : Hub
         }
     }
 
+    public async Task AddTopicAsync(string name, int maxUsers, string categories, string code)
+    {
+        try
+        {
+            var topic = await _topicService.AddTopic(name, maxUsers, categories, code);
+            await Clients.All.SendAsync("UpdateTopic", topic);
+        }
+        catch (Exception ex)
+        {
+            _loggerService.LogError($"{ex.Source}: {ex.Message}");
+            await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
+        }
+    }
+
     public async Task<string> LoginAsync(string phoneOrEmail, string password)
     {
         try

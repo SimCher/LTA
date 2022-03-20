@@ -9,16 +9,53 @@ public class TopicRepository : ITopicRepository
 {
     private readonly LtaApiContext _context;
     private IUserRepository UserRepository { get; }
+    private ICategoryRepository CategoryRepository { get; }
 
-    public TopicRepository(LtaApiContext context, IUserRepository userRepository)
+    public TopicRepository(LtaApiContext context, IUserRepository userRepository,
+        ICategoryRepository categoryRepository)
     {
         _context = context;
 
         UserRepository = userRepository;
+        CategoryRepository = categoryRepository;
     }
 
     public IEnumerable<Topic> GetAll()
         => _context.Topics.Include(t => t.Categories);
+
+    public async Task<Topic> AddAsync(string name, int maxUsers, string[] categories, string code)
+    {
+        var categoriesObject = await CategoryRepository.GetAll(categories);
+        var userId = await UserRepository.GetIdAsync(code) ?? 1;
+        var newTopic = new Topic
+        {
+            Name = name,
+            MaxUsersNumber = maxUsers,
+            Categories = new List<Category>(),
+            UserId = userId
+        };
+
+        if (categoriesObject.Count != 0)
+        {
+            if (categoriesObject.Count == 1)
+            {
+                newTopic.Categories.Add(categoriesObject.First());
+            }
+            else
+            {
+                foreach (var category in categoriesObject)
+                {
+                    newTopic.Categories.Add(category);
+                }
+            }
+        }
+
+        _context.Topics.Add(newTopic);
+
+        await _context.SaveChangesAsync();
+
+        return newTopic;
+    }
 
     public async Task UpdateAsync(int id, int userId, bool isUserBeingAdded)
     {

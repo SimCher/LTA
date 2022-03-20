@@ -24,9 +24,9 @@ namespace LTA.Mobile.Application.Services
         private Dictionary<string, string> ActiveTopics { get; } = new Dictionary<string, string>();
         public ChatService()
         {
-            //_hubConnection = new HubConnectionBuilder().WithUrl($"http://192.168.0.107:8082/lta").Build();
-            _hubConnection = new HubConnectionBuilder().WithUrl("http://192.168.2.1:8082/lta").Build();
-            //_hubConnection = new HubConnectionBuilder().WithUrl($"http://10.0.2.2:5240/lta").Build();
+            _hubConnection = new HubConnectionBuilder().WithUrl($"http://10.0.2.2:8082/lta").Build();
+            //_hubConnection = new HubConnectionBuilder().WithUrl("http://192.168.234.1:8082/lta").Build();
+            //_hubConnection = new HubConnectionBuilder().WithUrl(@"http://192.168.14.1:8082/lta").Build();
             _hubConnection.Closed += async (error) =>
             {
                 OnConnectionClosed?.Invoke(this, new MessageEventArgs("Connection closed...", string.Empty));
@@ -89,6 +89,12 @@ namespace LTA.Mobile.Application.Services
                 await ConnectIfNotAsync();
 
             await _hubConnection.InvokeAsync("SendMessage", message);
+        }
+
+        public async Task AddTopicAsync(string name, int maxUsers, string categories, string code)
+        {
+            await ConnectIfNotAsync();
+            await _hubConnection.InvokeAsync("AddTopicAsync", name, maxUsers, categories, code);
         }
 
         public void ReceiveMessage(Action<dynamic> getMessageAndUser)
@@ -154,7 +160,7 @@ namespace LTA.Mobile.Application.Services
         public void NewUserMessage(Action<string> showNewUserMessage)
             => _hubConnection.On("NewUserMessage", showNewUserMessage);
 
-        public void UpdateTopic(Action<int, int, DateTime> updateTopicMethod)
+        public void UpdateTopic(Action<Topic> updateTopicMethod)
         {
             _hubConnection.On("UpdateTopic", updateTopicMethod);
         }

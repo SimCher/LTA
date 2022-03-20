@@ -15,6 +15,7 @@ namespace LTA.Mobile.Application.Interfaces
         Task Connect();
         Task Disconnect();
         Task SendMessage(Message message);
+        Task AddTopicAsync(string name, int maxUsers, string categories, string code);
         void ReceiveMessage(Action<dynamic> getMessageAndUser);
         void SetErrorMessage(Action<string> getErrorMessage);
 
@@ -27,6 +28,6 @@ namespace LTA.Mobile.Application.Interfaces
 
         void NewUserMessage(Action<string> showNewUserMessage);
         void UserOutMessage(Action<string> showUserOutMessage);
-        void UpdateTopic(Action<int, int, DateTime> updateTopicMethod);
+        void UpdateTopic(Action<Topic> updateTopicMethod);
     }
 }

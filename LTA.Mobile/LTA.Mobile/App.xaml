@@ -13,6 +13,10 @@
 
         <valueConverters:IsNullConverter x:Key="IsNullValueConverter"/>
 
+        <Style ApplyToDerivedTypes="True" TargetType="NavigationPage">
+            <Setter Property="BarBackgroundColor" Value="{StaticResource AccentColor}"/>
+        </Style>
+
         <Style TargetType="Label" x:Key="TabLabelStyle">
             <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
             <Setter Property="TextColor" Value="{StaticResource SecondaryAccentColor}" />

@@ -8,11 +8,16 @@
              xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects"
              x:Name="TopicPage"
              xmlns:xe="clr-namespace:XamEffects;assembly=XamEffects"
+             xmlns:prism="http://prismlibrary.com"
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
-             xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
-             BackgroundColor="{StaticResource PrimaryColor}"
+             xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels"
+                     BackgroundColor="{StaticResource PrimaryColor}"
+             
              x:Class="LTA.Mobile.Pages.Topics.TopicsPage"
              TabSelectedIndex="0">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Sort" Command="{Binding SortCommand, Mode=OneTime}"/>
+    </ContentPage.ToolbarItems>
     <Shell.TitleView>
         <Grid>
             <Label Text="{Binding Title, Source={x:Reference TopicPage}}"
@@ -64,6 +69,11 @@
                             <Entry.Effects>
                                 <effects:BorderlessEntryEffect/>
                             </Entry.Effects>
+                            <Entry.Behaviors>
+                                <prism:EventToCommandBehavior EventName="TextChanged"
+                                                              Command="{Binding OnSearchTextChangedCommand}"
+                                                              CommandParameter="{Binding SearchText}"/>
+                            </Entry.Behaviors>
                         </Entry>
 
                         <Label Style="{StaticResource FontAwesomeLabel}"
@@ -93,32 +103,36 @@
                                                Style="{StaticResource LightShadowPancakeViewStyle}"
                                                Margin="15,10,15,10"/>
 
-                <CollectionView ItemsSource="{Binding TopicList}"
-                                Grid.Row="2"
-                                VerticalOptions="FillAndExpand"
+                <RefreshView Grid.Row="2"
+                             Command="{Binding RefreshCommand}"
+                             IsRefreshing="{Binding IsRefresh}">
+
+                    <CollectionView ItemsSource="{Binding TopicList}"
+                                    VerticalOptions="FillAndExpand"
                                 HorizontalOptions="FillAndExpand">
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid xe:TouchEffect.Color="{StaticResource SecondaryAccentColor}"
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid xe:TouchEffect.Color="{StaticResource SecondaryAccentColor}"
                                   xe:Commands.Tap="{Binding BindingContext.ItemTappedCommand, Source={x:Reference TopicPage}}"
                                   xe:Commands.TapParameter="{Binding}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <dataTemplates:TopicTemplate HeightRequest="100"/>
-                                <pancakeView:PancakeView BackgroundGradientStartPoint="0,0" BackgroundGradientEndPoint="1,0"
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <dataTemplates:TopicTemplate HeightRequest="125"/>
+                                    <pancakeView:PancakeView BackgroundGradientStartPoint="0,0" BackgroundGradientEndPoint="1,0"
                                                          HeightRequest="1" Grid.Row="1">
-                                    <pancakeView:PancakeView.BackgroundGradientStops>
-                                        <pancakeView:GradientStop Color="#000000"/>
-                                        <pancakeView:GradientStop Color="Transparent"/>
-                                    </pancakeView:PancakeView.BackgroundGradientStops>
-                                </pancakeView:PancakeView>
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                                        <pancakeView:PancakeView.BackgroundGradientStops>
+                                            <pancakeView:GradientStop Color="#000000"/>
+                                            <pancakeView:GradientStop Color="Transparent"/>
+                                        </pancakeView:PancakeView.BackgroundGradientStops>
+                                    </pancakeView:PancakeView>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </RefreshView>
             </Grid>
 
             <ActivityIndicator IsRunning="{Binding IsBusy}"

@@ -37,6 +37,18 @@ public class TopicService : ITopicService
         }
     }
 
+    public async Task<Topic> AddTopic(string name, int maxUsers, string categories, string code)
+    {
+        var categoriesArray = categories.Split(' ');
+
+        if (_topicRepository.GetAll().FirstOrDefault(t => t.Name == name) != null)
+        {
+            throw new Exception($"Topic with name {name} exists already!");
+        }
+
+        return await _topicRepository.AddAsync(name, maxUsers, categoriesArray, code);
+    }
+
     public async Task<Topic> AddUserAndReturnTopic(int topicId, int userId)
     {
         return await _topicRepository.UpdateAndReturnAsync(topicId, userId, true)

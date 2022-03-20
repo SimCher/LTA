@@ -13,7 +13,7 @@ namespace LTA.Mobile.Data.Repositories;
 public class TopicRepository : ITopicRepository
 {
     private readonly IChatService _chatService;
-    private ICollection<Topic> Topics { get; set; }
+    public ICollection<Topic> Topics { get; private set; }
 
     public TopicRepository(IChatService chatService)
     {
@@ -21,11 +21,7 @@ public class TopicRepository : ITopicRepository
     }
     public async Task<ICollection<Topic>> GetAllAsync()
     {
-        if (Topics == null)
-        {
-            await InitializeAsync();
-        }
-
+        await InitializeAsync();
         return Topics;
     }
 
@@ -63,6 +59,8 @@ public class TopicRepository : ITopicRepository
             OwnerUserId = 300,
             Name = "Test room",
             LastEntryDate = DateTime.Now,
+            CurrentUsersNumber = 1,
+            MaxUsersNumber = 3,
             Categories = new[] { "Test rooms" }
         });
 
