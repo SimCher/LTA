@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Windows.Input;
 using LTA.Mobile.Domain.Models.BaseModels;
 using Xamarin.Forms;
 
@@ -12,6 +14,8 @@ namespace LTA.Mobile.Domain.Models
         public int[] UserIds { get; set; }
 
         private string _name;
+
+        private bool _isSelected;
 
         private float _rating;
 
@@ -70,6 +74,16 @@ namespace LTA.Mobile.Domain.Models
             }
         }
 
+        public bool IsFavorite
+        {
+            get => _isFavorite;
+            set => SetProperty(ref _isFavorite, value);
+        }
+
+
+
+        private bool _isFavorite;
+
         private Color _onlineColor;
 
         public Color OnlineColor
@@ -98,7 +112,5 @@ namespace LTA.Mobile.Domain.Models
 
         [NotMapped]
         public ICollection<User> UsersIn { get; set; }
-
-
     }
 }

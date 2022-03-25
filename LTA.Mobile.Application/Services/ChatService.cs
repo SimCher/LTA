@@ -21,12 +21,12 @@ namespace LTA.Mobile.Application.Services
         private readonly HubConnection _hubConnection;
         private Random _random;
         private bool IsConnected { get; set; }
-        private Dictionary<string, string> ActiveTopics { get; } = new Dictionary<string, string>();
+        private Dictionary<string, string> ActiveTopics { get; } = new();
         public ChatService()
         {
-            _hubConnection = new HubConnectionBuilder().WithUrl($"http://10.0.2.2:8082/lta").Build();
+            //_hubConnection = new HubConnectionBuilder().WithUrl($"http://192.168.163.1:8082/lta").Build();
             //_hubConnection = new HubConnectionBuilder().WithUrl("http://192.168.234.1:8082/lta").Build();
-            //_hubConnection = new HubConnectionBuilder().WithUrl(@"http://192.168.14.1:8082/lta").Build();
+            _hubConnection = new HubConnectionBuilder().WithUrl(@"http://10.0.2.2:5240/lta").Build();
             _hubConnection.Closed += async (error) =>
             {
                 OnConnectionClosed?.Invoke(this, new MessageEventArgs("Connection closed...", string.Empty));
@@ -134,22 +134,22 @@ namespace LTA.Mobile.Application.Services
         //    //await _hubConnection.InvokeAsync("LogInChatAsync", userCode, topicId);
         //}
 
-        public async Task LogInChatAsync(int userId, int topicId)
+        public async Task LogInChatAsync(string userCode, int topicId)
         {
             if (!IsConnected)
             {
                 await ConnectIfNotAsync();
             }
 
-            await _hubConnection.SendAsync("LogInChatAsync", userId, topicId);
+            await _hubConnection.SendAsync("LogInChatAsync", userCode, topicId);
 
         }
 
-        public async Task LogOutFromChatAsync(int userId, int topicId)
+        public async Task LogOutFromChatAsync(string userCode, int topicId)
         {
             if (!IsConnected || !ActiveTopics.ContainsKey(topicId.ToString())) return;
 
-            await _hubConnection.SendAsync("LogOutFromChatAsync", topicId, userId);
+            await _hubConnection.SendAsync("LogOutFromChatAsync", topicId, userCode);
         }
 
         public void SetErrorMessage(Action<string> getErrorMessage)

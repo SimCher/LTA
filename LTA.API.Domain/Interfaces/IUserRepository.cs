@@ -5,6 +5,7 @@ namespace LTA.API.Domain.Interfaces;
 public interface IUserRepository
 {
     Task<User?> GetAsync(int id);
+    Task<User?> GetAsync(string userCode);
     Task<int?> GetIdAsync(string code);
     Task CreateAsync(Profile profile);
     Task UpdateAsync(int id);

@@ -6,7 +6,7 @@ namespace LTA.Mobile.Domain.Interfaces;
 
 public interface IMessageRepository
 {
-    IEnumerable<Message> GetAllForUser(int userId);
+    IEnumerable<Message> GetAllForUser(string userCode);
 
     IEnumerable<Message> GetAllForTopic(int topicId);
 

@@ -23,8 +23,8 @@ namespace LTA.Mobile.Application.Interfaces
         Task<string> LoginAsync(string phoneOrEmail, string password);
         Task<IEnumerable<dynamic>> LoadTopicsAsync();
 
-        Task LogInChatAsync(int userId, int topicId);
-        Task LogOutFromChatAsync(int userId, int topicId);
+        Task LogInChatAsync(string userCode, int topicId);
+        Task LogOutFromChatAsync(string userCode, int topicId);
 
         void NewUserMessage(Action<string> showNewUserMessage);
         void UserOutMessage(Action<string> showUserOutMessage);

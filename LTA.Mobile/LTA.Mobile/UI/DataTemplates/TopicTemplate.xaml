@@ -12,27 +12,13 @@
         <Grid Margin="0, 15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition />
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <Grid WidthRequest="70"
-                  Margin="10,0,5,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
 
+            <StackLayout Grid.Column="0" Spacing="5" Margin="50,0,0,0"
+                         VerticalOptions="StartAndExpand">
 
-
-            </Grid>
-
-            <StackLayout Grid.Column="1" Spacing="5"
-                         VerticalOptions="Center">
                 <StackLayout.Triggers>
                     <MultiTrigger TargetType="StackLayout">
                         <MultiTrigger.Conditions>
@@ -51,14 +37,15 @@
                 </StackLayout.Triggers>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition Width="20"/>
                     </Grid.ColumnDefinitions>
 
                     <Label Text="{StaticResource FontAwesomeCircle}"
                            FontFamily="{StaticResource FontAwesome}"
                            Grid.Column="0"
-                           FontSize="Caption"
+                           FontSize="10"
                            IsVisible="True"
                            HeightRequest="1000"
                            TextColor="{Binding OnlineColor}"
@@ -91,8 +78,8 @@
                         </Label.Triggers>-->
                     </Label>
 
-                    <Label Grid.Column="1" FontFamily="{StaticResource QuickSandBold}"
-                       LineBreakMode="TailTruncation">
+                    <Label Grid.Column="1" FontSize="16" FontFamily="{StaticResource QuickSandBold}" Margin="0,0,0,0"
+                               LineBreakMode="TailTruncation">
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span Text="{Binding Name}"/>
@@ -107,45 +94,6 @@
                 </Grid>
 
 
-                <CollectionView HorizontalScrollBarVisibility="Never"
-                                VerticalScrollBarVisibility="Default"
-                                ItemsSource="{Binding Categories}"
-                                Margin="5,0,0,0"
-                                ItemsLayout="HorizontalList"
-                                SelectionMode="Single" FlowDirection="LeftToRight" VerticalOptions="FillAndExpand"
-                                >
-                    <CollectionView.Triggers>
-                        <DataTrigger TargetType="CollectionView"
-                                     Binding="{Binding IsInTitle, Source={x:Reference SimpleTopicTemplate}}"
-                                     Value="True">
-                            <Setter Property="HeightRequest" Value="0"/>
-                        </DataTrigger>
-                    </CollectionView.Triggers>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <StackLayout Spacing="0"
-                                         HorizontalOptions="Start"
-                                         Margin="0,20,0,-20"
-                                         >
-                                <Frame MinimumHeightRequest="10"
-                                       MinimumWidthRequest="10"
-                                       Padding="5,0,5,5"
-                                       Margin="0,0,5,0"
-                                       BackgroundColor="{StaticResource PrimaryColor}"
-                                       BorderColor="{StaticResource AccentColor}"
-                                       CornerRadius="5">
-                                    <Label HorizontalOptions="CenterAndExpand"
-                                           VerticalOptions="CenterAndExpand"
-                                           FontSize="10"
-                                           FontFamily="{StaticResource QuickSandRegular}"
-                                           Text="{Binding}"/>
-                                </Frame>
-
-
-                            </StackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
                 <ContentView>
                     <ContentView.Triggers>
                         <MultiTrigger TargetType="ContentView">

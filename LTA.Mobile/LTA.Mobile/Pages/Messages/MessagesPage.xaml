@@ -49,6 +49,25 @@
                                              IsUsersTyping="{Binding BindingContext.IsTyping, Source={x:Reference MessagePage}}"
                                              Margin="-25,0,0,0"/>
 
+                <Label Grid.Column="1"
+                       Margin="-25,0,0,0"
+                       Text="{Binding PageMessage}"
+                       FontFamily="{StaticResource QuickSandRegular}"
+                       TextColor="{StaticResource SecondaryTextColor}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsPageMessageSeen}"
+                                     Value="True">
+                            <Setter Property="IsVisible" Value="True"/>
+                        </DataTrigger>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsPageMessageSeen}"
+                                     Value="False">
+                            <Setter Property="IsVisible" Value="False"/>
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+
                 <StackLayout Orientation="Horizontal" Grid.Column="2"
                              VerticalOptions="Center"
                              HorizontalOptions="End"

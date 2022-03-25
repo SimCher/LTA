@@ -12,9 +12,10 @@
                          xe:Commands.Tap="{Binding PressedCommand, Source={x:Reference FloatButton}}"
                          xe:TouchEffect.Color="LightGray"
                          x:Name="FloatButton">
-    <pancakeView:PancakeView.GestureRecognizers>
-        <TapGestureRecognizer Command="{Binding PressedCommand, Source={x:Reference FloatButton}}"/>
-    </pancakeView:PancakeView.GestureRecognizers>
+    <!--<pancakeView:PancakeView.GestureRecognizers>
+        <TapGestureRecognizer Command="{Binding PressedCommand, Source={x:Reference FloatButton}}"
+                              CommandParameter="{Binding CommandParameter}"/>
+    </pancakeView:PancakeView.GestureRecognizers>-->
 
     <pancakeView:PancakeView.Content>
         <Label HorizontalOptions="Center"

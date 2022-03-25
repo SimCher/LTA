@@ -57,13 +57,13 @@ public class TopicRepository : ITopicRepository
         return newTopic;
     }
 
-    public async Task UpdateAsync(int id, int userId, bool isUserBeingAdded)
+    public async Task UpdateAsync(int id, string userCode, bool isUserBeingAdded)
     {
         var topicToUpdate = await _context.Topics.FindAsync(id) ??
                             throw new NullReferenceException($"Cannot find the a topic with id: {id}");
 
-        var user = await UserRepository.GetAsync(userId) ??
-                        throw new NullReferenceException($"Cannot find the user with id: {userId}");
+        var user = await UserRepository.GetAsync(userCode) ??
+                        throw new NullReferenceException($"Cannot find the user with id: {userCode}");
 
         if (isUserBeingAdded)
         {
@@ -82,9 +82,9 @@ public class TopicRepository : ITopicRepository
         }
     }
 
-    public async Task<Topic> UpdateAndReturnAsync(int id, int userId, bool isUserBeingAdded)
+    public async Task<Topic> UpdateAndReturnAsync(int id, string userCode, bool isUserBeingAdded)
     {
-        await UpdateAsync(id, userId, isUserBeingAdded);
+        await UpdateAsync(id, userCode, isUserBeingAdded);
 
         return await _context.Topics.FindAsync(id) ??
                throw new NullReferenceException($"Cannot find topic with id: {id}");

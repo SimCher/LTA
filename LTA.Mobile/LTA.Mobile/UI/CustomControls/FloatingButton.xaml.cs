@@ -8,6 +8,7 @@ namespace LTA.Mobile.UI.CustomControls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FloatingButton
     {
+        public event EventHandler Clicked;
         #region PressedCommand
 
         public static readonly BindableProperty PressedCommandProperty = BindableProperty.Create(nameof(PressedCommand),
@@ -20,9 +21,19 @@ namespace LTA.Mobile.UI.CustomControls
                 me?.PressedCommandChanged(oldPressedCommand, newPressedCommand);
             });
 
+        public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(
+            nameof(CommandParameter),
+            typeof(object), typeof(FloatingButton));
+
         private void PressedCommandChanged(ICommand oldPressedCommand, ICommand newPressedCommand)
         {
 
+        }
+
+        public object CommandParameter
+        {
+            get => GetValue(CommandParameterProperty);
+            set => SetValue(CommandParameterProperty, value);
         }
 
         /// <summary>
@@ -118,6 +129,16 @@ namespace LTA.Mobile.UI.CustomControls
         public FloatingButton()
         {
             InitializeComponent();
+            GestureRecognizers.Add(new TapGestureRecognizer
+            {
+                Command = new Command(() =>
+                {
+                    Clicked?.Invoke(this, EventArgs.Empty);
+                    if (PressedCommand == null) return;
+                    if (PressedCommand.CanExecute(CommandParameter))
+                        PressedCommand.Execute(CommandParameter);
+                })
+            });
         }
     }
 }

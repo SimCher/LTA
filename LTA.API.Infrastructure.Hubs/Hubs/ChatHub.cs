@@ -91,11 +91,11 @@ public class ChatHub : Hub
     //    }
     //}
 
-    public async Task LogInChatAsync(int userId, int topicId)
+    public async Task LogInChatAsync(string userCode, int topicId)
     {
         try
         {
-            var topic = await _topicService.AddUserAndReturnTopic(topicId, userId);
+            var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{topic.Id}");
 
@@ -110,11 +110,11 @@ public class ChatHub : Hub
         }
     }
 
-    public async Task LogOutFromChatAsync(int userId, int topicId)
+    public async Task LogOutFromChatAsync(string userCode, int topicId)
     {
         try
         {
-            var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userId);
+            var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userCode);
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{topic.Id}");
 

@@ -30,30 +30,21 @@ public class MessagesPageModel : BasePageModel
 
         ReplyMessageSelectedCommand = ReactiveCommand.Create<Message>(ReplyMessageSelected);
         MessageSwippedCommand = ReactiveCommand.Create<Message>(MessageSwiped);
-        //SendMsgCommand = ReactiveCommand.CreateFromObservable(SendMessage);
-        //SendMsgCommand.IsExecuting.ToProperty(this, x => x.IsSending, out _isSending);
         SendMsgCommand = new DelegateCommand(SendMessage);
-        //SendMsgCommand = ReactiveCommand.CreateFromTask(SendMessage,
-        //    this.WhenAnyValue(vm => vm.Message, curm => !string.IsNullOrEmpty(curm)));
         CancelReplyCommand = ReactiveCommand.Create(CancelReply);
-        //BackCommand = new Command(async _ => await NavigationService.NavigateAsync("NavigationPage/TopicsPage"));
-        _messages = new List<Message>
-        {
 
-        };
+        _messages = new List<Message>();
+
+        //ChatService.NewUserMessage();
     }
 
-    //public ReactiveCommand<Unit, Unit> SendMsgCommand { get; private set; }
+    public ICommand SendMsgCommand { get; }
 
-    public ICommand SendMsgCommand { get; private set; }
+    public ICommand MessageSwippedCommand { get; }
 
-    public ICommand MessageSwippedCommand { get; private set; }
+    public ICommand CancelReplyCommand { get; }
 
-    public ICommand CancelReplyCommand { get; private set; }
-
-    public ICommand ReplyMessageSelectedCommand { get; private set; }
-
-    public ICommand BackCommand { get; private set; }
+    public ICommand ReplyMessageSelectedCommand { get; }
 
     public Topic CurrentTopic
     {
@@ -73,7 +64,7 @@ public class MessagesPageModel : BasePageModel
         set => this.RaiseAndSetIfChanged(ref _replyMessage, value);
     }
 
-    public IPageDialogService DialogService { get; private set; }
+    public IPageDialogService DialogService { get; }
 
     public ObservableCollection<MessageGroup> Messages
     {
@@ -102,9 +93,11 @@ public class MessagesPageModel : BasePageModel
             TopicId = parameters.GetValue<int>("TopicId");
             IsBusy = true;
             CurrentTopic = await TopicRepository.GetAsync(TopicId);
+
             var messages = MessageRepository.GetAllForTopic(TopicId);
 
-            _messages.AddRange(messages);
+            if (messages != null)
+                _messages.AddRange(messages);
 
             _messages.Add(
 
@@ -113,7 +106,7 @@ public class MessagesPageModel : BasePageModel
                     Id = 1,
                     CreationDate = DateTime.Now,
                     Topic = CurrentTopic,
-                    UserId = 1000,
+                    UserCode = Guid.NewGuid().ToString("D"),
                     IsSent = true,
                     Content = "hello",
                     TopicId = CurrentTopic.Id,
@@ -129,7 +122,7 @@ public class MessagesPageModel : BasePageModel
                     Id = 1,
                     CreationDate = DateTime.Now,
                     Topic = CurrentTopic,
-                    UserId = 1000,
+                    UserCode = Guid.NewGuid().ToString("D"),
                     IsSent = false,
                     Content = "hello",
                     TopicId = CurrentTopic.Id,
@@ -173,8 +166,6 @@ public class MessagesPageModel : BasePageModel
         {
             IsBusy = false;
         }
-
-
     }
 
     private void MessageSwiped(Message message)
@@ -190,40 +181,17 @@ public class MessagesPageModel : BasePageModel
             new ScrollToItemEventArgs { Item = message });
     }
 
-    //private IObservable<Unit> SendMessage()
-    //{
-    //    return Observable.Start(() =>
-    //    {
-    //        var message = new Message
-    //        {
-    //            Content = Message,
-    //            ReplyTo = ReplyMessage,
-    //            CreationDate = DateTime.Now,
-    //            //UserId = int.Parse(Settings.UserId),
-    //            UserId = 100,
-    //            IsSentPreviousMessage = (bool)Messages?.Last().Last()?.IsSent,
-    //            IsSent = true,
-    //            TopicId = CurrentTopic.Id
-    //        };
-
-
-    //        ChatService.SendMessage(message);
-    //        AddMessage(message);
-    //        Message = string.Empty;
-    //        ScrollToMessage(Messages.Last().Last());
-    //    });
-    //}
-
     private async void SendMessage()
     {
+        var isSent = Messages?.Last().Last()?.IsSent;
         var message = new Message
         {
             Content = Message,
             ReplyTo = ReplyMessage,
             CreationDate = DateTime.Now,
             //UserId = int.Parse(Settings.UserId),
-            UserId = 100,
-            IsSentPreviousMessage = (bool)Messages?.Last().Last()?.IsSent,
+            UserCode = Guid.NewGuid().ToString("D"),
+            IsSentPreviousMessage = isSent != null && (bool)isSent,
             IsSent = true,
             TopicId = CurrentTopic.Id
         };
@@ -244,23 +212,27 @@ public class MessagesPageModel : BasePageModel
     private async void AddMessage(dynamic message)
     {
         var dynamicMessage = JsonConvert.DeserializeObject(message.ToString());
-        var replyTo = JsonConvert.DeserializeObject<Message>(dynamicMessage.m.replyTo.ToString()) as Message;
-
-        var messageObject = new Message
+        if (dynamicMessage != null)
         {
-            Id = (int)dynamicMessage.m.id,
-            Content = (string)dynamicMessage.m.content,
-            ReplyTo = replyTo,
-            CreationDate = (DateTime)dynamicMessage.m.creationDate,
-            UserId = (int)dynamicMessage.m.userId,
-            IsSentPreviousMessage = (bool)Messages?.Last().Last()?.IsSent,
-            IsSent = false,
-            TopicId = CurrentTopic.Id
-        };
+            var replyTo = JsonConvert.DeserializeObject<Message>(dynamicMessage.m.replyTo.ToString()) as Message;
 
-        Messages.Last()?.Add(messageObject);
+            var isSent = Messages?.Last().Last()?.IsSent;
+            var messageObject = new Message
+            {
+                Id = (int)dynamicMessage.m.id,
+                Content = (string)dynamicMessage.m.content,
+                ReplyTo = replyTo,
+                CreationDate = (DateTime)dynamicMessage.m.creationDate,
+                UserCode = (string)dynamicMessage.m.userId,
+                IsSentPreviousMessage = isSent != null && (bool)isSent,
+                IsSent = false,
+                TopicId = CurrentTopic.Id
+            };
 
-        await MessageRepository.AddMessageAsync(messageObject);
+            Messages?.Last()?.Add(messageObject);
+
+            await MessageRepository.AddMessageAsync(messageObject);
+        }
     }
 
     private void GetMessage(dynamic message)
@@ -279,6 +251,11 @@ public class MessagesPageModel : BasePageModel
         DialogService.DisplayAlertAsync("Alert", message, "OK");
     }
 
+    private void NewUserMessage()
+    {
+        ShowMessage("New user is coming", 3000);
+    }
+
     private int TopicId { get; set; }
 
     private ITopicRepository TopicRepository { get; }
@@ -295,8 +272,4 @@ public class MessagesPageModel : BasePageModel
     private bool _isTyping;
 
     private Topic _topic;
-
-    private readonly ObservableAsPropertyHelper<bool> _isSending;
-
-    public bool IsSending => _isSending.Value;
 }

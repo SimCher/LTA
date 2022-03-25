@@ -49,15 +49,15 @@ public class TopicService : ITopicService
         return await _topicRepository.AddAsync(name, maxUsers, categoriesArray, code);
     }
 
-    public async Task<Topic> AddUserAndReturnTopic(int topicId, int userId)
+    public async Task<Topic> AddUserAndReturnTopic(int topicId, string userCode)
     {
-        return await _topicRepository.UpdateAndReturnAsync(topicId, userId, true)
+        return await _topicRepository.UpdateAndReturnAsync(topicId, userCode, true)
             ?? throw new ArgumentException("Something went wrong with adding a user to the topic");
     }
 
-    public async Task<Topic> RemoveUserAndReturnTopic(int topicId, int userId)
+    public async Task<Topic> RemoveUserAndReturnTopic(int topicId, string userCode)
     {
-        return await _topicRepository.UpdateAndReturnAsync(topicId, userId, false)
+        return await _topicRepository.UpdateAndReturnAsync(topicId, userCode, false)
                ?? throw new ArgumentException("Something went wrong with removing a user from the topic");
     }
 }

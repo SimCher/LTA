@@ -113,27 +113,27 @@ namespace LTA.Mobile.PageModels
         private async Task SendMsg()
         {
             var isSent = MessageList?.Last().Last().IsSent;
-            AddMessage(Message, true, Settings.UserId);
+            AddMessage(Message, true, Settings.UserCode);
             //await ChatService.SendMessage(_userService.GetUserCode(), Message, CurrentTopic.Id);
 
         }
 
-        private void GetMessage(int userId, string content)
+        private void GetMessage(string userCode, string content)
         {
-            AddMessage(content, false, userId);
+            AddMessage(content, false, userCode);
         }
 
-        private async void AddMessage(string content, bool isOwner, int userId)
+        private async void AddMessage(string content, bool isOwner, string userCode)
         {
-            var currentUserId = Settings.UserId;
-            if (currentUserId != default)
+            var currentUserId = Settings.UserCode;
+            if (string.IsNullOrEmpty(currentUserId))
             {
                 var message = new Message
                 {
                     Content = Message,
                     ReplyTo = ReplyMessage,
                     CreationDate = DateTime.Now,
-                    UserId = currentUserId,
+                    UserCode = currentUserId,
                     IsSent = true,
                     TopicId = CurrentTopic.Id,
                     IsOwner = isOwner,
@@ -179,13 +179,13 @@ namespace LTA.Mobile.PageModels
 
         public override async void OnNavigatedTo(INavigationParameters parameters)
         {
-            await ChatService.LogInChatAsync(Settings.UserId, CurrentTopic.Id);
+            await ChatService.LogInChatAsync(Settings.UserCode, CurrentTopic.Id);
             //await DialogService.DisplayAlertAsync("Checking...", Topic.CountUsersPresentation, "Ok");
         }
 
         public override async void OnNavigatedFrom(INavigationParameters parameters)
         {
-            await ChatService.LogOutFromChatAsync(Settings.UserId, CurrentTopic.Id);
+            await ChatService.LogOutFromChatAsync(Settings.UserCode, CurrentTopic.Id);
             //await DialogService.DisplayAlertAsync("Checking...", Topic.CountUsersPresentation, "Ok");
             await NavigationService.NavigateAsync($"NavigationPage/{nameof(TopicListPage)}", parameters, true);
         }
@@ -197,7 +197,7 @@ namespace LTA.Mobile.PageModels
             {
                 IsBusy = true;
                 await ChatService.Connect();
-                await ChatService.LogInChatAsync(Settings.UserId, CurrentTopic.Id);
+                await ChatService.LogInChatAsync(Settings.UserCode, CurrentTopic.Id);
                 IsConnected = true;
             }
             catch (Exception ex)

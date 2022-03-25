@@ -1,4 +1,7 @@
-﻿using System;
+﻿#nullable enable
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using Xamarin.Essentials;
 
 namespace LTA.Mobile.Helpers;
@@ -9,10 +12,10 @@ public static class Settings
     public const string MessagesPageNavigation = "NavigationPage/MessagesPage";
     public const string AddTopicNavigation = "NavigationPage/Add";
 
-    public static int UserId
+    public static string UserCode
     {
-        get => TryGetValue();
-        set => Preferences.Set(nameof(UserId), value);
+        get => Preferences.Get(nameof(UserCode), string.Empty);
+        set => Preferences.Set(nameof(UserCode), value);
     }
 
     public static string TopicName
@@ -36,15 +39,24 @@ public static class Settings
     public static bool IsCurrentPage(PageNames pageName)
         => CurrentPage.Equals(pageName);
 
-    private static PageNames _currentPage;
-
-    private static int TryGetValue()
+    public static void SaveCollection(ICollection<string> collection, string key)
     {
-        if (int.TryParse(Preferences.Get(nameof(UserId), null), out var returnValue))
-        {
-            return returnValue;
-        }
-
-        throw new InvalidOperationException($"Cannot get value from {nameof(UserId)}");
+        if (collection == null) throw new ArgumentNullException(nameof(collection));
+        var json = JsonConvert.SerializeObject(collection);
+        Preferences.Set(key, json);
     }
+
+    public static ICollection<string>? GetCollection(string key)
+    {
+        var collection = Preferences.Get(key, null);
+
+        if (collection == null) return null;
+
+        var collectionObj = JsonConvert.DeserializeObject<ICollection<string>>(collection);
+
+        return collectionObj ?? throw new NullReferenceException("Cannot deserialize the collection");
+
+    }
+
+    private static PageNames _currentPage;
 }

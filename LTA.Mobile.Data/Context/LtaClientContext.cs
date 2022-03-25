@@ -6,7 +6,7 @@ using Xamarin.Essentials;
 
 namespace LTA.Mobile.Data.Context;
 
-public class LtaClientContext : DbContext, IDbContextable
+public sealed class LtaClientContext : DbContext, IDbContextable
 {
     public DbSet<Message> Messages { get; set; }
 

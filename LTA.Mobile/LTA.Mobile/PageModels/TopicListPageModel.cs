@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using DynamicData.Binding;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Domain.Interfaces;
 using LTA.Mobile.Domain.Models;
@@ -35,11 +33,12 @@ public class TopicListPageModel : BasePageModel
         //ItemTappedCommand = new DelegateCommand(OnItemTappedAsync);
         NavigateToAddCommand = ReactiveCommand.CreateFromTask(NavigateToAdd);
         ItemTappedCommand = ReactiveCommand.CreateFromTask<Topic>(OnItemTappedAsync);
-        FilterOptionChangedCommand = ReactiveCommand.CreateFromTask<bool>(FilterOptionChanged, NotBusyObservable);
+        FilterOptionChangedCommand = ReactiveCommand.CreateFromTask<string>(FilterOptionChanged, NotBusyObservable);
         RefreshCommand = ReactiveCommand.CreateFromTask(RefreshTopics);
         OnSearchTextChangedCommand = new DelegateCommand(OnSearchTextChanged);
         FilterChangedCommand = new DelegateCommand<string>(FilterChanged);
         SortCommand = new DelegateCommand(ExecuteSortAsync);
+        SetIsFavoriteCommand = new DelegateCommand<string>(SetIsFavorite);
         DialogService = pageDialogService;
         IsBusy = false;
     }
@@ -68,12 +67,25 @@ public class TopicListPageModel : BasePageModel
     public string SearchText { get; set; }
     public string Filter { get; set; }
 
+    public string SelectedFilter
+    {
+        get => _selectedFilter;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _selectedFilter, value);
+            ChangeFilter(value);
+        }
+    }
+
+    private string _selectedFilter;
+
     public ICommand ItemTappedCommand { get; set; }
     public ICommand NavigateToAddCommand { get; private set; }
     public ICommand FilterOptionChangedCommand { get; private set; }
     public ICommand RefreshCommand { get; private set; }
     public ICommand OnSearchTextChangedCommand { get; private set; }
     public ICommand FilterChangedCommand { get; private set; }
+    public ICommand SetIsFavoriteCommand { get; }
 
     public override async void Initialize(INavigationParameters parameters)
     {
@@ -85,15 +97,32 @@ public class TopicListPageModel : BasePageModel
             ChatService.UpdateTopic(AddTopic);
 
             await RefreshTopics();
+
+            LoadFavorites();
         }
         catch (System.Exception ex)
         {
-            await DialogService.DisplayAlertAsync($"Error!", $"{ex.Source}: {ex.Message}", "Shit...");
+            await DialogService.DisplayAlertAsync($"Error!", $"{ex.Source}: {ex.Message}", "Got it!");
         }
 
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    private void ChangeFilter(string filter)
+    {
+        switch (filter)
+        {
+            case "All":
+                TopicList = new ObservableRangeCollection<Topic>(_topicRepository.Topics);
+                break;
+            case "Favorites":
+                TopicList = new ObservableRangeCollection<Topic>(TopicList.Where(t => t.IsFavorite));
+                break;
+            case "My":
+                return;
         }
     }
 
@@ -180,13 +209,60 @@ public class TopicListPageModel : BasePageModel
 
     }
 
-    private async Task FilterOptionChanged(bool isNotOnline)
+    private void SetIsFavorite(string topicName)
+    {
+        var topicForUpdate = TopicList.First(t => t.Name.Equals(topicName));
+        topicForUpdate.IsFavorite = !topicForUpdate.IsFavorite;
+
+        ICollection<string> topicNames = (from t in TopicList where t.IsFavorite select t.Name).ToList();
+
+        Settings.SaveCollection(topicNames, "favoriteTopics");
+    }
+
+    private void LoadFavorites()
+    {
+        var favoriteTopicNames = Settings.GetCollection("favoriteTopics");
+
+        if (favoriteTopicNames == null) return;
+
+        foreach (var name in favoriteTopicNames)
+        {
+            for (int i = 0; i < TopicList.Count; i++)
+            {
+                if (name.Equals(TopicList[i].Name))
+                {
+                    TopicList[i].IsFavorite = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    private async Task FilterOptionChanged(string categoryName)
     {
         IsBusy = true;
-        if (isNotOnline)
+        if (string.IsNullOrEmpty(categoryName))
         {
-            await RefreshTopics();
+            TopicList = new ObservableRangeCollection<Topic>(_topicRepository.Topics);
         }
+        else
+        {
+            var tempList = new ObservableRangeCollection<Topic>();
+
+            for (int i = 0; i < TopicList.Count; i++)
+            {
+                foreach (var category in TopicList[i].Categories)
+                {
+                    if (category.Split(" ").Contains(categoryName))
+                    {
+                        tempList.Add(TopicList[i]);
+                    }
+                }
+            }
+
+            TopicList = new ObservableRangeCollection<Topic>(tempList);
+        }
+
 
         IsBusy = false;
     }
@@ -201,7 +277,7 @@ public class TopicListPageModel : BasePageModel
     private async void ExecuteSortAsync()
     {
         var sort = await PrismApplicationBase.Current.MainPage.DisplayActionSheet("Sort by", "Cancel", null,
-            buttons: new string[] { "Name", "Count", "Date" });
+            buttons: new[] { "Name", "Count", "Date" });
 
         if (sort != "Cancel")
         {
@@ -214,6 +290,7 @@ public class TopicListPageModel : BasePageModel
 
             return;
         }
+
         TopicList = new ObservableRangeCollection<Topic>(_topicRepository.Topics);
     }
 

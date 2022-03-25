@@ -43,7 +43,6 @@ namespace LTA.Mobile.PageModels
             protected set => this.RaiseAndSetIfChanged(ref _isPageMessageSeen, value);
         }
 
-
         public BasePageModel(INavigationService navigationService, IChatService chatService)
         {
             NavigationService = navigationService;

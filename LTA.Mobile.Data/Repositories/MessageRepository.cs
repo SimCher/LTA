@@ -18,9 +18,9 @@ public class MessageRepository : IMessageRepository
         Context = context;
     }
 
-    public IEnumerable<Message> GetAllForUser(int userId)
+    public IEnumerable<Message> GetAllForUser(string userCode)
     {
-        return Context.Messages.Where(m => m.UserId == userId);
+        return Context.Messages.Where(m => m.UserCode == userCode);
     }
 
     public IEnumerable<Message> GetAllForTopic(int topicId)

@@ -7,7 +7,7 @@ namespace LTA.Mobile.Domain.Models
     public class Message : BaseModel
     {
         private string _content;
-        private int _userId;
+        private string _userCode;
         private int _topicId;
         private bool _isOwner;
         private bool _isSent;
@@ -20,10 +20,10 @@ namespace LTA.Mobile.Domain.Models
         [NotMapped]
         public User Sender { get; set; }
 
-        public int UserId
+        public string UserCode
         {
-            get => _userId;
-            set => SetProperty(ref _userId, value);
+            get => _userCode;
+            set => SetProperty(ref _userCode, value);
         }
 
         public bool IsOwner

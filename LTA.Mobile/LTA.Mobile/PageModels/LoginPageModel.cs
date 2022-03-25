@@ -47,7 +47,7 @@ public class LoginPageModel : BasePageModel
         ShowMessage("Logging in...");
         if (await _userService.LoginAsync(PhoneOrEmail, Password, SetErrorMessage))
         {
-            Settings.UserId = new Random().Next(1, 1000);
+            Settings.UserCode = Guid.NewGuid().ToString("D");
             await NavigationService.NavigateAsync(Settings.TopicsPageNavigation);
         }
 
