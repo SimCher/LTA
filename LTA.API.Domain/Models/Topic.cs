@@ -64,6 +64,7 @@ public class Topic
 
         user.Color = GetAvailableColor();
         UsersIn.Add(user);
+        UserNumber = UsersIn.Count;
     }
 
     public bool RemoveUser(User user)
@@ -76,6 +77,7 @@ public class Topic
         user.Color = default;
         ReleaseColor(user.Color);
         UsersIn.Remove(user);
+        UserNumber = UsersIn.Count;
         return true;
     }
 
@@ -98,6 +100,23 @@ public class Topic
         var availableColor = AvailableColors.First(ac => ac.Value).Key;
         AvailableColors[availableColor] = false;
         return availableColor;
+    }
+
+    public Color[] GetColors()
+    {
+        return AvailableColors.Where(ac => !ac.Value).Select(ac => ac.Key).ToArray();
+    }
+
+    public Dictionary<string, Color> GetUsersCodeAndColor()
+    {
+        var usersCodeAndColor = new Dictionary<string, Color>();
+
+        foreach (var user in UsersIn)
+        {
+            usersCodeAndColor[user.Code] = user.Color;
+        }
+
+        return usersCodeAndColor;
     }
 
     public void ReleaseColor(Color color)

@@ -14,6 +14,7 @@
              BackgroundColor="{StaticResource PrimaryColor}"
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              xmlns:base="clr-namespace:LTA.Mobile.Pages.Base;assembly=LTA.Mobile"
+             xmlns:behaviors="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Name="MessagePage">
     <ContentPage.Content>
@@ -47,7 +48,7 @@
                                              Grid.Column="1"
                                              IsInTitle="True"
                                              IsUsersTyping="{Binding BindingContext.IsTyping, Source={x:Reference MessagePage}}"
-                                             Margin="-25,0,0,0"/>
+                                             Margin="25,0,0,50"/>
 
                 <Label Grid.Column="1"
                        Margin="-25,0,0,0"
@@ -178,6 +179,10 @@
                                     <Editor.Effects>
                                         <effects:BorderlessEntryEffect/>
                                     </Editor.Effects>
+                                    <Editor.Behaviors>
+                                        <behaviors:EventToCommandBehavior EventName="TextChanged"
+                                                                          Command="{Binding UserTypingCommand}"/>
+                                    </Editor.Behaviors>
                                 </Editor>
 
                                 <customControls:FloatingButton CornerRadius="90"

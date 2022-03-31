@@ -57,7 +57,7 @@ public class TopicRepository : ITopicRepository
         return newTopic;
     }
 
-    public async Task UpdateAsync(int id, string userCode, bool isUserBeingAdded)
+    public async Task<Topic> UpdateAsync(int id, string userCode, bool isUserBeingAdded)
     {
         var topicToUpdate = await _context.Topics.FindAsync(id) ??
                             throw new NullReferenceException($"Cannot find the a topic with id: {id}");
@@ -80,14 +80,13 @@ public class TopicRepository : ITopicRepository
                     $"Cannot remove user with id: {user.Id} from topic with id: {topicToUpdate.Id}");
             }
         }
+
+        return topicToUpdate;
     }
 
     public async Task<Topic> UpdateAndReturnAsync(int id, string userCode, bool isUserBeingAdded)
     {
-        await UpdateAsync(id, userCode, isUserBeingAdded);
-
-        return await _context.Topics.FindAsync(id) ??
-               throw new NullReferenceException($"Cannot find topic with id: {id}");
+        return await UpdateAsync(id, userCode, isUserBeingAdded);
     }
 
     public Topic? Get(int id) => _context.Topics.Find(id);

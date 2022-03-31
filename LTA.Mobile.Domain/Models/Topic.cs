@@ -28,7 +28,8 @@ namespace LTA.Mobile.Domain.Models
 
         public Topic()
         {
-            UsersIn = new ObservableCollection<User>();
+            //TODO:: Return observable collection instead dictionary
+            UsersIn = new Dictionary<string, Color>();
         }
 
         public string Name
@@ -111,6 +112,6 @@ namespace LTA.Mobile.Domain.Models
         public ICollection<Message> Messages { get; set; }
 
         [NotMapped]
-        public ICollection<User> UsersIn { get; set; }
+        public Dictionary<string, Color> UsersIn { get; set; }
     }
 }

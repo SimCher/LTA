@@ -10,4 +10,8 @@ public interface ITopicRepository
     Task<ICollection<Topic>> GetAllAsync();
 
     Task<Topic> GetAsync(int topicId);
+
+    Task AddUserInTopic(User user, int topicId);
+
+    Task<bool> RemoveUserFromTopic(string userCode, int topicId);
 }

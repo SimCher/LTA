@@ -10,7 +10,7 @@
              Title="Registration"
              >
     <ContentPage.Content>
-        <StackLayout Style="{StaticResource RegLayout}">
+        <StackLayout >
             <Label Text="LETS'S TALK ABOUT ALPHA"
                        HorizontalOptions="CenterAndExpand"
                        FontSize="30"
@@ -19,18 +19,17 @@
             <Label Text="{Binding PageMessage}" TextColor="Red"/>
 
             <Label Text="Enter your phone number or E-Mail"/>
-            <Entry Style="{StaticResource RegEntry}" Text="{Binding PhoneOrEmail}" Keyboard="Email" Placeholder="Enter phone number or email">
+            <Entry  Text="{Binding PhoneOrEmail}" Keyboard="Email" Placeholder="Enter phone number or email">
                 <Entry.Behaviors>
                     <xct:EmailValidationBehavior 
-                            DecorationFlags="Trim"
-                            InvalidStyle="{StaticResource InvalidStyle}"/>
+                            DecorationFlags="Trim"/>
                 </Entry.Behaviors>
             </Entry>
             <Label Text="Enter your password"/>
-            <Entry x:Name="PasswordEntry"  Style="{StaticResource RegEntry}" IsPassword="True" Text="{Binding Password}" Placeholder="Password">
+            <Entry x:Name="PasswordEntry" IsPassword="True" Text="{Binding Password}" Placeholder="Password">
                 <Entry.Behaviors>
                     <xct:MultiValidationBehavior 
-                            InvalidStyle="{StaticResource InvalidStyle}">
+                           >
                         <xct:TextValidationBehavior
                                 MinimumLength="6" />
                         <xct:CharactersValidationBehavior 
@@ -52,7 +51,7 @@
                 </Entry.Behaviors>
             </Entry>
             <Label Text="Confirm your password"/>
-            <Entry Style="{StaticResource RegEntry}" IsPassword="True" Text="{Binding Confirm}">
+            <Entry  IsPassword="True" Text="{Binding Confirm}">
                 <Entry.Behaviors>
                     <xct:RequiredStringValidationBehavior
                             RequiredString="{Binding Text,
@@ -60,9 +59,9 @@
                 </Entry.Behaviors>
             </Entry>
 
-            <Button Style="{StaticResource ButtonStyle}" Text="Sign Up"
+            <Button  Text="Sign Up"
                         Command="{Binding TryRegisterCommand}"/>
-            <Button Style="{StaticResource ButtonStyle}" Text="Sign In"
+            <Button Text="Sign In"
                         Command="{Binding NavigateToLoginPageCommand}"/>
         </StackLayout>
     </ContentPage.Content>

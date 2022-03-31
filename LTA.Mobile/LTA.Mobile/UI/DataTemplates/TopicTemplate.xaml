@@ -127,18 +127,17 @@
                                 <BindingCondition Binding="{Binding IsUsersTyping, Source={x:Reference SimpleTopicTemplate}}"
                                                   Value="True"/>
                             </MultiTrigger.Conditions>
-
                             <MultiTrigger.Setters>
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <lottie:AnimationView Grid.Row="1"
-                                                              Loop="True" Margin="-10,0,0,0"
+                                        <lottie:AnimationView Grid.Row="0"
+                                                              Loop="True" Margin="15,0,0,0"
                                                               HorizontalOptions="Start"
                                                               VerticalOptions="Center"
                                                               IsPlaying="{Binding IsUsersTyping, Source={x:Reference SimpleTopicTemplate}}"
                                                               IsVisible="{Binding IsUsersTyping, Source={x:Reference SimpleTopicTemplate}}"
-                                                              HeightRequest="20"
-                                                              WidthRequest="70"
+                                                              HeightRequest="35"
+                                                              WidthRequest="35"
                                                               Animation="typing.json"
                                                               BackgroundColor="Transparent"/>
                                     </Setter.Value>

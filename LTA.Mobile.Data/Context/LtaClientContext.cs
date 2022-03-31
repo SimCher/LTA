@@ -12,6 +12,7 @@ public sealed class LtaClientContext : DbContext, IDbContextable
 
     public LtaClientContext()
     {
+        Database.EnsureDeleted();
         SQLitePCL.Batteries_V2.Init();
         Database.EnsureCreated();
     }

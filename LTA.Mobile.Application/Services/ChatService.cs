@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using Xamarin.Forms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,13 +21,14 @@ namespace LTA.Mobile.Application.Services
 
         private readonly HubConnection _hubConnection;
         private Random _random;
+        public string CurrentUserCode { get; private set; }
         private bool IsConnected { get; set; }
         private Dictionary<string, string> ActiveTopics { get; } = new();
         public ChatService()
         {
-            //_hubConnection = new HubConnectionBuilder().WithUrl($"http://192.168.163.1:8082/lta").Build();
+            //_hubConnection = new HubConnectionBuilder().WithUrl($"http://192.168.216.1:8082/lta").Build();
             //_hubConnection = new HubConnectionBuilder().WithUrl("http://192.168.234.1:8082/lta").Build();
-            _hubConnection = new HubConnectionBuilder().WithUrl(@"http://10.0.2.2:5240/lta").Build();
+            _hubConnection = new HubConnectionBuilder().WithUrl(@"http://192.168.216.1:8082/lta").Build();
             _hubConnection.Closed += async (error) =>
             {
                 OnConnectionClosed?.Invoke(this, new MessageEventArgs("Connection closed...", string.Empty));
@@ -83,12 +85,12 @@ namespace LTA.Mobile.Application.Services
             IsConnected = false;
         }
 
-        public async Task SendMessage(Message message)
+        public async Task SendMessage(Message message, int topicId)
         {
             if (!IsConnected)
                 await ConnectIfNotAsync();
 
-            await _hubConnection.InvokeAsync("SendMessage", message);
+            await _hubConnection.InvokeAsync("SendMessage", message, topicId);
         }
 
         public async Task AddTopicAsync(string name, int maxUsers, string categories, string code)
@@ -102,22 +104,35 @@ namespace LTA.Mobile.Application.Services
             _hubConnection.On("ReceiveMessage", getMessageAndUser);
         }
 
+        public async Task SendTyping(int topicId)
+        {
+            if (!IsConnected)
+                await ConnectIfNotAsync();
+
+            await _hubConnection.InvokeAsync("SendTyping", topicId);
+        }
+
+        public void ReceiveTyping(Action setIsTypingMethod)
+        {
+            _hubConnection.On("ReceiveTyping", setIsTypingMethod);
+        }
+
         public async Task<bool> RegisterAsync(string phoneOrEmail, string password, string confirm, string keyword)
         {
             await ConnectIfNotAsync();
             return await _hubConnection.InvokeAsync<bool>("RegisterAsync", phoneOrEmail, password, confirm, keyword);
         }
 
-        public async Task<string> LoginAsync(string phoneOrEmail, string password)
+        public async Task LoginAsync(string phoneOrEmail, string password)
         {
             await ConnectIfNotAsync();
-            return await _hubConnection.InvokeAsync<string>("LoginAsync", phoneOrEmail, password);
+            CurrentUserCode = await _hubConnection.InvokeAsync<string>("LoginAsync", phoneOrEmail, password);
         }
 
-        public async Task<IEnumerable<dynamic>> LoadTopicsAsync()
+        public async Task<IEnumerable<object>> LoadTopicsAsync()
         {
             await ConnectIfNotAsync();
-            return await _hubConnection.InvokeAsync<IEnumerable<dynamic>>("LoadTopics");
+            return await _hubConnection.InvokeAsync<IEnumerable<object>>("LoadTopicsAsObject");
         }
 
 
@@ -145,11 +160,13 @@ namespace LTA.Mobile.Application.Services
 
         }
 
+
+
         public async Task LogOutFromChatAsync(string userCode, int topicId)
         {
-            if (!IsConnected || !ActiveTopics.ContainsKey(topicId.ToString())) return;
+            if (!IsConnected) return;
 
-            await _hubConnection.SendAsync("LogOutFromChatAsync", topicId, userCode);
+            await _hubConnection.SendAsync("LogOutFromChatAsync", userCode, topicId);
         }
 
         public void SetErrorMessage(Action<string> getErrorMessage)
@@ -160,13 +177,20 @@ namespace LTA.Mobile.Application.Services
         public void NewUserMessage(Action<string> showNewUserMessage)
             => _hubConnection.On("NewUserMessage", showNewUserMessage);
 
-        public void UpdateTopic(Action<Topic> updateTopicMethod)
-        {
-            _hubConnection.On("UpdateTopic", updateTopicMethod);
-        }
-
         public void UserOutMessage(Action<string> showUserOutMessage)
             => _hubConnection.On("UserOutMessage", showUserOutMessage);
+
+        public Task<int> AddUserInTopic(Func<int, Dictionary<string, Color>, DateTime, Task> addUserMethod)
+        {
+            _hubConnection.On("AddUser", addUserMethod);
+
+            return Task.FromResult(1);
+        }
+
+        public void RemoveUserFromTopic(Action<int, string> removeUserMethod)
+        {
+            _hubConnection.On("RemoveUser", removeUserMethod);
+        }
 
         private async Task ConnectIfNotAsync()
         {
@@ -190,5 +214,7 @@ namespace LTA.Mobile.Application.Services
 
             throw new Exception("No network adapters with an IPv4 address in the system!");
         }
+
+
     }
 }

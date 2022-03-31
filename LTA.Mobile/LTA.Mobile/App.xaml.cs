@@ -31,9 +31,14 @@ namespace LTA.Mobile
         {
             InitializeComponent();
 
-            //MainPage = new AppShell();
-
-            await NavigationService.NavigateAsync(Settings.TopicsPageNavigation);
+            if (string.IsNullOrEmpty(Settings.UserCode))
+            {
+                await NavigationService.NavigateAsync(Settings.LoginPageNavigation);
+            }
+            else
+            {
+                await NavigationService.NavigateAsync(Settings.TopicsPageNavigation);
+            }
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)

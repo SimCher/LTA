@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -23,7 +24,7 @@ public class TopicListPageModel : BasePageModel
     private Topic _topic;
     private bool _isRefreshing;
 
-    public TopicListPageModel(INavigationService navigationService, IChatService chatService, IUserService userService,
+    public TopicListPageModel(INavigationService navigationService, IChatService chatService,
         ITopicRepository topicRepository, IPageDialogService pageDialogService) : base(navigationService, chatService)
     {
         IsBusy = true;
@@ -94,7 +95,8 @@ public class TopicListPageModel : BasePageModel
             IsBusy = true;
             Settings.CurrentPage = PageNames.Topics;
             PageMessage = await TryConnectAsync();
-            ChatService.UpdateTopic(AddTopic);
+            ChatService.AddUserInTopic(AddUser);
+            ChatService.RemoveUserFromTopic(RemoveUser);
 
             await RefreshTopics();
 
@@ -138,6 +140,41 @@ public class TopicListPageModel : BasePageModel
         AddTopic(topic);
     }
 
+    private async void UpdateTopic(int topicId, Dictionary<string, Color> users, DateTime lastEntry)
+    {
+        foreach (var (key, value) in users)
+        {
+            await _topicRepository.AddUserInTopic(new User
+            {
+                Code = key,
+                Color = value
+            }, topicId);
+        }
+
+        TopicList = new ObservableRangeCollection<Topic>(_topicRepository.Topics);
+    }
+
+    private async Task AddUser(int topicId, Dictionary<string, Color> users, DateTime lastEntry)
+    {
+        foreach (var (key, value) in users)
+        {
+            await _topicRepository.AddUserInTopic(new User
+            {
+                Code = key,
+                Color = value
+            }, topicId);
+        }
+
+        TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAllAsync());
+    }
+
+    private async void RemoveUser(int topicId, string userCode)
+    {
+        await _topicRepository.RemoveUserFromTopic(userCode, topicId);
+
+        TopicList = new ObservableRangeCollection<Topic>(_topicRepository.Topics);
+    }
+
     private void OnSearchTextChanged()
     {
         TopicList = string.IsNullOrWhiteSpace(SearchText)
@@ -160,6 +197,7 @@ public class TopicListPageModel : BasePageModel
         {
             IsNavigate = true;
             var parameters = new NavigationParameters { { "TopicId", topic.Id } };
+            await ChatService.LogInChatAsync(Settings.UserCode, topic.Id);
             await NavigationService.NavigateAsync(Settings.MessagesPageNavigation, parameters, true);
         }
 

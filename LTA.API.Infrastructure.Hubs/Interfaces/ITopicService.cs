@@ -6,6 +6,8 @@ public interface ITopicService
 {
     public IEnumerable<dynamic> GetTopicsDynamic();
 
+    public IEnumerable<object> GetTopicsObject();
+
     public Topic? GetTopic(int id);
 
     public Task<Topic> AddTopic(string name, int maxUsers, string categories, string code);

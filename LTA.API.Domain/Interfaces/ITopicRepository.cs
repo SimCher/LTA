@@ -8,7 +8,7 @@ public interface ITopicRepository
 
     Task<Topic> AddAsync(string name, int maxUsers, string[] categories, string code);
 
-    Task UpdateAsync(int id, string userCode, bool isUserBeingAdded);
+    Task<Topic> UpdateAsync(int id, string userCode, bool isUserBeingAdded);
 
     Task<Topic> UpdateAndReturnAsync(int id, string userCode, bool isUserBeingAdded);
 

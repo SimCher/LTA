@@ -20,6 +20,9 @@ public class TopicService : ITopicService
     public IEnumerable<dynamic> GetTopicsDynamic()
         => _topicRepository.GetAll().ToDynamicEnumerable();
 
+    public IEnumerable<object> GetTopicsObject()
+        => _topicRepository.GetAll().ToObjectEnumerable();
+
     public Topic? GetTopic(int id)
     {
         try

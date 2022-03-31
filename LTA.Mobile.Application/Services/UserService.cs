@@ -1,6 +1,8 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Threading.Tasks;
 using LTA.Mobile.Application.Interfaces;
+using LTA.Mobile.Domain.Models;
 
 namespace LTA.Mobile.Application.Services;
 
@@ -17,7 +19,7 @@ public class UserService : IUserService
     {
         try
         {
-            _chatService.SetErrorMessage(setMessage);
+            await _chatService.LoginAsync(phoneOrEmail, password);
             return true;
         }
         catch (Exception ex)

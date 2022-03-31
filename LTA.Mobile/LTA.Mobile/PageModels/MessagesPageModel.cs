@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Domain.Interfaces;
@@ -31,6 +32,7 @@ public class MessagesPageModel : BasePageModel
         ReplyMessageSelectedCommand = ReactiveCommand.Create<Message>(ReplyMessageSelected);
         MessageSwippedCommand = ReactiveCommand.Create<Message>(MessageSwiped);
         SendMsgCommand = new DelegateCommand(SendMessage);
+        UserTypingCommand = new DelegateCommand(SendTyping);
         CancelReplyCommand = ReactiveCommand.Create(CancelReply);
 
         _messages = new List<Message>();
@@ -45,6 +47,8 @@ public class MessagesPageModel : BasePageModel
     public ICommand CancelReplyCommand { get; }
 
     public ICommand ReplyMessageSelectedCommand { get; }
+
+    public ICommand UserTypingCommand { get; }
 
     public Topic CurrentTopic
     {
@@ -90,6 +94,7 @@ public class MessagesPageModel : BasePageModel
         try
         {
             ChatService.ReceiveMessage(GetMessage);
+            ChatService.ReceiveTyping(UserTyping);
             TopicId = parameters.GetValue<int>("TopicId");
             IsBusy = true;
             CurrentTopic = await TopicRepository.GetAsync(TopicId);
@@ -112,7 +117,6 @@ public class MessagesPageModel : BasePageModel
                     TopicId = CurrentTopic.Id,
                     IsSentPreviousMessage = false
                 }
-
             );
 
             _messages.Add(
@@ -130,7 +134,6 @@ public class MessagesPageModel : BasePageModel
                 }
 
             );
-
 
             var messagesGroups = _messages.GroupBy(m => m.CreationDate.Day)
                 .Select(group =>
@@ -168,6 +171,11 @@ public class MessagesPageModel : BasePageModel
         }
     }
 
+    public override async void OnNavigatedFrom(INavigationParameters parameters)
+    {
+        await ChatService.LogOutFromChatAsync(Settings.UserCode, CurrentTopic.Id);
+    }
+
     private void MessageSwiped(Message message)
     {
         ReplyMessage = message;
@@ -196,7 +204,7 @@ public class MessagesPageModel : BasePageModel
             TopicId = CurrentTopic.Id
         };
 
-        await ChatService.SendMessage(message);
+        await ChatService.SendMessage(message, message.TopicId);
         AddMessage(message);
 
         Message = string.Empty;
@@ -254,6 +262,20 @@ public class MessagesPageModel : BasePageModel
     private void NewUserMessage()
     {
         ShowMessage("New user is coming", 3000);
+    }
+
+    private void SendTyping()
+    {
+        ChatService.SendTyping(CurrentTopic.Id);
+    }
+
+    private void UserTyping()
+    {
+        if (!IsTyping)
+        {
+            IsTyping = true;
+            Observable.Timer(TimeSpan.FromMilliseconds(1500)).Subscribe(_ => IsTyping = false);
+        }
     }
 
     private int TopicId { get; set; }

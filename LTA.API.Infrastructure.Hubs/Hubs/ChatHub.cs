@@ -1,6 +1,7 @@
 ﻿using LTA.API.Infrastructure.Hubs.Interfaces;
 using LTA.API.Infrastructure.Loggers.Interfaces;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 
 namespace LTA.API.Infrastructure.Hubs.Hubs;
 
@@ -97,11 +98,12 @@ public class ChatHub : Hub
         {
             var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"{topic.Id}");
+            await Groups.AddToGroupAsync(Context.ConnectionId, topic.Id.ToString());
 
             await Clients.OthersInGroup($"{topic.Id}").SendAsync("NewUserMessage");
 
-            await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UsersIn, topic.LastEntryDate);
+            await Clients.Others
+                .SendAsync("AddUser", topic.Id, topic.GetUsersCodeAndColor(), topic.LastEntryDate);
         }
         catch (Exception ex)
         {
@@ -118,9 +120,9 @@ public class ChatHub : Hub
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{topic.Id}");
 
-            await Clients.OthersInGroup($"{topic.Id}").SendAsync("UserOutMessage");
+            await Clients.OthersInGroup(topic.Id.ToString()).SendAsync("UserOutMessage");
 
-            await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UsersIn);
+            await Clients.All.SendAsync("RemoveUser", topic.Id, userCode);
         }
         catch (Exception ex)
         {
@@ -129,14 +131,44 @@ public class ChatHub : Hub
         }
     }
 
-    public async Task SendMessage(dynamic message)
+    //public async Task LogOutFromChatAsync(string userCode, int topicId)
+    //{
+    //    try
+    //    {
+    //        var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userCode);
+
+    //        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{topic.Id}");
+
+    //        await Clients.OthersInGroup($"{topic.Id}").SendAsync("UserOutMessage");
+
+    //        await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UsersIn);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _loggerService.LogError($"{ex.Source}: {ex.Message}");
+    //        await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
+    //    }
+    //}
+
+    public async Task SendMessage(dynamic message, int topicId)
     {
         var a = new { m = message };
-        await Clients.Others/*($"{message.topicId}")*/.SendAsync("ReceiveMessage", a);
+        await Groups.AddToGroupAsync(Context.ConnectionId, topicId.ToString());
+        await Clients.OthersInGroup(topicId.ToString()).SendAsync("ReceiveMessage", a);
     }
 
     public IEnumerable<dynamic> LoadTopics()
     {
         return _topicService.GetTopicsDynamic();
+    }
+
+    public IEnumerable<object> LoadTopicsAsObject()
+    {
+        return _topicService.GetTopicsObject();
+    }
+
+    public async Task SendTyping(int topicId)
+    {
+        await Clients.OthersInGroup(topicId.ToString()).SendAsync("ReceiveTyping");
     }
 }

@@ -11,7 +11,7 @@ namespace LTA.Mobile.PageModels
     public abstract class BasePageModel : ReactiveObject, IInitialize, INavigationAware, IDestructible
     {
         protected INavigationService NavigationService { get; private set; }
-        protected IChatService ChatService { get; private set; }
+        public IChatService ChatService { get; private set; }
 
         private string _title;
         private bool _isBusy;
