@@ -29,6 +29,7 @@
     </Shell.TitleView>
 
     <base:BaseTabbedPage.ViewContent>
+
         <Grid>
 
             <Grid.RowDefinitions>
@@ -134,20 +135,64 @@
                         <CollectionView.ItemTemplate>
 
                             <DataTemplate>
-                                <Grid xe:TouchEffect.Color="{StaticResource SecondaryAccentColor}"
-                                      xe:Commands.Tap="{Binding BindingContext.ItemTappedCommand, Source={x:Reference TopicPage}}"
-                                      xe:Commands.TapParameter="{Binding}" HeightRequest="105">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="1*"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="300"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <dataTemplates:TopicTemplate/>
-                                    <customControls:FloatingButton Grid.Row="0" Grid.Column="1" WidthRequest="25" HeightRequest="25"
+                                <SwipeView BackgroundColor="{StaticResource PrimaryColor}">
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems SwipeBehaviorOnInvoked="Close">
+                                            <SwipeItemView>
+                                                <StackLayout Orientation="Horizontal">
+                                                    <customControls:FloatingButton
+                                                                   CornerRadius="5"
+                                                                   WidthRequest="80"
+                                                                   Icon="{StaticResource FontAwesomeSolidHeart}"
+                                                                   xe:Commands.Tap="{Binding BindingContext.SetIsFavoriteCommand, Source={x:Reference TopicPage}}"
+                                                                   xe:Commands.TapParameter="{Binding Name}"
+                                                                   CommandParameter="{Binding Name}"
+                                                                   BackgroundColor="{StaticResource PrimaryColor}"
+                                                                   IconSize="30"
+                                                                   Style="{StaticResource LightShadowPancakeViewStyle}">
+                                                        <customControls:FloatingButton.Triggers>
+                                                            <DataTrigger TargetType="customControls:FloatingButton"
+                                                         Binding="{Binding IsFavorite}"
+                                                         Value="True">
+                                                                <Setter Property="IconColor" Value="{StaticResource AccentColor}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger TargetType="customControls:FloatingButton"
+                                                         Binding="{Binding IsFavorite}"
+                                                         Value="False">
+                                                                <Setter Property="IconColor" Value="DarkGray"/>
+                                                            </DataTrigger>
+                                                        </customControls:FloatingButton.Triggers>
+                                                    </customControls:FloatingButton>
+                                                    <customControls:FloatingButton
+                                                        CornerRadius="5"
+                                                                   WidthRequest="80"
+                                                                   Icon="{StaticResource FontAwesomeReport}"
+                                                                   xe:Commands.Tap="{Binding BindingContext.SendReportCommand, Source={x:Reference TopicPage}}"
+                                                                   xe:Commands.TapParameter="{Binding Name}"
+                                                                   CommandParameter="{Binding Name}"
+                                                                   BackgroundColor="{StaticResource PrimaryColor}"
+                                                                   IconSize="30"
+                                                                   IconColor="DarkGray"
+                                                                   Style="{StaticResource LightShadowPancakeViewStyle}"/>
+                                                </StackLayout>
+
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+                                    <Grid xe:TouchEffect.Color="{StaticResource SecondaryAccentColor}"
+                                          xe:Commands.Tap="{Binding BindingContext.ItemTappedCommand, Source={x:Reference TopicPage}}"
+                                          xe:Commands.TapParameter="{Binding}" HeightRequest="105">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="300"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <dataTemplates:TopicTemplate/>
+                                        <customControls:FloatingButton Grid.Row="0" Grid.Column="1" WidthRequest="25" HeightRequest="25"
                                                                    CornerRadius="5"
                                                                    Margin="0,20,0,0"
                                                                    Icon="{StaticResource FontAwesomeSolidHeart}"
@@ -158,21 +203,21 @@
                                                                    BackgroundColor="{StaticResource PrimaryColor}"
                                                                    IconSize="13"
                                                                    Style="{StaticResource LightShadowPancakeViewStyle}">
-                                        <customControls:FloatingButton.Triggers>
-                                            <DataTrigger TargetType="customControls:FloatingButton"
+                                            <customControls:FloatingButton.Triggers>
+                                                <DataTrigger TargetType="customControls:FloatingButton"
                                                          Binding="{Binding IsFavorite}"
                                                          Value="True">
-                                                <Setter Property="IconColor" Value="{StaticResource AccentColor}"/>
-                                            </DataTrigger>
-                                            <DataTrigger TargetType="customControls:FloatingButton"
+                                                    <Setter Property="IconColor" Value="{StaticResource AccentColor}"/>
+                                                </DataTrigger>
+                                                <DataTrigger TargetType="customControls:FloatingButton"
                                                          Binding="{Binding IsFavorite}"
                                                          Value="False">
-                                                <Setter Property="IconColor" Value="DarkGray"/>
-                                            </DataTrigger>
-                                        </customControls:FloatingButton.Triggers>
-                                    </customControls:FloatingButton>
+                                                    <Setter Property="IconColor" Value="DarkGray"/>
+                                                </DataTrigger>
+                                            </customControls:FloatingButton.Triggers>
+                                        </customControls:FloatingButton>
 
-                                    <CollectionView Grid.Row="1" HorizontalScrollBarVisibility="Never"
+                                        <CollectionView Grid.Row="1" HorizontalScrollBarVisibility="Never"
                                                     VerticalScrollBarVisibility="Default"
                                 ItemsSource="{Binding Categories}"
                                 Margin="66,-15,0,0"
@@ -180,49 +225,46 @@
                                 HeightRequest="50"
                                 SelectionMode="Single" FlowDirection="LeftToRight" VerticalOptions="Start"
                 >
-                                        <CollectionView.Triggers>
-                                            <DataTrigger TargetType="CollectionView"
+                                            <CollectionView.Triggers>
+                                                <DataTrigger TargetType="CollectionView"
                                      Binding="{Binding IsInTitle, Source={x:Reference TopicPage}}"
                                      Value="True">
-                                                <Setter Property="HeightRequest" Value="0"/>
-                                            </DataTrigger>
-                                        </CollectionView.Triggers>
-                                        <CollectionView.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackLayout HorizontalOptions="Start">
-                                                    <Frame MinimumHeightRequest="10"
+                                                    <Setter Property="HeightRequest" Value="0"/>
+                                                </DataTrigger>
+                                            </CollectionView.Triggers>
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackLayout HorizontalOptions="Start">
+                                                        <Frame MinimumHeightRequest="10"
                                        MinimumWidthRequest="10"
                                        Padding="5,0,5,5"
                                        Margin="0,0,5,0"
                                        BackgroundColor="{StaticResource PrimaryColor}"
                                        BorderColor="{StaticResource AccentColor}"
                                        CornerRadius="5">
-                                                        <Label HorizontalOptions="CenterAndExpand"
+                                                            <Label HorizontalOptions="CenterAndExpand"
                                            VerticalOptions="Center"
                                            FontSize="10"
                                            FontFamily="{StaticResource QuickSandRegular}"
                                            Text="{Binding}"/>
-                                                        <Frame.GestureRecognizers>
-                                                            <TapGestureRecognizer Command="{Binding BindingContext.FilterOptionChangedCommand, Source={x:Reference TopicPage}}"
+                                                            <Frame.GestureRecognizers>
+                                                                <TapGestureRecognizer Command="{Binding BindingContext.FilterOptionChangedCommand, Source={x:Reference TopicPage}}"
                                                                 CommandParameter="{Binding}"/>
-                                                        </Frame.GestureRecognizers>
-                                                    </Frame>
-
-
-                                                </StackLayout>
-
-                                            </DataTemplate>
-
-                                        </CollectionView.ItemTemplate>
-                                    </CollectionView>
-                                    <pancakeView:PancakeView BackgroundGradientStartPoint="0,0" BackgroundGradientEndPoint="1,0"
+                                                            </Frame.GestureRecognizers>
+                                                        </Frame>
+                                                    </StackLayout>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <pancakeView:PancakeView BackgroundGradientStartPoint="0,0" BackgroundGradientEndPoint="1,0"
                                                          HeightRequest="1" Grid.Row="2" Grid.Column="0">
-                                        <pancakeView:PancakeView.BackgroundGradientStops>
-                                            <pancakeView:GradientStop Color="#000000"/>
-                                            <pancakeView:GradientStop Color="Transparent"/>
-                                        </pancakeView:PancakeView.BackgroundGradientStops>
-                                    </pancakeView:PancakeView>
-                                </Grid>
+                                            <pancakeView:PancakeView.BackgroundGradientStops>
+                                                <pancakeView:GradientStop Color="#000000"/>
+                                                <pancakeView:GradientStop Color="Transparent"/>
+                                            </pancakeView:PancakeView.BackgroundGradientStops>
+                                        </pancakeView:PancakeView>
+                                    </Grid>
+                                </SwipeView>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>

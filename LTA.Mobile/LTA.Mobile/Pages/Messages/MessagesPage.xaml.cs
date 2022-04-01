@@ -67,7 +67,7 @@ namespace LTA.Mobile.Pages.Messages
 
         protected override async void OnDisappearing()
         {
-            await ViewModel.ChatService.LogOutFromChatAsync(Settings.UserCode, ViewModel.CurrentTopic.Id);
+            await ViewModel.ChatService.LogOutFromChatAsync(Helpers.Settings.UserCode, ViewModel.CurrentTopic.Id);
             await ViewModel.ChatService.Disconnect();
             MessagingCenter.Unsubscribe<BasePageModel, LTAFocusEventArgs>(this, "ShowKeyboard");
             MessagingCenter.Unsubscribe<BasePageModel, ScrollToItemEventArgs>(this, "ScrollToItem");

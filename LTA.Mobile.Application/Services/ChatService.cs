@@ -20,15 +20,38 @@ namespace LTA.Mobile.Application.Services
         public event EventHandler<MessageEventArgs> OnConnectionClosed;
 
         private readonly HubConnection _hubConnection;
+        private string _currentUserCode;
         private Random _random;
-        public string CurrentUserCode { get; private set; }
+
+        public string CurrentUserCode
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_currentUserCode))
+                {
+                    throw new NullReferenceException(nameof(_currentUserCode));
+                }
+
+                return _currentUserCode;
+            }
+            private set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new NullReferenceException(nameof(value));
+                }
+
+                _currentUserCode = value;
+            }
+        }
+
         private bool IsConnected { get; set; }
         private Dictionary<string, string> ActiveTopics { get; } = new();
         public ChatService()
         {
             //_hubConnection = new HubConnectionBuilder().WithUrl($"http://192.168.216.1:8082/lta").Build();
             //_hubConnection = new HubConnectionBuilder().WithUrl("http://192.168.234.1:8082/lta").Build();
-            _hubConnection = new HubConnectionBuilder().WithUrl(@"http://192.168.216.1:8082/lta").Build();
+            _hubConnection = new HubConnectionBuilder().WithUrl(@"http://192.168.0.107:8082/lta").Build();
             _hubConnection.Closed += async (error) =>
             {
                 OnConnectionClosed?.Invoke(this, new MessageEventArgs("Connection closed...", string.Empty));
@@ -169,13 +192,15 @@ namespace LTA.Mobile.Application.Services
             await _hubConnection.SendAsync("LogOutFromChatAsync", userCode, topicId);
         }
 
+        public void NewUserMessage(Action<string> showNewUserMessage)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SetErrorMessage(Action<string> getErrorMessage)
         {
             _hubConnection.On("SetErrorMessage", getErrorMessage);
         }
-
-        public void NewUserMessage(Action<string> showNewUserMessage)
-            => _hubConnection.On("NewUserMessage", showNewUserMessage);
 
         public void UserOutMessage(Action<string> showUserOutMessage)
             => _hubConnection.On("UserOutMessage", showUserOutMessage);

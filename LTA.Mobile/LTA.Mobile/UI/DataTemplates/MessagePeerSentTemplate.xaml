@@ -51,15 +51,20 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <Ellipse HeightRequest="10"
+
+                    <Ellipse Grid.Row="0" HeightRequest="10"
                          WidthRequest="10"
                          HorizontalOptions="Start"
                          VerticalOptions="Center"
                          BackgroundColor="{Binding Sender.Color}"
                          Margin="7,0,0,0"/>
 
-                    <customViews:MessageBubble Text="{Binding Content}"
+                    <customViews:MessageBubble Grid.Row="0" Text="{Binding Content}"
                                            HorizontalOptions="Start"
                                            VerticalOptions="Center"
                                            BackgroundColor="White"
@@ -74,6 +79,13 @@
                             </DataTrigger>
                         </customViews:MessageBubble.Triggers>
                     </customViews:MessageBubble>
+                    <Label Margin="10,0,0,0" Grid.Row="1" Grid.Column="1" Text="{Binding Time}"
+                           HorizontalOptions="StartAndExpand"
+                           VerticalOptions="Center"
+                           FontSize="11"
+                           FontFamily="{StaticResource QuickSandRegular}"
+                           TextColor="{StaticResource SecondaryTextColor}"
+                    />
                 </Grid>
             </Grid>
         </SwipeView>

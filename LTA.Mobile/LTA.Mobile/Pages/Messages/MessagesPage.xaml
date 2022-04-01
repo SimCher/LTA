@@ -51,7 +51,9 @@
                                              Margin="25,0,0,50"/>
 
                 <Label Grid.Column="1"
-                       Margin="-25,0,0,0"
+                       HorizontalOptions="CenterAndExpand"
+                       VerticalOptions="Center"
+                       HeightRequest="50"
                        Text="{Binding PageMessage}"
                        FontFamily="{StaticResource QuickSandRegular}"
                        TextColor="{StaticResource SecondaryTextColor}">

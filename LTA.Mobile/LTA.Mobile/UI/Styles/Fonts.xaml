@@ -27,6 +27,7 @@
     <x:String x:Key="QuickSandRegular">segoeui.ttf#Segoe</x:String>
     <x:String x:Key="FontAwesomeSolidHeart">&#xf004;</x:String>
     <x:String x:Key="FontAwesomeRegularHeart">&#x10f004;</x:String>
+    <x:String x:Key="FontAwesomeReport">&#xf024;</x:String>
 
     <Style x:Key="FontAwesomeLabel" TargetType="{x:Type Label}">
         <Setter Property="FontFamily"

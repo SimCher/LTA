@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels"
+           x:Class="LTA.Mobile.Pages.Topics.Popups.ReportPopup"
+             BackgroundColor="{StaticResource PrimaryColor}">
+    <Label Style="{StaticResource FontAwesomeLabel}"
+           FontSize="Large"
+           TextColor="{StaticResource SecondaryTextColor}"
+           HorizontalOptions="CenterAndExpand"
+           VerticalOptions="CenterAndExpand">
+        <Label.FormattedText>
+            <FormattedString>
+                <Span Text="Жалоба на "/>
+                <Span Text="{Binding TopicName}"/>
+            </FormattedString>
+        </Label.FormattedText>
+    </Label>
+    <Editor Placeholder="Ваша жалоба"
+                AutoSize="TextChanges"
+                Text="{Binding ReportText}"
+                VerticalOptions="CenterAndExpand"
+                FontFamily="{StaticResource QuickSandRegular}"
+                FontAttributes="Bold"/>
+    <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand">
+        <Button TextColor="{StaticResource PrimaryTextColor}"
+                    Text="Отправить"
+                    FontFamily="{StaticResource QuickSandRegular}"
+                    HorizontalOptions="Start"/>
+        <Button TextColor="{StaticResource PrimaryTextColor}"
+                    Text="Отмена"
+                    FontFamily="{StaticResource QuickSandRegular}"
+                    Command="{Binding CloseCommand}"
+                    HorizontalOptions="Start"/>
+    </StackLayout>
+</StackLayout>

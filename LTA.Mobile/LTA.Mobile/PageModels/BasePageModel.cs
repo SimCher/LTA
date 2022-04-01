@@ -15,7 +15,7 @@ namespace LTA.Mobile.PageModels
 
         private string _title;
         private bool _isBusy;
-        protected string _pageMessage;
+        protected static string _pageMessage;
         protected bool _isPageMessageSeen;
 
         protected IObservable<bool> NotBusyObservable;

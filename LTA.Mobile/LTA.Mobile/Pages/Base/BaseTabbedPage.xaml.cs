@@ -97,17 +97,20 @@ namespace LTA.Mobile.Pages.Base
             SettingsTappedCommandProperty = BindableProperty.Create(nameof(SettingsTappedCommand), typeof(ICommand),
                 typeof(BaseTabbedPage), propertyChanged: (obj, old, newV) =>
                 {
-                    var me = obj as BaseTabbedPage;
-                    if (newV != null && !(newV is Type)) return;
-                    var oldSettingsTappedCommand = (Type)old;
-                    var newSettingsTappedCommand = (Type)newV;
-                    me?.SettingsTappedCommandChanged(oldSettingsTappedCommand, newSettingsTappedCommand);
+                    if (!Helpers.Settings.IsCurrentPage(PageNames.Settings))
+                    {
+                        var me = obj as BaseTabbedPage;
+                        if (newV != null && !(newV is Type)) return;
+                        var oldSettingsTappedCommand = (Type)old;
+                        var newSettingsTappedCommand = (Type)newV;
+                        me?.SettingsTappedCommandChanged(oldSettingsTappedCommand, newSettingsTappedCommand);
+                    }
                 });
 
             TopicsTappedCommandProperty = BindableProperty.Create(nameof(TopicsTappedCommand), typeof(ICommand),
                 typeof(BaseTabbedPage), propertyChanged: (obj, old, newV) =>
                 {
-                    if (!Settings.IsCurrentPage(PageNames.Topics))
+                    if (!Helpers.Settings.IsCurrentPage(PageNames.Topics))
                     {
                         var me = obj as BaseTabbedPage;
                         if (newV != null && newV is not ICommand) return;
@@ -122,10 +125,17 @@ namespace LTA.Mobile.Pages.Base
             InitializeComponent();
             NavigationService = navigationService;
 
-            SettingsTappedCommand = new Command(() => Shell.Current.GoToAsync("///LetsTalkAbout/settings"));
+            SettingsTappedCommand = new Command(() =>
+            {
+                if (!Helpers.Settings.IsCurrentPage(PageNames.Settings))
+                {
+                    NavigationService.NavigateAsync("NavigationPage/SettingsPage");
+                }
+            });
+
             TopicsTappedCommand = new Command(() =>
             {
-                if (!Settings.IsCurrentPage(PageNames.Topics))
+                if (!Helpers.Settings.IsCurrentPage(PageNames.Topics))
                 {
                     NavigationService.NavigateAsync("NavigationPage/TopicsPage");
                 }

@@ -8,7 +8,9 @@ using LTA.Mobile.PageModels;
 using LTA.Mobile.Pages.Base;
 using LTA.Mobile.Pages.Identity;
 using LTA.Mobile.Pages.Messages;
+using LTA.Mobile.Pages.Settings;
 using LTA.Mobile.Pages.Topics;
+using LTA.Mobile.Pages.Topics.Popups;
 using Microsoft.EntityFrameworkCore;
 using Prism;
 using Prism.Ioc;
@@ -24,7 +26,6 @@ namespace LTA.Mobile
         public App(IPlatformInitializer initializer)
             : base(initializer)
         {
-
         }
 
         protected override async void OnInitialized()
@@ -62,6 +63,8 @@ namespace LTA.Mobile
             containerRegistry.RegisterForNavigation<LoginPage, LoginPageModel>();
             containerRegistry.RegisterForNavigation<TopicsPage, TopicListPageModel>();
             containerRegistry.RegisterForNavigation<Add, AddTopicPageModel>();
+            containerRegistry.RegisterForNavigation<SettingsPage, SettingsPageModel>();
+            containerRegistry.RegisterDialog<ReportPopup, ReportDialogPageModel>("Report");
         }
     }
 }

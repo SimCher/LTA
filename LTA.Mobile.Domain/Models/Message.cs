@@ -50,6 +50,9 @@ namespace LTA.Mobile.Domain.Models
             set => SetProperty(ref _sentAt, value);
         }
 
+        [NotMapped]
+        public string Time => CreationDate.ToString("HH:mm");
+
         public int TopicId
         {
             get => _topicId;

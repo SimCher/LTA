@@ -96,11 +96,11 @@ public class ChatHub : Hub
     {
         try
         {
+            await Groups.AddToGroupAsync(Context.ConnectionId, topicId.ToString());
+
+            await Clients.Group(topicId.ToString()).SendAsync("SetErrorMessage", "Собеседник вошёл!");
+
             var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, topic.Id.ToString());
-
-            await Clients.OthersInGroup($"{topic.Id}").SendAsync("NewUserMessage");
 
             await Clients.Others
                 .SendAsync("AddUser", topic.Id, topic.GetUsersCodeAndColor(), topic.LastEntryDate);
@@ -108,7 +108,6 @@ public class ChatHub : Hub
         catch (Exception ex)
         {
             _loggerService.LogError($"{ex.Source}: {ex.Message}");
-            await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
         }
     }
 
@@ -116,11 +115,11 @@ public class ChatHub : Hub
     {
         try
         {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, topicId.ToString());
+
+            await Clients.Group(topicId.ToString()).SendAsync("SetErrorMessage", "Собеседник вышел!");
+
             var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userCode);
-
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{topic.Id}");
-
-            await Clients.OthersInGroup(topic.Id.ToString()).SendAsync("UserOutMessage");
 
             await Clients.All.SendAsync("RemoveUser", topic.Id, userCode);
         }
@@ -153,7 +152,6 @@ public class ChatHub : Hub
     public async Task SendMessage(dynamic message, int topicId)
     {
         var a = new { m = message };
-        await Groups.AddToGroupAsync(Context.ConnectionId, topicId.ToString());
         await Clients.OthersInGroup(topicId.ToString()).SendAsync("ReceiveMessage", a);
     }
 

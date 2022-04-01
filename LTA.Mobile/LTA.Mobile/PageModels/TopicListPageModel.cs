@@ -12,8 +12,11 @@ using Prism.Services;
 using MvvmHelpers;
 using Prism;
 using Prism.Commands;
+using Prism.Navigation.Xaml;
+using Prism.Services.Dialogs;
 using ReactiveUI;
 using Xamarin.Forms;
+using NavigationParameters = Prism.Navigation.NavigationParameters;
 
 namespace LTA.Mobile.PageModels;
 
@@ -25,7 +28,7 @@ public class TopicListPageModel : BasePageModel
     private bool _isRefreshing;
 
     public TopicListPageModel(INavigationService navigationService, IChatService chatService,
-        ITopicRepository topicRepository, IPageDialogService pageDialogService) : base(navigationService, chatService)
+        ITopicRepository topicRepository, IDialogService pageDialogService) : base(navigationService, chatService)
     {
         IsBusy = true;
 
@@ -40,11 +43,18 @@ public class TopicListPageModel : BasePageModel
         FilterChangedCommand = new DelegateCommand<string>(FilterChanged);
         SortCommand = new DelegateCommand(ExecuteSortAsync);
         SetIsFavoriteCommand = new DelegateCommand<string>(SetIsFavorite);
+
         DialogService = pageDialogService;
+
+        SendReportCommand = new DelegateCommand<string>((topicName) =>
+        {
+            var parameters = new DialogParameters { { "topicName", topicName } };
+            DialogService.ShowDialog("Report", parameters);
+        });
         IsBusy = false;
     }
 
-    public IPageDialogService DialogService;
+    public IDialogService DialogService;
 
     private bool IsNavigate { get; set; }
     public bool IsRefreshing
@@ -88,6 +98,8 @@ public class TopicListPageModel : BasePageModel
     public ICommand FilterChangedCommand { get; private set; }
     public ICommand SetIsFavoriteCommand { get; }
 
+    public ICommand SendReportCommand { get; }
+
     public override async void Initialize(INavigationParameters parameters)
     {
         try
@@ -95,7 +107,7 @@ public class TopicListPageModel : BasePageModel
             IsBusy = true;
             Settings.CurrentPage = PageNames.Topics;
             PageMessage = await TryConnectAsync();
-            ChatService.AddUserInTopic(AddUser);
+            await ChatService.AddUserInTopic(AddUser);
             ChatService.RemoveUserFromTopic(RemoveUser);
 
             await RefreshTopics();
@@ -104,7 +116,7 @@ public class TopicListPageModel : BasePageModel
         }
         catch (System.Exception ex)
         {
-            await DialogService.DisplayAlertAsync($"Error!", $"{ex.Source}: {ex.Message}", "Got it!");
+            //await DialogService.DisplayAlertAsync($"Error!", $"{ex.Source}: {ex.Message}", "Got it!");
         }
 
         finally

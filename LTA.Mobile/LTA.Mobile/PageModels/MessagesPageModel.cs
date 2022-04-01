@@ -95,6 +95,7 @@ public class MessagesPageModel : BasePageModel
         {
             ChatService.ReceiveMessage(GetMessage);
             ChatService.ReceiveTyping(UserTyping);
+            ChatService.SetErrorMessage(NewUserMessage);
             TopicId = parameters.GetValue<int>("TopicId");
             IsBusy = true;
             CurrentTopic = await TopicRepository.GetAsync(TopicId);
@@ -259,9 +260,9 @@ public class MessagesPageModel : BasePageModel
         DialogService.DisplayAlertAsync("Alert", message, "OK");
     }
 
-    private void NewUserMessage()
+    private void NewUserMessage(string message)
     {
-        ShowMessage("New user is coming", 3000);
+        ShowMessage(message, 5000);
     }
 
     private void SendTyping()

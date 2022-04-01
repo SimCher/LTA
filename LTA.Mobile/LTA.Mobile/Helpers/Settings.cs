@@ -17,7 +17,15 @@ public static class Settings
     public static string UserCode
     {
         get => Preferences.Get(nameof(UserCode), string.Empty);
-        set => Preferences.Set(nameof(UserCode), value);
+        set
+        {
+            if (!string.IsNullOrEmpty(Preferences.Get(nameof(UserCode), value)))
+            {
+                UserCode = string.Empty;
+            }
+
+            Preferences.Set(nameof(UserCode), value);
+        }
     }
 
     public static string TopicName
