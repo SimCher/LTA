@@ -13,4 +13,6 @@
     <Color x:Key="PrimaryTextColor">#303C5E</Color>
     <Color x:Key="SecondaryTextColor">#979DAB</Color>
     <Color x:Key="ConnectedColor">#4FC84A</Color>
+
+    <Color x:Key="ErrorColor">#BB0000</Color>
 </ResourceDictionary>

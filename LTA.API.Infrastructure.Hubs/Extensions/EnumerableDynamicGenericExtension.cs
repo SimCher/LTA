@@ -1,4 +1,6 @@
 ﻿using LTA.API.Domain.Models;
+using LTA.API.Infrastructure.Hubs.Interfaces;
+using LTA.API.Infrastructure.Hubs.Services;
 
 namespace LTA.API.Infrastructure.Hubs.Extensions;
 
@@ -7,8 +9,13 @@ public static class CollectopnDynamicGenericExtension
     public static IEnumerable<dynamic> ToDynamicEnumerable(this IEnumerable<Topic> topicList) =>
         topicList.Select(GetNewDynamicTopic);
 
-    public static IEnumerable<object> ToObjectEnumerable(this IEnumerable<Topic> topicList) =>
-        topicList.Select(GetNewObjectTopic);
+    public static IEnumerable<object> ToObjectEnumerable(this IEnumerable<Topic> topicList)
+    {
+        var topics = topicList.Select(GetNewObjectTopic);
+
+        return topics;
+    }
+
 
     private static object GetNewObjectTopic(Topic topic)
     {
@@ -21,7 +28,7 @@ public static class CollectopnDynamicGenericExtension
             topic.MaxUsersNumber,
             topic.LastEntryDate,
             topic.UserNumber,
-            UsersIn = topic.GetUsersCodeAndColor(),
+            UsersIn = TopicService.GetTopicChattersAndColors(topic),
             Categories = topic.GetCategoryNames()
 
         };
@@ -41,7 +48,7 @@ public static class CollectopnDynamicGenericExtension
             topic.MaxUsersNumber,
             topic.LastEntryDate,
             topic.UserNumber,
-            UsersIn = topic.GetUsersCodeAndColor(),
+            UsersIn = TopicService.GetTopicChattersAndColors(topic),
             Categories = topic.GetCategoryNames()
         };
 

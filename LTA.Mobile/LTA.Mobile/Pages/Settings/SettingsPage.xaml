@@ -1,32 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<base:BaseTabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LTA.Mobile.Pages.Settings.SettingsPage">
-  <ListView x:Name="MyListView"
-            ItemsSource="{Binding Items}"
-            ItemTapped="Handle_ItemTapped"
-            CachingStrategy="RecycleElement">
-    <!--Built in Cells-->
-    <ListView.ItemTemplate>
-        <DataTemplate>
-            <TextCell Text="{Binding .}" />
-        </DataTemplate>
-    </ListView.ItemTemplate>
-    
-    <!--Custom View Cells-->
-    <!--
-    <ListView.ItemTemplate>
-      <DataTemplate>
-        <ViewCell>
-          <StackLayout>
-            <Label Text="{Binding Text}" 
-                   Style="{DynamicResource ListItemTextStyle}" />
-            <Label Text="{Binding Detail}" 
-                   Style="{DynamicResource ListItemDetailTextStyle}"/>
-          </StackLayout>
-        </ViewCell>
-      </DataTemplate>
-    </ListView.ItemTemplate>
-    -->
-  </ListView>
-</ContentPage>
+             xmlns:xe="clr-namespace:XamEffects;assembly=XamEffects"
+             xmlns:base="clr-namespace:LTA.Mobile.Pages.Base" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels" x:DataType="pagemodels:SettingsPageModel"
+                     x:Class="LTA.Mobile.Pages.Settings.SettingsPage"
+             NavigationPage.HasBackButton="False"
+             x:Name="Settings"
+             Title="Настройки"
+             TabSelectedIndex="1">
+    <Shell.TitleView>
+        <Grid>
+            <Label Text="{Binding Title, Source={x:Reference Settings}}"
+                   Style="{StaticResource PageTitleLabel}"/>
+        </Grid>
+    </Shell.TitleView>
+    <base:BaseTabbedPage.ViewContent>
+        <ScrollView>
+            <Grid Padding="12" ColumnDefinitions="{OnIdiom Phone='Auto,*,Auto', Default='.05*,.9*,.05*'}">
+                <StackLayout Grid.Column="1">
+                    <CollectionView ItemsSource="{Binding Options}"
+                                    VerticalOptions="StartAndExpand"
+                                    HorizontalOptions="FillAndExpand">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid xe:TouchEffect.Color="{StaticResource SecondaryAccentColor}"
+                                      xe:Commands.Tap="{Binding BindingContext.LogoutCommand,Source={x:Reference Settings}}">
+                                    <Label Text="Logout" FontFamily="{StaticResource QuickSandBold}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+                </StackLayout>
+            </Grid>
+        </ScrollView>
+    </base:BaseTabbedPage.ViewContent>
+</base:BaseTabbedPage>

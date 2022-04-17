@@ -35,7 +35,6 @@
     <Folder Include="UI\Effects\" />
     <Folder Include="UI\TemplateSelectors\" />
     <Folder Include="EventHandlers\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -51,17 +51,23 @@ namespace LTA.Mobile.PageModels
         {
             try
             {
+                IsBusy = true;
                 await TryConnectAsync();
             }
             catch
             {
                 ShowMessage("Can't connect to the API...", 3000);
             }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async void NavigateToLoginPage()
         {
-            ShowMessage("Receiving the data...");
+            IsBusy = true;
+            ShowMessage("Передаю данные...");
             if (await _registerService.RegisterAsync(PhoneOrEmail, Password, Confirm, SetErrorMessage))
             {
                 await NavigationService.NavigateAsync($"NavigationPage/{nameof(LoginPage)}");
@@ -70,6 +76,8 @@ namespace LTA.Mobile.PageModels
             PhoneOrEmail = string.Empty;
             Password = string.Empty;
             Confirm = string.Empty;
+
+            IsBusy = false;
         }
 
         private async void NavigateToLogin()

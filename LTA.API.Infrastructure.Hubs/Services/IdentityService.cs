@@ -43,43 +43,68 @@ public class IdentityService : IIdentityService
         {
             _logger.LogError($"{ex.Source}: {ex.Message}");
         }
-        
+
     }
 
-    public async Task<string> LoginAsync(string phoneOrEmail, string password)
+    public async Task<string?> LoginAsync(string phoneOrEmail, string password)
     {
-        var profile = await _profileRepository.GetAsync(phoneOrEmail) ??
-                      throw new NullReferenceException(
-                          $"Cannot find profile with phone or email like {phoneOrEmail}\nWanna sign in?");
-
-        if (profile.Password != password)
-        {
-            throw new ArgumentException($"Invalid password. Do you forgot your password?");
-        }
-
         try
         {
+            var profile = await _profileRepository.GetAsync(phoneOrEmail) ??
+                          throw new NullReferenceException(
+                              $"Cannot find profile with phone or email like {phoneOrEmail}\nWanna sign in?");
+
+            if (profile.Password != password)
+                throw new ArgumentException($"Неверный пароль. Забыли пароль?");
+
             var user = await _userRepository.GetAsync(profile.Id);
-            if (user != null)
-            {
-                return (await _userRepository.UpdateAndReturnAsync(profile.Id)).Code;
-            }
+
+            if (user != null) return (await _userRepository.UpdateAndReturnAsync(profile.Id)).Code;
 
             await _userRepository.CreateAsync(profile);
-            try
-            {
-                await _profileRepository.UpdateAsync(profile.Id);
-            }
-            catch
-            {
-                await _userRepository.TryDeleteAsync(profile.Id);
-            }
 
-            return (await _userRepository.UpdateAndReturnAsync(profile.Id)).Code;
+            return (await _userRepository.GetAsync(profile.Id))?.Code;
         }
         catch (Exception ex)
         {
             throw new NullReferenceException($"{ex}: Something wrong with login... Please, try again.");
         }
     }
+
+    //public async Task<string> LoginAsync(string phoneOrEmail, string password)
+    //{
+    //    var profile = await _profileRepository.GetAsync(phoneOrEmail) ??
+    //                  throw new NullReferenceException(
+    //                      $"Cannot find profile with phone or email like {phoneOrEmail}\nWanna sign in?");
+
+    //    if (profile.Password != password)
+    //    {
+    //        throw new ArgumentException($"Invalid password. Do you forgot your password?");
+    //    }
+
+    //    try
+    //    {
+    //        var user = await _userRepository.GetAsync(profile.Id);
+    //        if (user != null)
+    //        {
+    //            return (await _userRepository.UpdateAndReturnAsync(profile.Id)).Code;
+    //        }
+
+    //        await _userRepository.CreateAsync(profile);
+    //        try
+    //        {
+    //            await _profileRepository.UpdateAsync(profile.Id);
+    //        }
+    //        catch
+    //        {
+    //            await _userRepository.TryDeleteAsync(profile.Id);
+    //        }
+
+    //        return (await _userRepository.UpdateAndReturnAsync(profile.Id)).Code;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        throw new NullReferenceException($"{ex}: Something wrong with login... Please, try again.");
+    //    }
+    //}
 }

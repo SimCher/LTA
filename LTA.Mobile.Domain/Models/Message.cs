@@ -14,7 +14,6 @@ namespace LTA.Mobile.Domain.Models
         private DateTime _sentAt;
         private Message _replyTo;
 
-        [NotMapped]
         public Topic Topic { get; set; }
 
         [NotMapped]

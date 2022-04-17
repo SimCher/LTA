@@ -2,7 +2,6 @@
 using System;
 using System.Threading.Tasks;
 using LTA.Mobile.Application.Interfaces;
-using LTA.Mobile.Domain.Models;
 
 namespace LTA.Mobile.Application.Services;
 

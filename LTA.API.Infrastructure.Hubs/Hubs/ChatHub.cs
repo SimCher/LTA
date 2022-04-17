@@ -92,18 +92,31 @@ public class ChatHub : Hub
     //    }
     //}
 
-    public async Task LogInChatAsync(string userCode, int topicId)
+    //public async Task LogInChatAsync(string userCode, int topicId)
+    //{
+    //    try
+    //    {
+    //        await Groups.AddToGroupAsync(Context.ConnectionId, topicId.ToString());
+
+    //        await Clients.Group(topicId.ToString()).SendAsync("SetErrorMessage", "Собеседник вошёл!");
+
+    //        var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
+
+    //        await Clients.OthersInGroup(topicId.ToString())
+    //            .SendAsync("AddUser", topic.Id, _topicService.GetChattersAndColors(topic), topic.LastEntryDate);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _loggerService.LogError($"{ex.Source}: {ex.Message}");
+    //    }
+    //}
+
+    public async Task LogInChatAsync(int topicId)
     {
+        var stringTopicId = topicId.ToString();
         try
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, topicId.ToString());
-
-            await Clients.Group(topicId.ToString()).SendAsync("SetErrorMessage", "Собеседник вошёл!");
-
-            var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
-
-            await Clients.Others
-                .SendAsync("AddUser", topic.Id, topic.GetUsersCodeAndColor(), topic.LastEntryDate);
+            await Groups.AddToGroupAsync(Context.ConnectionId, stringTopicId);
         }
         catch (Exception ex)
         {
@@ -111,17 +124,44 @@ public class ChatHub : Hub
         }
     }
 
-    public async Task LogOutFromChatAsync(string userCode, int topicId)
+    public async Task LogOutFromChatAsync(int topicId)
+    {
+        var stringTopicId = topicId.ToString();
+
+        try
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, stringTopicId);
+        }
+        catch (Exception ex)
+        {
+            _loggerService.LogError($"{ex.Source}: {ex.Message}");
+        }
+    }
+
+    public async Task SubscribeToChat(string userCode, int topicId)
+    {
+        var stringTopicId = topicId.ToString();
+
+        try
+        {
+            var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
+
+            await Clients.OthersInGroup(stringTopicId)
+                .SendAsync("AddUser", topic.Id, _topicService.GetChattersAndColors(topic), topic.LastEntryDate);
+        }
+        catch (Exception ex)
+        {
+            _loggerService.LogError($"{ex.Source}: {ex.Message}");
+        }
+    }
+
+    public async Task UnsubscribeFromChat(string userCode, int topicId)
     {
         try
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, topicId.ToString());
-
-            await Clients.Group(topicId.ToString()).SendAsync("SetErrorMessage", "Собеседник вышел!");
-
             var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userCode);
 
-            await Clients.All.SendAsync("RemoveUser", topic.Id, userCode);
+            await Clients.OthersInGroup(topicId.ToString()).SendAsync("RemoveUser", topic.Id, userCode);
         }
         catch (Exception ex)
         {
@@ -129,6 +169,25 @@ public class ChatHub : Hub
             await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
         }
     }
+
+    //public async Task LogOutFromChatAsync(string userCode, int topicId)
+    //{
+    //    try
+    //    {
+    //        await Groups.RemoveFromGroupAsync(Context.ConnectionId, topicId.ToString());
+
+    //        await Clients.Group(topicId.ToString()).SendAsync("SetErrorMessage", "Собеседник вышел!");
+
+    //        var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userCode);
+
+    //        await Clients.OthersInGroup(topicId.ToString()).SendAsync("RemoveUser", topic.Id, userCode);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _loggerService.LogError($"{ex.Source}: {ex.Message}");
+    //        await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
+    //    }
+    //}
 
     //public async Task LogOutFromChatAsync(string userCode, int topicId)
     //{

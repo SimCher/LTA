@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LTA.Mobile.Application.Interfaces;
+using LTA.Mobile.Data.Context;
 using LTA.Mobile.Domain.Interfaces;
 using LTA.Mobile.Domain.Models;
 using LTA.Mobile.Domain.Properties;
@@ -14,42 +15,55 @@ namespace LTA.Mobile.Data.Repositories;
 public class TopicRepository : ITopicRepository
 {
     private readonly IChatService _chatService;
-    public ICollection<Topic> Topics { get; private set; }
+    private LtaClientContext Context { get; }
 
-    public TopicRepository(IChatService chatService)
+    public TopicRepository(LtaClientContext context, IChatService chatService)
     {
+        Context = context;
         _chatService = chatService;
-    }
-    public async Task<ICollection<Topic>> GetAllAsync()
-    {
-        await InitializeAsync();
-        return Topics;
+
+        InitializeAsync();
     }
 
-    [ItemCanBeNull]
-    public async Task<Topic> GetAsync(int topicId)
+    public ICollection<Topic> GetAllAsync()
     {
-        if (Topics == null)
-        {
-            await InitializeAsync();
-        }
-
-        return Topics.FirstOrDefault(t => t.Id == topicId);
+        var t = Context.Topics.ToList();
+        return t;
     }
 
-    public async Task AddUserInTopic(User user, int topicId)
+    public Topic Get(int topicId)
     {
-        var topic = await GetAsync(topicId);
+        return Context.Topics.Find(topicId);
+    }
+
+    public void AddUserInTopic(User user, int topicId)
+    {
+        var topic = Get(topicId);
 
         topic.UsersIn[user.Code] = user.Color;
     }
 
-    public async Task<bool> RemoveUserFromTopic(string userCode, int topicId)
+    public bool RemoveUserFromTopic(string userCode, int topicId)
     {
-        var topic = await GetAsync(topicId);
+        var topic = Get(topicId);
 
         return topic.UsersIn.Remove(userCode);
     }
+    //public async Task<ICollection<Topic>> GetAllAsync()
+    //{
+    //    if (Topics.Count == 0)
+    //    {
+    //        await InitializeAsync();
+
+    //        //await Context.Topics.AddRangeAsync(Topics);
+
+    //        //await Context.SaveChangesAsync();
+    //    }
+
+
+
+    //    return Topics;
+    //}
 
     //private async Task InitializeAsync()
     //{
@@ -83,6 +97,11 @@ public class TopicRepository : ITopicRepository
     //}
     private async Task InitializeAsync()
     {
+        if (!_chatService.IsConnected)
+        {
+            await _chatService.Connect();
+        }
+
         var definition = new
         {
             Id = 0,
@@ -96,9 +115,9 @@ public class TopicRepository : ITopicRepository
             Categories = string.Empty
         };
 
-        var topics = await _chatService.LoadTopicsAsync();
+        var topics = (await _chatService.LoadTopicsAsync()).ToList();
 
-        Topics = topics.Select(topic => JsonConvert.DeserializeAnonymousType(topic.ToString(), definition))
+        var topicsObject = topics.Select(topic => JsonConvert.DeserializeAnonymousType(topic.ToString(), definition))
             .Select(anonTopic =>
             {
                 if (anonTopic == null) throw new NullReferenceException("Cannot deserialize the anonymous type");
@@ -114,6 +133,15 @@ public class TopicRepository : ITopicRepository
                     UsersIn = anonTopic.UsersIn,
                     Categories = anonTopic.Categories.Split(',')
                 };
-            }).ToList();
+            });
+
+        Context.Topics.AddRange(topicsObject);
+
+        foreach (var topic in Context.Topics)
+        {
+            Console.WriteLine(topic.Id);
+        }
+
+        await Context.SaveChangesAsync();
     }
 }

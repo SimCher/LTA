@@ -9,25 +9,74 @@
              Title="Log in"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.Content>
-        <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="0">
-            <Label Text="{Binding PageMessage}"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <Label Text="Enter your phone number or E-Mail"/>
-            <Editor Placeholder="Phone or E-Mail" Margin="10,5,5,10" VerticalOptions="Center"
+            <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="0">
+                <StackLayout.Triggers>
+                    <DataTrigger TargetType="StackLayout"
+                                 Binding="{Binding IsBusy}"
+                                 Value="True">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </StackLayout.Triggers>
+                <Label FontFamily="{StaticResource QuickSandBold}" Text="LET'S TALK ABOUT ALPHA"
+                       HorizontalOptions="CenterAndExpand"
+                       FontSize="26"
+                       Margin="0,0,0,50"/>
+                <Label Text="{Binding PageMessage}"/>
+
+                <Label Text="Ваш номер телефона или E-Mail"/>
+                <Editor Placeholder="Телефон или E-Mail" Margin="10,5,5,10" VerticalOptions="Center"
                    FontFamily="{StaticResource QuickSandRegular}" FontAttributes="Bold" Text="{Binding PhoneOrEmail}" Keyboard="Email"/>
 
-            <Label Text="Enter your password"/>
-            <Entry Placeholder="Phone or E-Mail" Margin="10,5,5,10" VerticalOptions="Center"
+                <Label Text="Ваш пароль"/>
+                <Entry Placeholder="Пароль" Margin="10,5,5,10" VerticalOptions="Center"
                     FontFamily="{StaticResource QuickSandRegular}" FontAttributes="Bold" IsPassword="True" Text="{Binding Password}"/>
 
-            <customControls:FloatingButton WidthRequest="60" HeightRequest="60"
+                <Label HorizontalOptions="CenterAndExpand" VerticalOptions="StartAndExpand" TextDecorations="Underline" Text="Забыли пароль?" TextColor="DodgerBlue"
+                Margin="10,-10,10,20" FontSize="16" BackgroundColor="Transparent">
+                </Label>
+
+                <customControls:FloatingButton WidthRequest="60" HeightRequest="60"
                                            HorizontalOptions="Center" VerticalOptions="Center"
                                            BackgroundColor="{StaticResource AccentColor}"
                                            PressedCommand="{Binding TryLoginCommand}"
-                                           Icon="{StaticResource FontAwesomePaperPlane}"
+                                           Icon="{StaticResource FontAwesomeLogin}"
                                            IconColor="{StaticResource PrimaryColor}"
                                            Style="{StaticResource LightShadowPancakeViewStyle}"
                                            Margin="5,0,10,0"/>
-        </StackLayout>
+                <Label HorizontalOptions="Center"
+                   VerticalOptions="CenterAndExpand">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="У вас нет аккаунта? "/>
+                            <Span Text="Зарегистрируйтесь!"
+                              TextColor="PowderBlue"
+                              TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding NavigateToRegisterCommand}"/>
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+
+
+            </StackLayout>
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               Grid.RowSpan="2"
+                               IsVisible="{Binding IsBusy}"
+                               Color="{StaticResource AccentColor}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               HeightRequest="50"
+                               WidthRequest="50"/>
+        </Grid>
+
     </ContentPage.Content>
 </ContentPage>

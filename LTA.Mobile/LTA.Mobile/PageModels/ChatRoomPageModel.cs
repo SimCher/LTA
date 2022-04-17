@@ -179,13 +179,13 @@ namespace LTA.Mobile.PageModels
 
         public override async void OnNavigatedTo(INavigationParameters parameters)
         {
-            await ChatService.LogInChatAsync(Settings.UserCode, CurrentTopic.Id);
+            await ChatService.LogInChatAsync(CurrentTopic.Id);
             //await DialogService.DisplayAlertAsync("Checking...", Topic.CountUsersPresentation, "Ok");
         }
 
         public override async void OnNavigatedFrom(INavigationParameters parameters)
         {
-            await ChatService.LogOutFromChatAsync(Settings.UserCode, CurrentTopic.Id);
+            await ChatService.LogOutFromChatAsync(CurrentTopic.Id);
             //await DialogService.DisplayAlertAsync("Checking...", Topic.CountUsersPresentation, "Ok");
             await NavigationService.NavigateAsync($"NavigationPage/{nameof(TopicListPage)}", parameters, true);
         }
@@ -197,7 +197,7 @@ namespace LTA.Mobile.PageModels
             {
                 IsBusy = true;
                 await ChatService.Connect();
-                await ChatService.LogInChatAsync(Settings.UserCode, CurrentTopic.Id);
+                await ChatService.LogInChatAsync(CurrentTopic.Id);
                 IsConnected = true;
             }
             catch (Exception ex)

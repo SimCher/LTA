@@ -121,30 +121,30 @@
     <value>Let's Talk About</value>
   </data>
   <data name="Chat" xml:space="preserve">
-    <value>Chat</value>
+    <value>Чат</value>
   </data>
   <data name="Home" xml:space="preserve">
-    <value>Home</value>
+    <value>Домой</value>
   </data>
   <data name="Messages" xml:space="preserve">
-    <value>Messages</value>
+    <value>Беседы</value>
   </data>
   <data name="Profile" xml:space="preserve">
-    <value>Profile</value>
+    <value>Профиль</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Настройки</value>
   </data>
   <data name="Today" xml:space="preserve">
-    <value>Today</value>
+    <value>Сегодня</value>
   </data>
   <data name="Users" xml:space="preserve">
-    <value>Users</value>
+    <value>Пользователи</value>
   </data>
   <data name="Yesterday" xml:space="preserve">
-    <value>Yesterday</value>
+    <value>Вчера</value>
   </data>
   <data name="You" xml:space="preserve">
-    <value>You</value>
+    <value>Вы</value>
   </data>
 </root>

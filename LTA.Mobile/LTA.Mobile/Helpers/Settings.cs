@@ -8,24 +8,17 @@ namespace LTA.Mobile.Helpers;
 
 public static class Settings
 {
-    public const string TopicsPageNavigation = "NavigationPage/TopicsPage";
-    public const string MessagesPageNavigation = "NavigationPage/MessagesPage";
-    public const string AddTopicNavigation = "NavigationPage/Add";
-    public const string RegistrationPageNavigation = "NavigationPage/RegistrationPage";
-    public const string LoginPageNavigation = "NavigationPage/LoginPage";
+    public const string TopicsPageNavigation = "lta:///NavigationPage/TopicsPage";
+    public const string MessagesPageNavigation = "lta:///NavigationPage/MessagesPage";
+    public const string MessagesPageModal = "NavigationPage/MessagesPage";
+    public const string AddTopicNavigation = "lta:///NavigationPage/Add";
+    public const string RegistrationPageNavigation = "lta:///NavigationPage/RegistrationPage";
+    public const string LoginPageNavigation = "lta:///NavigationPage/LoginPage";
 
     public static string UserCode
     {
         get => Preferences.Get(nameof(UserCode), string.Empty);
-        set
-        {
-            if (!string.IsNullOrEmpty(Preferences.Get(nameof(UserCode), value)))
-            {
-                UserCode = string.Empty;
-            }
-
-            Preferences.Set(nameof(UserCode), value);
-        }
+        set => Preferences.Set(nameof(UserCode), value);
     }
 
     public static string TopicName
@@ -67,6 +60,10 @@ public static class Settings
         return collectionObj ?? throw new NullReferenceException("Cannot deserialize the collection");
 
     }
+
+    public static void Logout() => UserCode = string.Empty;
+
+    public static void Clear() => Preferences.Clear();
 
     private static PageNames _currentPage;
 }

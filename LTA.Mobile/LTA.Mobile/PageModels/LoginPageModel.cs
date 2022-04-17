@@ -22,6 +22,7 @@ public class LoginPageModel : BasePageModel
         _userService = userService;
 
         TryLoginCommand = new DelegateCommand(TryToLogin);
+        NavigateToRegisterCommand = new DelegateCommand(NavigateToRegister);
     }
 
     public string PhoneOrEmail { get => _phoneOrEmail; set => this.RaiseAndSetIfChanged(ref _phoneOrEmail, value); }
@@ -29,22 +30,29 @@ public class LoginPageModel : BasePageModel
     public string Password { get => _password; set => this.RaiseAndSetIfChanged(ref _password, value); }
 
     public ICommand TryLoginCommand { get; private set; }
+    public ICommand NavigateToRegisterCommand { get; }
 
     public override async void Initialize(INavigationParameters parameters)
     {
         try
         {
+            IsBusy = true;
             await ChatService.Connect();
         }
         catch
         {
             ShowMessage("Something wrong with the server connection...");
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     private async void TryToLogin()
     {
         ShowMessage("Logging in...");
+        IsBusy = true;
         if (await _userService.LoginAsync(PhoneOrEmail, Password, SetErrorMessage))
         {
             Settings.UserCode = ChatService.CurrentUserCode;
@@ -53,6 +61,12 @@ public class LoginPageModel : BasePageModel
 
         PhoneOrEmail = string.Empty;
         Password = string.Empty;
+        IsBusy = false;
+    }
+
+    private async void NavigateToRegister()
+    {
+        await NavigationService.NavigateAsync(Settings.RegistrationPageNavigation);
     }
 
     private void SetErrorMessage(string message) => ShowMessage(message);

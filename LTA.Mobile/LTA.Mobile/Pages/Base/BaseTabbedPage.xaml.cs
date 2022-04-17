@@ -129,7 +129,7 @@ namespace LTA.Mobile.Pages.Base
             {
                 if (!Helpers.Settings.IsCurrentPage(PageNames.Settings))
                 {
-                    NavigationService.NavigateAsync("NavigationPage/SettingsPage");
+                    NavigationService.NavigateAsync("NavigationPage/SettingsPage", null, true);
                 }
             });
 
@@ -137,7 +137,8 @@ namespace LTA.Mobile.Pages.Base
             {
                 if (!Helpers.Settings.IsCurrentPage(PageNames.Topics))
                 {
-                    NavigationService.NavigateAsync("NavigationPage/TopicsPage");
+                    NavigationService.NavigateAsync("lta:///NavigationPage/TopicsPage");
+                    //NavigationService.NavigateAsync("NavigationPage/TopicsPage", null, true);
                 }
             });
         }

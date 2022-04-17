@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Windows.Input;
 using LTA.Mobile.Domain.Models.BaseModels;
 using Xamarin.Forms;
 
@@ -11,8 +8,6 @@ namespace LTA.Mobile.Domain.Models
 {
     public class Topic : BaseModel
     {
-        public int[] UserIds { get; set; }
-
         private string _name;
 
         private bool _isSelected;
@@ -62,6 +57,7 @@ namespace LTA.Mobile.Domain.Models
             set => SetProperty(ref _currentUsersNumber, value);
         }
 
+        [NotMapped]
         public bool? IsFull
         {
             get
@@ -75,6 +71,7 @@ namespace LTA.Mobile.Domain.Models
             }
         }
 
+        [NotMapped]
         public bool IsFavorite
         {
             get => _isFavorite;
@@ -87,6 +84,7 @@ namespace LTA.Mobile.Domain.Models
 
         private Color _onlineColor;
 
+        [NotMapped]
         public Color OnlineColor
         {
             get => CurrentUsersNumber switch
@@ -102,11 +100,13 @@ namespace LTA.Mobile.Domain.Models
 
         public int OwnerUserId { get; set; }
 
-
+        [NotMapped]
         public string CountPresentation => $"{_currentUsersNumber}/{_maxUsersNumber}";
 
+        [NotMapped]
         public bool IsRoomFilled => _currentUsersNumber >= _maxUsersNumber;
 
+        [NotMapped]
         public ICollection<string> Categories { get; set; }
 
         public ICollection<Message> Messages { get; set; }

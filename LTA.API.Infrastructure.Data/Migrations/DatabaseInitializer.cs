@@ -9,6 +9,7 @@ public static class DatabaseInitializer
     {
         await context.Database.EnsureCreatedAsync();
 
+
         if (context.Profiles.Any()) return;
 
         var newProfile = new Profile
@@ -20,14 +21,20 @@ public static class DatabaseInitializer
             RegistrationDate = DateTime.Now
         };
 
-
         context.Profiles.Add(newProfile);
 
-        context.Users.Add(new User
+        var user = new User
         {
             Code = Guid.NewGuid().ToString("D"),
             LastEntryDate = DateTime.Now,
             Profile = newProfile
+        };
+
+        context.Users.Add(user);
+
+        context.Chatters.Add(new Chatter
+        {
+            User = user
         });
 
         await context.SaveChangesAsync();
@@ -54,7 +61,7 @@ public static class DatabaseInitializer
                 Categories = new List<Category>() {categories[1]}
             }
         };
-        
+
 
         context.Topics.AddRange(topics);
 

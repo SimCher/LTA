@@ -98,12 +98,28 @@ public class MessagesPageModel : BasePageModel
             ChatService.SetErrorMessage(NewUserMessage);
             TopicId = parameters.GetValue<int>("TopicId");
             IsBusy = true;
-            CurrentTopic = await TopicRepository.GetAsync(TopicId);
+            CurrentTopic = TopicRepository.Get(TopicId);
 
             var messages = MessageRepository.GetAllForTopic(TopicId);
 
             if (messages != null)
                 _messages.AddRange(messages);
+
+            _messages.Add(
+
+                new Message()
+                {
+                    Id = 1,
+                    CreationDate = DateTime.Now.AddDays(-1),
+                    Topic = CurrentTopic,
+                    UserCode = Guid.NewGuid().ToString("D"),
+                    IsSent = false,
+                    Content = "privet",
+                    TopicId = CurrentTopic.Id,
+                    IsSentPreviousMessage = false
+                }
+
+            );
 
             _messages.Add(
 
@@ -118,22 +134,6 @@ public class MessagesPageModel : BasePageModel
                     TopicId = CurrentTopic.Id,
                     IsSentPreviousMessage = false
                 }
-            );
-
-            _messages.Add(
-
-                new Message()
-                {
-                    Id = 1,
-                    CreationDate = DateTime.Now,
-                    Topic = CurrentTopic,
-                    UserCode = Guid.NewGuid().ToString("D"),
-                    IsSent = false,
-                    Content = "hello",
-                    TopicId = CurrentTopic.Id,
-                    IsSentPreviousMessage = false
-                }
-
             );
 
             var messagesGroups = _messages.GroupBy(m => m.CreationDate.Day)
@@ -174,7 +174,7 @@ public class MessagesPageModel : BasePageModel
 
     public override async void OnNavigatedFrom(INavigationParameters parameters)
     {
-        await ChatService.LogOutFromChatAsync(Settings.UserCode, CurrentTopic.Id);
+        await ChatService.LogOutFromChatAsync(CurrentTopic.Id);
     }
 
     private void MessageSwiped(Message message)
@@ -232,8 +232,7 @@ public class MessagesPageModel : BasePageModel
                 Content = (string)dynamicMessage.m.content,
                 ReplyTo = replyTo,
                 CreationDate = (DateTime)dynamicMessage.m.creationDate,
-                UserCode = (string)dynamicMessage.m.userId,
-                IsSentPreviousMessage = isSent != null && (bool)isSent,
+                UserCode = (string)dynamicMessage.m.userCode,
                 IsSent = false,
                 TopicId = CurrentTopic.Id
             };

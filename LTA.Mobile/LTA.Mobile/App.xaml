@@ -17,6 +17,11 @@
             <Setter Property="BarBackgroundColor" Value="{StaticResource AccentColor}"/>
         </Style>
 
+        <Style TargetType="Entry" x:Key="ErrorStyle">
+            <Setter Property="TextColor" Value="{StaticResource ErrorColor}"/>
+            <Setter Property="FontFamily" Value="{StaticResource QuickSandRegular}"/>
+        </Style>
+
         <Style TargetType="Label" x:Key="TabLabelStyle">
             <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
             <Setter Property="TextColor" Value="{StaticResource SecondaryAccentColor}" />
@@ -41,57 +46,6 @@
         </Style>
 
         <Style TargetType="TabBar" BasedOn="{StaticResource BaseStyle}"/>
-        <!--<Color x:Key="PrimaryColor">#1B1F7B
-        </Color>
-        <Color x:Key="PurpleColor">#2B002B</Color>
-        <Color x:Key="ElegantDarkColor">#2E2E2E</Color>
-        <Color x:Key="WhiteColor">#FFFFFF</Color>
-        -->
-        <!-- Application resource dictionary -->
-
-        <!--Navigation bar-->
-        <!--
-        <Style TargetType="NavigationPage">
-            <Setter Property="BarBackgroundColor" Value="{StaticResource PrimaryColor}"/>
-            <Setter Property="BarTextColor" Value="{StaticResource WhiteColor}"/>
-        </Style>
-
-        <Style x:Key="RegEntry" TargetType="Entry">
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
-        </Style>
-        <Style x:Key="RegLayout" TargetType="StackLayout">
-            <Setter Property="VerticalOptions" Value="FillAndExpand"/>
-            <Setter Property="Spacing" Value="10"/>
-            <Setter Property="Padding" Value="15,0"/>
-        </Style>
-
-        <Style x:Key="InvalidStyle" TargetType="Entry">
-            <Setter Property="TextColor" Value="Red"/>
-        </Style>
-
-        -->
-        <!--Button Style-->
-        <!--
-        <Style x:Key="ButtonFrameStyle" TargetType="Frame">
-            <Setter Property="BackgroundColor" Value="{StaticResource PurpleColor}" />
-            <Setter Property="HasShadow" Value="True"/>
-            <Setter Property="CornerRadius" Value="100" />
-            <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
-            <Setter Property="VerticalOptions" Value="Center" />
-            <Setter Property="HeightRequest" Value="50" />
-            <Setter Property="Padding" Value="0" />
-        </Style>
-        <Style x:Key="ButtonStyle" TargetType="Button">
-            <Setter Property="BackgroundColor" Value="{StaticResource PrimaryColor}" />
-            <Setter Property="TextColor" Value="{StaticResource WhiteColor}"/>
-            <Setter Property="HorizontalOptions" Value="FillAndExpand" />
-            <Setter Property="CornerRadius" Value="15" />
-        </Style>-->
-
-
-
-
         <converters:BoolToVisibility x:Key="BoolToVisibility"/>
     </Application.Resources>
 </prism:PrismApplication>

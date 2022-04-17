@@ -6,10 +6,11 @@
              xmlns:base="clr-namespace:LTA.Mobile.Pages.Base;assembly=LTA.Mobile"
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
              x:Name="AddTopicPage"
-             x:Class="LTA.Mobile.Pages.Topics.Add">
+             x:Class="LTA.Mobile.Pages.Topics.Add"
+             Title="Добавление беседы">
     <ContentPage.Content>
         <StackLayout Margin="15,10,0,0">
-            <customControls:FloatingButton Margin="5,0,0,0"
+            <customControls:FloatingButton Margin="0,0,0,0"
                                            HorizontalOptions="Start"
                                            VerticalOptions="Center"
                                            CornerRadius="90"
@@ -19,22 +20,14 @@
                                            Icon="{StaticResource FontAwesomeChevronLeft}"
                                            BackgroundColor="{StaticResource PrimaryColor}"
                                            IconColor="{StaticResource AccentColor}"/>
-            <Label FontFamily="{StaticResource QuickSandBold}"
-                   HorizontalOptions="StartAndExpand"
-                   LineBreakMode="TailTruncation">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="Add New Topic"/>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
+
             <Label FontFamily="{StaticResource QuickSandBold}"
                    LineBreakMode="TailTruncation"
-                   Margin="10,0,0,5" Text="Name"/>
-            <Entry Placeholder="Name"
+                   Margin="10,0,0,5" Text="Название"/>
+            <Entry Placeholder="Название"
                    Margin="10,5,5,10"
                    Text="{Binding TopicName}"
-                   MaxLength="50"
+                   MaxLength="150"
                    Keyboard="Text"
                    HorizontalOptions="StartAndExpand"
                    VerticalOptions="Center"
@@ -42,8 +35,8 @@
             </Entry>
             <Label FontFamily="{StaticResource QuickSandBold}"
                    LineBreakMode="TailTruncation"
-                   Margin="10,0,0,5" Text="Maximum Users"/>
-            <Entry Placeholder="Maximum Users"
+                   Margin="10,0,0,5" Text="Макс. пользователей"/>
+            <Entry
                     Margin="10,5,5,10"
                     MaxLength="2"
                     Text="{Binding MaxNumbers}"
@@ -54,17 +47,18 @@
             </Entry>
             <Label FontFamily="{StaticResource QuickSandBold}"
                    LineBreakMode="TailTruncation"
-                   Margin="10,0,0,5" Text="Categories"/>
-            <Entry Placeholder="Categories (use space)"
+                   Margin="10,0,0,5" Text="Категории"/>
+            <Entry Placeholder="Категории (через пробел)"
                    Margin="10,5,5,10"
                    Text="{Binding Categories}"
-                   MaxLength="50"
+                   MaxLength="100"
                    HorizontalOptions="StartAndExpand"
                    VerticalOptions="Center"
                    Keyboard="Text"
                    FontFamily="{StaticResource QuickSandRegular}"/>
             <customControls:FloatingButton MinimumHeightRequest="65"
                                            HeightRequest="65"
+                                           IconSize="17"
                                            BackgroundColor="{StaticResource AccentColor}"
                                            PressedCommand="{Binding AddTopicCommand}"
                                            Icon="{StaticResource FontAwesomePlus}"

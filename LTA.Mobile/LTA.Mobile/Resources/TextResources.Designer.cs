@@ -70,7 +70,7 @@ namespace LTA.Mobile.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Chat.
+        ///   Ищет локализованную строку, похожую на Чат.
         /// </summary>
         internal static string Chat {
             get {
@@ -79,7 +79,7 @@ namespace LTA.Mobile.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Home.
+        ///   Ищет локализованную строку, похожую на Домой.
         /// </summary>
         internal static string Home {
             get {
@@ -88,7 +88,7 @@ namespace LTA.Mobile.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Messages.
+        ///   Ищет локализованную строку, похожую на Беседы.
         /// </summary>
         internal static string Messages {
             get {
@@ -97,7 +97,7 @@ namespace LTA.Mobile.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Profile.
+        ///   Ищет локализованную строку, похожую на Профиль.
         /// </summary>
         internal static string Profile {
             get {
@@ -106,7 +106,7 @@ namespace LTA.Mobile.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Settings.
+        ///   Ищет локализованную строку, похожую на Настройки.
         /// </summary>
         internal static string Settings {
             get {
@@ -115,7 +115,7 @@ namespace LTA.Mobile.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Today.
+        ///   Ищет локализованную строку, похожую на Сегодня.
         /// </summary>
         internal static string Today {
             get {
@@ -124,7 +124,7 @@ namespace LTA.Mobile.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Users.
+        ///   Ищет локализованную строку, похожую на Пользователи.
         /// </summary>
         internal static string Users {
             get {
@@ -133,7 +133,7 @@ namespace LTA.Mobile.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Yesterday.
+        ///   Ищет локализованную строку, похожую на Вчера.
         /// </summary>
         internal static string Yesterday {
             get {
@@ -142,7 +142,7 @@ namespace LTA.Mobile.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на You.
+        ///   Ищет локализованную строку, похожую на Вы.
         /// </summary>
         internal static string You {
             get {

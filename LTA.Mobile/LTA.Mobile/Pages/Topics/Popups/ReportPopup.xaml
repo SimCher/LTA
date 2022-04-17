@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels"
            x:Class="LTA.Mobile.Pages.Topics.Popups.ReportPopup"
-             BackgroundColor="{StaticResource PrimaryColor}">
+             BackgroundColor="{StaticResource PrimaryColor}"
+             HeightRequest="300"
+             WidthRequest="300">
     <Label Style="{StaticResource FontAwesomeLabel}"
            FontSize="Large"
            TextColor="{StaticResource SecondaryTextColor}"

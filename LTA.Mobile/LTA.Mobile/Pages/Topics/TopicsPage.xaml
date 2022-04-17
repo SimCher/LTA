@@ -6,20 +6,17 @@
              xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
              Title="{x:Static resources:TextResources.Messages}"
              xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects"
-             xmlns:ui="clr-namespace:LTA.Mobile.UI.DataTemplates"
              x:Name="TopicPage"
-             xmlns:pageModels="clr-namespace:LTA.Mobile.PageModels"
              xmlns:xe="clr-namespace:XamEffects;assembly=XamEffects"
              xmlns:prism="http://prismlibrary.com"
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
              xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
-                     BackgroundColor="{StaticResource PrimaryColor}"
-             
+             BackgroundColor="{StaticResource PrimaryColor}"
              x:Class="LTA.Mobile.Pages.Topics.TopicsPage"
              TabSelectedIndex="0">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Clear Filter" Command="{Binding FilterOptionChangedCommand, Mode=OneTime}"/>
-        <ToolbarItem Text="Sort" Command="{Binding SortCommand, Mode=OneTime}"/>
+        <ToolbarItem Text="Сброс фильтра" Command="{Binding FilterOptionChangedCommand, Mode=OneTime}"/>
+        <ToolbarItem Text="Сортировка" Command="{Binding SortCommand, Mode=OneTime}"/>
     </ContentPage.ToolbarItems>
     <Shell.TitleView>
         <Grid>
@@ -65,10 +62,11 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Entry Placeholder="Search"
+                        <Entry Placeholder="Поиск"
                                Text="{Binding SearchText}"
                                VerticalOptions="Center"
                                FontFamily="{StaticResource QuickSandBold}"
+                               FontSize="14"
                                FontAttributes="Bold">
                             <Entry.Effects>
                                 <effects:BorderlessEntryEffect/>
@@ -124,7 +122,7 @@
                 <RefreshView Grid.Row="2"
                              Command="{Binding RefreshCommand}"
                              VerticalOptions="FillAndExpand"
-                             IsRefreshing="{Binding IsRefresh}">
+                             IsRefreshing="{Binding IsRefreshing}">
 
 
 
@@ -141,29 +139,6 @@
                                             <SwipeItemView>
                                                 <StackLayout Orientation="Horizontal">
                                                     <customControls:FloatingButton
-                                                                   CornerRadius="5"
-                                                                   WidthRequest="80"
-                                                                   Icon="{StaticResource FontAwesomeSolidHeart}"
-                                                                   xe:Commands.Tap="{Binding BindingContext.SetIsFavoriteCommand, Source={x:Reference TopicPage}}"
-                                                                   xe:Commands.TapParameter="{Binding Name}"
-                                                                   CommandParameter="{Binding Name}"
-                                                                   BackgroundColor="{StaticResource PrimaryColor}"
-                                                                   IconSize="30"
-                                                                   Style="{StaticResource LightShadowPancakeViewStyle}">
-                                                        <customControls:FloatingButton.Triggers>
-                                                            <DataTrigger TargetType="customControls:FloatingButton"
-                                                         Binding="{Binding IsFavorite}"
-                                                         Value="True">
-                                                                <Setter Property="IconColor" Value="{StaticResource AccentColor}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger TargetType="customControls:FloatingButton"
-                                                         Binding="{Binding IsFavorite}"
-                                                         Value="False">
-                                                                <Setter Property="IconColor" Value="DarkGray"/>
-                                                            </DataTrigger>
-                                                        </customControls:FloatingButton.Triggers>
-                                                    </customControls:FloatingButton>
-                                                    <customControls:FloatingButton
                                                         CornerRadius="5"
                                                                    WidthRequest="80"
                                                                    Icon="{StaticResource FontAwesomeReport}"
@@ -175,7 +150,6 @@
                                                                    IconColor="DarkGray"
                                                                    Style="{StaticResource LightShadowPancakeViewStyle}"/>
                                                 </StackLayout>
-
                                             </SwipeItemView>
                                         </SwipeItems>
                                     </SwipeView.LeftItems>
@@ -219,12 +193,13 @@
 
                                         <CollectionView Grid.Row="1" HorizontalScrollBarVisibility="Never"
                                                     VerticalScrollBarVisibility="Default"
-                                ItemsSource="{Binding Categories}"
-                                Margin="66,-15,0,0"
-                                ItemsLayout="HorizontalList"
-                                HeightRequest="50"
-                                SelectionMode="Single" FlowDirection="LeftToRight" VerticalOptions="Start"
-                >
+                                                    ItemsSource="{Binding Categories}"
+                                                    Margin="66,-15,0,0"
+                                                    ItemsLayout="HorizontalList"
+                                                    HeightRequest="50"
+                                                    SelectionMode="Single" 
+                                                    FlowDirection="LeftToRight" 
+                                                    VerticalOptions="Start">
                                             <CollectionView.Triggers>
                                                 <DataTrigger TargetType="CollectionView"
                                      Binding="{Binding IsInTitle, Source={x:Reference TopicPage}}"

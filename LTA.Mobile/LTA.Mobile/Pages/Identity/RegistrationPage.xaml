@@ -4,66 +4,117 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels" x:DataType="pagemodels:RegistrationPageModel"
              x:Class="LTA.Mobile.Pages.Identity.RegistrationPage"
              xmlns:mvvm="http://prismlibrary.com"
-             xmlns:pages="clr-namespace:LTA.Mobile.Pages;assembly=LTA.Mobile"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              mvvm:ViewModelLocator.AutowireViewModel="True"
-             Title="Registration"
-             >
+             Title="Регистрация"
+>
     <ContentPage.Content>
-        <StackLayout >
-            <Label Text="LETS'S TALK ABOUT ALPHA"
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackLayout >
+                <StackLayout.Triggers>
+                    <DataTrigger TargetType="StackLayout"
+                                 Binding="{Binding IsBusy}"
+                                 Value="True">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </StackLayout.Triggers>
+                <Label FontFamily="{StaticResource QuickSandBold}" Text="LET'S TALK ABOUT ALPHA"
                        HorizontalOptions="CenterAndExpand"
                        FontSize="30"
                        Margin="0,0,0,50"/>
 
-            <Label Text="{Binding PageMessage}" TextColor="Red"/>
+                <Label Text="{Binding PageMessage}" TextColor="Red"/>
 
-            <Label Text="Enter your phone number or E-Mail"/>
-            <Entry  Text="{Binding PhoneOrEmail}" Keyboard="Email" Placeholder="Enter phone number or email">
-                <Entry.Behaviors>
-                    <xct:EmailValidationBehavior 
-                            DecorationFlags="Trim"/>
-                </Entry.Behaviors>
-            </Entry>
-            <Label Text="Enter your password"/>
-            <Entry x:Name="PasswordEntry" IsPassword="True" Text="{Binding Password}" Placeholder="Password">
-                <Entry.Behaviors>
-                    <xct:MultiValidationBehavior 
+                <Label Text="Введите номер телефона или E-Mail" Margin="10,0,0,0"
+                   TextColor="{StaticResource PrimaryTextColor}" FontFamily="{StaticResource QuickSandRegular}"/>
+                <Entry Margin="10,0"  Text="{Binding PhoneOrEmail}" Keyboard="Email" Placeholder="Введите номер телефона или E-Mail">
+                    <Entry.Behaviors>
+                        <xct:EmailValidationBehavior 
+                        RegexPattern="^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"
+                        InvalidStyle="{StaticResource ErrorStyle}"/>
+                    </Entry.Behaviors>
+                </Entry>
+                <Label Text="Введите пароль" Margin="10,0,0,0"/>
+                <Entry x:Name="PasswordEntry" Margin="10,0" IsPassword="True" Text="{Binding Password}" Placeholder="Password">
+                    <Entry.Behaviors>
+                        <xct:MultiValidationBehavior 
                            >
-                        <xct:TextValidationBehavior
-                                MinimumLength="6" />
-                        <xct:CharactersValidationBehavior 
-                                CharacterType="Digit"
-                                MinimumCharacterCount="1" />
-                        <xct:CharactersValidationBehavior 
-                                CharacterType="LowercaseLetter" 
-                                MinimumCharacterCount="1" />
-                        <xct:CharactersValidationBehavior
-                                CharacterType="UppercaseLetter" 
-                                MinimumCharacterCount="1" />
-                        <xct:CharactersValidationBehavior 
-                                CharacterType="NonAlphanumericSymbol" 
-                                MinimumCharacterCount="1" />
-                        <xct:CharactersValidationBehavior 
-                                CharacterType="Whitespace" 
-                                MaximumCharacterCount="0" />
-                    </xct:MultiValidationBehavior>
-                </Entry.Behaviors>
-            </Entry>
-            <Label Text="Confirm your password"/>
-            <Entry  IsPassword="True" Text="{Binding Confirm}">
-                <Entry.Behaviors>
-                    <xct:RequiredStringValidationBehavior
-                            RequiredString="{Binding Text,
-                            Source={x:Reference PasswordEntry}}"/>
-                </Entry.Behaviors>
-            </Entry>
 
-            <Button  Text="Sign Up"
+                            <xct:TextValidationBehavior
+                                MinimumLength="6"
+                                
+                                InvalidStyle="{StaticResource ErrorStyle}"/>
+                            <xct:CharactersValidationBehavior 
+                                CharacterType="Digit"
+                                MinimumCharacterCount="1" 
+                                InvalidStyle="{StaticResource ErrorStyle}"/>
+                            <xct:CharactersValidationBehavior 
+                                CharacterType="LowercaseLetter" 
+                                MinimumCharacterCount="1" 
+                                InvalidStyle="{StaticResource ErrorStyle}"/>
+                            <xct:CharactersValidationBehavior
+                                CharacterType="UppercaseLetter" 
+                                MinimumCharacterCount="1" 
+                                InvalidStyle="{StaticResource ErrorStyle}"/>
+                            <xct:CharactersValidationBehavior 
+                                CharacterType="NonAlphanumericSymbol" 
+                                MinimumCharacterCount="1"  
+                                InvalidStyle="{StaticResource ErrorStyle}"/>
+                            <xct:CharactersValidationBehavior 
+                                CharacterType="Whitespace" 
+                                MaximumCharacterCount="0" 
+                                InvalidStyle="{StaticResource ErrorStyle}"/>
+                        </xct:MultiValidationBehavior>
+                    </Entry.Behaviors>
+                </Entry>
+                <Label Text="Подтвердите пароль" Margin="10,0,0,0"/>
+                <Entry Margin="10,0" IsPassword="True" Text="{Binding Confirm}">
+                    <Entry.Behaviors>
+                        <xct:RequiredStringValidationBehavior
+                        
+                        InvalidStyle="{StaticResource ErrorStyle}"
+                    RequiredString="{Binding Text,
+                            Source={x:Reference PasswordEntry}}"/>
+                    </Entry.Behaviors>
+                </Entry>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width=".13*"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Color="{StaticResource AccentColor}" Grid.Column="0" Margin="10,0"/>
+                    <Label Grid.Column="1" Margin="10,0" FontSize="13" BackgroundColor="Transparent">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Я согласен(на) с " TextColor="{StaticResource PrimaryTextColor}"/>
+                                <Span Text="обработкой персональных данных" TextDecorations="Underline" TextColor="DodgerBlue"/>
+                            </FormattedString>
+
+                        </Label.FormattedText>
+                    </Label>
+                </Grid>
+
+
+
+                <Button BackgroundColor="{StaticResource PrimaryColor}" BorderWidth="2" BorderColor="{StaticResource AccentColor}" Text="Зарегистрироваться" FontFamily="{StaticResource QuickSandBold}" Margin="10,0" CornerRadius="10"
                         Command="{Binding TryRegisterCommand}"/>
-            <Button Text="Sign In"
-                        Command="{Binding NavigateToLoginPageCommand}"/>
-        </StackLayout>
+                <Button BackgroundColor="{StaticResource PrimaryColor}" BorderWidth="2" BorderColor="{StaticResource AccentColor}" Text="Войти" FontFamily="{StaticResource QuickSandBold}" Margin="10,0" CornerRadius="10"
+                    Command="{Binding NavigateToLoginPageCommand}"/>
+            </StackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               Grid.RowSpan="2"
+                               IsVisible="{Binding IsBusy}"
+                               Color="{StaticResource AccentColor}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               HeightRequest="50"
+                               WidthRequest="50"/>
+        </Grid>
     </ContentPage.Content>
 
 </ContentPage>

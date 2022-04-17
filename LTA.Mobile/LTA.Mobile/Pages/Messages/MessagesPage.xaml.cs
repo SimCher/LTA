@@ -2,6 +2,7 @@
 using LTA.Mobile.EventHandlers;
 using LTA.Mobile.Helpers;
 using LTA.Mobile.PageModels;
+using Prism.Navigation;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -15,6 +16,8 @@ namespace LTA.Mobile.Pages.Messages
         public static readonly BindableProperty BackCommandProperty;
         private MessagesPageModel ViewModel { get; }
 
+        private INavigationService NavigationService { get; }
+
         public ICommand BackCommand
         {
             get => (ICommand)GetValue(BackCommandProperty);
@@ -25,15 +28,16 @@ namespace LTA.Mobile.Pages.Messages
         { }
 
         #endregion
-        public MessagesPage()
+        public MessagesPage(INavigationService navigationService)
         {
             InitializeComponent();
+
+            NavigationService = navigationService;
 
             ViewModel = (MessagesPageModel)this.BindingContext;
 
             BackCommand = new Command(async _ =>
             {
-
                 await Navigation.PopModalAsync();
             });
         }
@@ -67,8 +71,7 @@ namespace LTA.Mobile.Pages.Messages
 
         protected override async void OnDisappearing()
         {
-            await ViewModel.ChatService.LogOutFromChatAsync(Helpers.Settings.UserCode, ViewModel.CurrentTopic.Id);
-            await ViewModel.ChatService.Disconnect();
+            await ViewModel.ChatService.LogOutFromChatAsync(ViewModel.CurrentTopic.Id);
             MessagingCenter.Unsubscribe<BasePageModel, LTAFocusEventArgs>(this, "ShowKeyboard");
             MessagingCenter.Unsubscribe<BasePageModel, ScrollToItemEventArgs>(this, "ScrollToItem");
             base.OnDisappearing();

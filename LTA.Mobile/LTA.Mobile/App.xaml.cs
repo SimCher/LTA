@@ -21,6 +21,9 @@ using Xamarin.Forms;
 
 namespace LTA.Mobile
 {
+    /// <summary>
+    /// Основной класс приложения
+    /// </summary>
     public partial class App
     {
         public App(IPlatformInitializer initializer)
@@ -28,11 +31,14 @@ namespace LTA.Mobile
         {
         }
 
+        /// <summary>
+        /// Обработчик события запуска приложения
+        /// </summary>
         protected override async void OnInitialized()
         {
             InitializeComponent();
 
-            if (string.IsNullOrEmpty(Settings.UserCode))
+            if (Settings.UserCode.Equals(string.Empty))
             {
                 await NavigationService.NavigateAsync(Settings.LoginPageNavigation);
             }
@@ -42,28 +48,34 @@ namespace LTA.Mobile
             }
         }
 
+        /// <summary>
+        /// Регистрирует все типы в приложении, а такж связывает между собой в рамках контейнера зависимостей
+        /// </summary>
+        /// <param name="containerRegistry">Контейнер зависимостей</param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            //Регистрация файла приложения
             containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
-
+            //Регистрация контекста базы данных
             containerRegistry.Register<DbContext, LtaClientContext>();
+            //Регистрация сервисов
             containerRegistry.RegisterSingleton<IUserService, UserService>();
+            containerRegistry.RegisterSingleton<IChatService, ChatService>();
+            containerRegistry.Register<IRegisterService, RegisterService>();
+            //Регистрация репозиториев
             containerRegistry.RegisterSingleton<ITopicRepository, TopicRepository>();
             containerRegistry.RegisterSingleton<IMessageRepository, MessageRepository>();
-            containerRegistry.RegisterSingleton<IChatService, ChatService>();
-
-            containerRegistry.Register<IRegisterService, RegisterService>();
-            containerRegistry.Register<IPageDialogService, PageDialogService>();
-
+            //Регистрация навигации
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<BaseTabbedPage, TopicsPage>();
             containerRegistry.RegisterForNavigation<MessagesPage, MessagesPageModel>();
-            //containerRegistry.RegisterForNavigation<ChatRoomPage, TestChatRoomPageModel>();
             containerRegistry.RegisterForNavigation<RegistrationPage, RegistrationPageModel>();
             containerRegistry.RegisterForNavigation<LoginPage, LoginPageModel>();
             containerRegistry.RegisterForNavigation<TopicsPage, TopicListPageModel>();
             containerRegistry.RegisterForNavigation<Add, AddTopicPageModel>();
             containerRegistry.RegisterForNavigation<SettingsPage, SettingsPageModel>();
+            //Регистрация модальных окон
+            containerRegistry.Register<IPageDialogService, PageDialogService>();
             containerRegistry.RegisterDialog<ReportPopup, ReportDialogPageModel>("Report");
         }
     }
