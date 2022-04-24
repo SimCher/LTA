@@ -1,8 +1,6 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Helpers;
-using LTA.Mobile.Pages;
 using Prism.Commands;
 using Prism.Navigation;
 using ReactiveUI;
@@ -12,7 +10,6 @@ namespace LTA.Mobile.PageModels;
 public class LoginPageModel : BasePageModel
 {
     private readonly IUserService _userService;
-    private string _message;
     private string _phoneOrEmail;
     private string _password;
 

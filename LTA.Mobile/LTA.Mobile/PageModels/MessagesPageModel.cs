@@ -98,7 +98,7 @@ public class MessagesPageModel : BasePageModel
             ChatService.SetErrorMessage(NewUserMessage);
             TopicId = parameters.GetValue<int>("TopicId");
             IsBusy = true;
-            CurrentTopic = TopicRepository.Get(TopicId);
+            CurrentTopic = await TopicRepository.GetAsync(TopicId);
 
             var messages = MessageRepository.GetAllForTopic(TopicId);
 

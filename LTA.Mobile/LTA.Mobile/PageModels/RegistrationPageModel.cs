@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
-using LTA.Mobile.Pages;
 using LTA.Mobile.Pages.Identity;
 using Prism.Commands;
 using Prism.Navigation;
@@ -12,7 +10,6 @@ namespace LTA.Mobile.PageModels
     public class RegistrationPageModel : BasePageModel
     {
         private readonly IRegisterService _registerService;
-        private string _message;
         private string _phoneOrEmail;
         private string _password;
         private string? _confirm;

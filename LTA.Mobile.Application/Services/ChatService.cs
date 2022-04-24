@@ -14,15 +14,10 @@ namespace LTA.Mobile.Application.Services
     //Обслуживающий класс для общения с сервером
     public class ChatService : IChatService
     {
-        public event EventHandler<MessageEventArgs> OnReceivedMessage;
-        public event EventHandler<MessageEventArgs> OnEnteredOrExited;
-        public event EventHandler<MessageEventArgs> OnConnectionClosed;
-
-        private const string GlobalIP = $"http://192.168.168.1:8082/lta";
+        private const string GlobalIP = $"http://192.168.0.108:8082/lta";
 
         private readonly HubConnection _hubConnection;
         private string _currentUserCode;
-        private Random _random;
 
         //Текущий идентификатор пользователя
         public string CurrentUserCode
@@ -51,39 +46,12 @@ namespace LTA.Mobile.Application.Services
 
 
         private Dictionary<string, string> ActiveTopics { get; } = new();
+#pragma warning disable CS8618
         public ChatService()
+#pragma warning restore CS8618
         {
             const string localIP = @"http://10.0.2.2:5240/lta";
             _hubConnection = new HubConnectionBuilder().WithUrl(GlobalIP).Build();
-            _hubConnection.Closed += async (error) =>
-            {
-                OnConnectionClosed?.Invoke(this, new MessageEventArgs("Connection closed...", string.Empty));
-                IsConnected = false;
-                await Task.Delay(_random.Next(0, 5) * 1000);
-                try
-                {
-                    await Connect();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-            };
-
-            _hubConnection.On<string>("Entered", (user) =>
-            {
-                OnEnteredOrExited?.Invoke(this, new MessageEventArgs($"{user} entered.", user));
-            });
-
-            _hubConnection.On<string>("Left", (user) =>
-            {
-                OnEnteredOrExited?.Invoke(this, new MessageEventArgs($"{user} left.", user));
-            });
-
-            _hubConnection.On<string>("EnteredOrLeft", (message) =>
-            {
-                OnEnteredOrExited?.Invoke(this, new MessageEventArgs(message, message));
-            });
         }
 
         /// <summary>
@@ -93,7 +61,6 @@ namespace LTA.Mobile.Application.Services
         public async Task Connect()
         {
             if (IsConnected) return;
-
             await _hubConnection.StartAsync();
             IsConnected = true;
         }
@@ -222,7 +189,6 @@ namespace LTA.Mobile.Application.Services
         /// <summary>
         /// Асинхронный вход в чат
         /// </summary>
-        /// <param name="userCode">Идентификатор пользователя</param>
         /// <param name="topicId">Идентификатор темы</param>
         /// <returns></returns>
         public async Task LogInChatAsync(int topicId)

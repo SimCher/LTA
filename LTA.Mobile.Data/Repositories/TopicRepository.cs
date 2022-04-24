@@ -25,76 +25,31 @@ public class TopicRepository : ITopicRepository
         InitializeAsync();
     }
 
-    public ICollection<Topic> GetAllAsync()
+    public ICollection<Topic> GetAll()
     {
         var t = Context.Topics.ToList();
         return t;
     }
 
-    public Topic Get(int topicId)
+    public async Task<Topic> GetAsync(int topicId)
     {
-        return Context.Topics.Find(topicId);
+        return await Context.Topics.FindAsync(topicId);
     }
 
-    public void AddUserInTopic(User user, int topicId)
+    public async Task AddUserInTopicAsync(User user, int topicId)
     {
-        var topic = Get(topicId);
+        var topic = await GetAsync(topicId);
 
         topic.UsersIn[user.Code] = user.Color;
     }
 
-    public bool RemoveUserFromTopic(string userCode, int topicId)
+    public async Task<bool> RemoveUserFromTopicAsync(string userCode, int topicId)
     {
-        var topic = Get(topicId);
+        var topic = await GetAsync(topicId);
 
         return topic.UsersIn.Remove(userCode);
     }
-    //public async Task<ICollection<Topic>> GetAllAsync()
-    //{
-    //    if (Topics.Count == 0)
-    //    {
-    //        await InitializeAsync();
 
-    //        //await Context.Topics.AddRangeAsync(Topics);
-
-    //        //await Context.SaveChangesAsync();
-    //    }
-
-
-
-    //    return Topics;
-    //}
-
-    //private async Task InitializeAsync()
-    //{
-    //    //TODO:: Use Preferences
-    //    var topics = await _chatService.LoadTopicsAsync();
-
-    //    Topics = topics.Select(topic => JsonConvert.DeserializeObject(topic.ToString()))
-    //        .Select(dynamicTopic => new Topic
-    //        {
-    //            Id = (int)dynamicTopic.id,
-    //            OwnerUserId = (int)dynamicTopic.userId,
-    //            Name = (string)dynamicTopic.name,
-    //            Rating = (float)dynamicTopic.rating,
-    //            MaxUsersNumber = (int)dynamicTopic.maxUsersNumber,
-    //            LastEntryDate = (DateTime)dynamicTopic.lastEntryDate,
-    //            CurrentUsersNumber = (int)dynamicTopic.userNumber,
-    //            UsersIn = JsonConvert.DeserializeObject<Dictionary<string, Color>>(dynamicTopic.usersIn.ToString()),
-    //            Categories = ((string)dynamicTopic.categories).Split(',')
-    //        }).ToList();
-    //    Topics.Add(new Topic
-    //    {
-    //        Id = 1000,
-    //        OwnerUserId = 300,
-    //        Name = "Test room",
-    //        LastEntryDate = DateTime.Now,
-    //        CurrentUsersNumber = 1,
-    //        MaxUsersNumber = 3,
-    //        Categories = new[] { "Test rooms" }
-    //    });
-
-    //}
     private async Task InitializeAsync()
     {
         if (!_chatService.IsConnected)
@@ -135,7 +90,7 @@ public class TopicRepository : ITopicRepository
                 };
             });
 
-        Context.Topics.AddRange(topicsObject);
+        await Context.Topics.AddRangeAsync(topicsObject);
 
         foreach (var topic in Context.Topics)
         {

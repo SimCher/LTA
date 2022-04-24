@@ -10,13 +10,14 @@
              xmlns:xe="clr-namespace:XamEffects;assembly=XamEffects"
              xmlns:prism="http://prismlibrary.com"
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
-             xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
-             BackgroundColor="{StaticResource PrimaryColor}"
+             xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels"
+                     BackgroundColor="{StaticResource PrimaryColor}"
              x:Class="LTA.Mobile.Pages.Topics.TopicsPage"
              TabSelectedIndex="0">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Сброс фильтра" Command="{Binding FilterOptionChangedCommand, Mode=OneTime}"/>
-        <ToolbarItem Text="Сортировка" Command="{Binding SortCommand, Mode=OneTime}"/>
+
+        <ToolbarItem Text="Сортировка" Order="Secondary" Priority="1" Command="{Binding SortCommand, Mode=OneTime}"/>
+        <ToolbarItem Text="Сброс" Order="Secondary" Priority="0" Command="{Binding FilterOptionChangedCommand, Mode=OneTime}"/>
     </ContentPage.ToolbarItems>
     <Shell.TitleView>
         <Grid>
@@ -88,6 +89,7 @@
                     </Grid>
                 </pancakeView:PancakeView>
 
+
                 <!--<customControls:ToggleButton HorizontalOptions="Start"
                                              Margin="15,10,15,10"
                                              VerticalOptions="Center"
@@ -95,20 +97,25 @@
                                              Grid.Row="1"
                                              ToggleCommand="{Binding FilterOptionChangedCommand}"
                                              NotToggledOptionTitle="Saved"/>-->
-
-                <Picker Grid.Row="1"
-                        HorizontalOptions="Start"
-                        Margin="60,0,0,0"
-                        VerticalOptions="Center"
-                        WidthRequest="60"
-                        FontFamily="{StaticResource FontAwesomeSearch}"
-                        SelectedItem="{Binding SelectedFilter}">
-                    <Picker.Items>
-                        <x:String>All</x:String>
-                        <x:String>Favorites</x:String>
-                        <x:String>My</x:String>
-                    </Picker.Items>
-                </Picker>
+                <StackLayout Grid.Row="1" HorizontalOptions="Start"
+                             Orientation="Horizontal"
+                             VerticalOptions="Center"
+                             Margin="60,0,0,10">
+                    <Label Text="Фильтр по" FontSize="16" FontFamily="{StaticResource QuickSandRegular}"
+                           LineBreakMode="TailTruncation"/>
+                    <Picker
+                          WidthRequest="150"
+                            FontSize="14"
+                            FontFamily="{StaticResource FontAwesomeSearch}"
+                            SelectedItem="{Binding SelectedFilter}">
+                        <Picker.Items>
+                            <x:String>All</x:String>
+                            <x:String>Favorites</x:String>
+                            <x:String>My</x:String>
+                        </Picker.Items>
+                    </Picker>
+                </StackLayout>
+              
 
                 <customControls:FloatingButton Grid.Row= "1" WidthRequest="60" HeightRequest="25"
                                                HorizontalOptions="End" VerticalOptions="Center"

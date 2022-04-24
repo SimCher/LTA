@@ -41,6 +41,6 @@ public class ReportDialogPageModel : BasePageModel, IDialogAware
     {
         TopicName = parameters.GetValue<string>("topicName");
     }
-
+#warning disable
     public event Action<IDialogParameters> RequestClose;
 }
