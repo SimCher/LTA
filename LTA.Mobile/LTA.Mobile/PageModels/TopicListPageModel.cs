@@ -34,10 +34,10 @@ public class TopicListPageModel : BasePageModel
         _topicRepository = topicRepository;
 
         //ItemTappedCommand = new DelegateCommand(OnItemTappedAsync);
-        NavigateToAddCommand = ReactiveCommand.CreateFromTask(NavigateToAdd);
-        ItemTappedCommand = ReactiveCommand.CreateFromTask<Topic>(OnItemTappedAsync);
+        NavigateToAddCommand = ReactiveCommand.CreateFromTask(NavigateToAdd, NotBusyObservable);
+        ItemTappedCommand = ReactiveCommand.CreateFromTask<Topic>(OnItemTappedAsync, NotBusyObservable);
         FilterOptionChangedCommand = ReactiveCommand.CreateFromTask<string>(FilterOptionChanged, NotBusyObservable);
-        RefreshCommand = ReactiveCommand.Create(RefreshTopics);
+        RefreshCommand = ReactiveCommand.Create(RefreshTopics, NotBusyObservable);
         OnSearchTextChangedCommand = new DelegateCommand(OnSearchTextChanged);
         FilterChangedCommand = new DelegateCommand<string>(FilterChanged);
         SortCommand = new DelegateCommand(ExecuteSortAsync);
@@ -90,11 +90,11 @@ public class TopicListPageModel : BasePageModel
     private string _selectedFilter;
 
     public ICommand ItemTappedCommand { get; set; }
-    public ICommand NavigateToAddCommand { get; private set; }
-    public ICommand FilterOptionChangedCommand { get; private set; }
-    public ICommand RefreshCommand { get; private set; }
-    public ICommand OnSearchTextChangedCommand { get; private set; }
-    public ICommand FilterChangedCommand { get; private set; }
+    public ICommand NavigateToAddCommand { get; }
+    public ICommand FilterOptionChangedCommand { get; }
+    public ICommand RefreshCommand { get; }
+    public ICommand OnSearchTextChangedCommand { get; }
+    public ICommand FilterChangedCommand { get; }
     public ICommand SetIsFavoriteCommand { get; }
 
     public ICommand SendReportCommand { get; }
@@ -106,14 +106,14 @@ public class TopicListPageModel : BasePageModel
             IsBusy = true;
             Settings.CurrentPage = PageNames.Topics;
             PageMessage = await TryConnectAsync();
-            ChatService.AddUserInTopic(AddUser);
+            //ChatService.AddUserInTopic(AddUser);
             ChatService.RemoveUserFromTopic(RemoveUser);
 
             RefreshTopics();
 
             LoadFavorites();
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             await DialogService.ShowDialogAsync($"Error!, ${ex.Source}: {ex.Message}");
         }
@@ -124,12 +124,12 @@ public class TopicListPageModel : BasePageModel
         }
     }
 
-    private void ChangeFilter(string filter)
+    private async void ChangeFilter(string filter)
     {
         switch (filter)
         {
             case "All":
-                TopicList = new ObservableRangeCollection<Topic>(_topicRepository.GetAll());
+                TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAll());
                 break;
             case "Favorites":
                 TopicList = new ObservableRangeCollection<Topic>(TopicList.Where(t => t.IsFavorite));
@@ -139,11 +139,10 @@ public class TopicListPageModel : BasePageModel
         }
     }
 
-    private void RefreshTopics()
+    private async void RefreshTopics()
     {
-        if (IsBusy) return;
         IsRefreshing = true;
-        TopicList = new ObservableRangeCollection<Topic>(_topicRepository.GetAll());
+        TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAll());
         IsRefreshing = false;
     }
 
@@ -158,12 +157,11 @@ public class TopicListPageModel : BasePageModel
         {
             await _topicRepository.AddUserInTopicAsync(new User
             {
-                Code = key,
-                Color = value
+                Code = key
             }, topicId);
         }
 
-        TopicList = new ObservableRangeCollection<Topic>(_topicRepository.GetAll());
+        TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAll());
     }
 
     private async Task AddUser(int topicId, Dictionary<string, Color> users, DateTime lastEntry)
@@ -172,25 +170,24 @@ public class TopicListPageModel : BasePageModel
         {
             await _topicRepository.AddUserInTopicAsync(new User
             {
-                Code = key,
-                Color = value
+                Code = key
             }, topicId);
         }
 
-        TopicList = new ObservableRangeCollection<Topic>(_topicRepository.GetAll());
+        TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAll());
     }
 
     private async void RemoveUser(int topicId, string userCode)
     {
         await _topicRepository.RemoveUserFromTopicAsync(userCode, topicId);
 
-        TopicList = new ObservableRangeCollection<Topic>(_topicRepository.GetAll());
+        TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAll());
     }
 
-    private void OnSearchTextChanged()
+    private async void OnSearchTextChanged()
     {
         TopicList = string.IsNullOrWhiteSpace(SearchText)
-            ? new ObservableRangeCollection<Topic>(_topicRepository.GetAll())
+            ? new ObservableRangeCollection<Topic>(await _topicRepository.GetAll())
             : new ObservableRangeCollection<Topic>(TopicList.Where(t => t.Name.ToLower().Contains(SearchText.ToLower())));
     }
 
@@ -204,18 +201,14 @@ public class TopicListPageModel : BasePageModel
 
     private async Task OnItemTappedAsync(Topic topic)
     {
-        IsBusy = true;
         if (IsNavigate) return;
         if (!topic.IsRoomFilled)
         {
-            IsBusy = true;
             IsNavigate = true;
             var parameters = new NavigationParameters { { "TopicId", topic.Id } };
-            await ChatService.LogInChatAsync(topic.Id);
-            IsBusy = false;
             await NavigationService.NavigateAsync(Settings.MessagesPageModal, parameters, true);
+            IsNavigate = false;
         }
-        IsBusy = false;
         ShowMessage("This room is filled. Choose an another room or create your own room! :)", 2000);
     }
 
@@ -228,10 +221,11 @@ public class TopicListPageModel : BasePageModel
 
     public override void OnNavigatedTo(INavigationParameters parameters)
     {
-        IsBusy = true;
+        
         IsNavigate = false;
         try
         {
+            IsBusy = true;
             RefreshTopics();
         }
         catch (Exception ex)
@@ -292,13 +286,11 @@ public class TopicListPageModel : BasePageModel
 
         foreach (var name in favoriteTopicNames)
         {
-            for (int i = 0; i < TopicList.Count; i++)
+            foreach (var t in TopicList)
             {
-                if (name.Equals(TopicList[i].Name))
-                {
-                    TopicList[i].IsFavorite = true;
-                    break;
-                }
+                if (!name.Equals(t.Name)) continue;
+                t.IsFavorite = true;
+                break;
             }
         }
     }
@@ -308,19 +300,19 @@ public class TopicListPageModel : BasePageModel
         IsBusy = true;
         if (string.IsNullOrEmpty(categoryName))
         {
-            TopicList = new ObservableRangeCollection<Topic>(_topicRepository.GetAll());
+            TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAll());
         }
         else
         {
             var tempList = new ObservableRangeCollection<Topic>();
 
-            for (int i = 0; i < TopicList.Count; i++)
+            foreach (var t in TopicList)
             {
-                foreach (var category in TopicList[i].Categories)
+                foreach (var category in t.Categories)
                 {
                     if (category.Split(" ").Contains(categoryName))
                     {
-                        tempList.Add(TopicList[i]);
+                        tempList.Add(t);
                     }
                 }
             }
@@ -335,7 +327,7 @@ public class TopicListPageModel : BasePageModel
     private async void FilterChanged(string filter)
     {
         TopicList = string.IsNullOrWhiteSpace(Filter)
-            ? new ObservableRangeCollection<Topic>(_topicRepository.GetAll())
+            ? new ObservableRangeCollection<Topic>(await _topicRepository.GetAll())
             : new ObservableRangeCollection<Topic>(TopicList.Where(t => t.Categories.Contains(Filter)));
     }
 
@@ -356,7 +348,7 @@ public class TopicListPageModel : BasePageModel
             return;
         }
 
-        TopicList = new ObservableRangeCollection<Topic>(_topicRepository.GetAll());
+        TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAll());
     }
 
     private string SortBy
@@ -368,6 +360,4 @@ public class TopicListPageModel : BasePageModel
     public ICommand SortCommand { get; }
 
     private string _sortBy;
-
-
 }

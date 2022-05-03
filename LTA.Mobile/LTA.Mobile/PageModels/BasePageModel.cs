@@ -32,6 +32,7 @@ namespace LTA.Mobile.PageModels
         /// при использовании ReactiveUI
         /// </summary>
         protected IObservable<bool> NotBusyObservable;
+
         /// <summary>
         /// Заголовок страницы
         /// </summary>
@@ -49,6 +50,7 @@ namespace LTA.Mobile.PageModels
             get => _isBusy;
             set => this.RaiseAndSetIfChanged(ref _isBusy, value);
         }
+
         /// <summary>
         /// Сообщение пользователю
         /// </summary>
@@ -73,6 +75,7 @@ namespace LTA.Mobile.PageModels
             ChatService = chatService;
             NotBusyObservable = this.WhenAnyValue(vm => vm.IsBusy, isBusy => !isBusy);
         }
+
         /// <summary>
         /// Совершает попытку асинхронного подключения к серверу
         /// </summary>
@@ -91,6 +94,7 @@ namespace LTA.Mobile.PageModels
                 return $"{ex.Source}: {ex.Message}";
             }
         }
+
         /// <summary>
         /// Активирует видимость приложения на время указанное в миллисекундах
         /// </summary>

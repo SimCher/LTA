@@ -1,6 +1,5 @@
 ﻿using System;
 using LTA.Mobile.Application.Interfaces;
-using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services.Dialogs;
 using ReactiveUI;

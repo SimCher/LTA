@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Frame xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:datatemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
+             x:DataType="datatemplates:ErrorTemplate"
+       x:Class="LTA.Mobile.UI.DataTemplates.ErrorTemplate"
+             BackgroundColor="{StaticResource FrameErrorColor}"
+             CornerRadius="10">
+    <ContentView.Content>
+        <StackLayout Orientation="Horizontal">
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="{StaticResource ErrorColor}"
+                   FontFamily="{StaticResource QuickSandRegular}"
+                   />
+        </StackLayout>
+    </ContentView.Content>
+</Frame>

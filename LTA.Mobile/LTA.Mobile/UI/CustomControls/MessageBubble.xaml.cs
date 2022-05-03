@@ -20,10 +20,23 @@ namespace LTA.Mobile.UI.CustomControls
                 me?.TextChanged(oldText, newText);
             });
 
+        public static readonly BindableProperty ImageProperty = BindableProperty.Create(nameof(Image),
+            typeof(ImageSource),
+            typeof(MessageBubble), propertyChanged: (obj, old, newV) =>
+            {
+                var me = obj as MessageBubble;
+                if (newV != null && newV is not ImageSource) return;
+                var oldImage = (ImageSource) old;
+                var newImage = (ImageSource) newV;
+                me?.ImageChanged(oldImage, newImage);
+            });
+
         private void TextChanged(string oldText, string newText)
         {
 
         }
+
+        private void ImageChanged(ImageSource oldImage, ImageSource newImage) {}
 
         /// <summary>
         /// A bindable property
@@ -32,6 +45,12 @@ namespace LTA.Mobile.UI.CustomControls
         {
             get => (string)GetValue(TextProperty);
             set => SetValue(TextProperty, value);
+        }
+
+        public ImageSource Image
+        {
+            get => (ImageSource) GetValue(ImageProperty);
+            set => SetValue(ImageProperty, value);
         }
         #endregion
 

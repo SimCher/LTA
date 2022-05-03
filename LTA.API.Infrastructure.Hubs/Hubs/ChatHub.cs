@@ -144,10 +144,16 @@ public class ChatHub : Hub
 
         try
         {
+            await Groups.AddToGroupAsync(Context.ConnectionId, stringTopicId);
             var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
 
             await Clients.OthersInGroup(stringTopicId)
-                .SendAsync("AddUser", topic.Id, _topicService.GetChattersAndColors(topic), topic.LastEntryDate);
+                .SendAsync("AddUser", userCode, topic.LastEntryDate, topic.Chatters.Count);
+        }
+        catch (NullReferenceException ex)
+        {
+            _loggerService.LogError($"{ex.Source}: {ex.Message}");
+            await Clients.Caller.SendAsync("Logout");
         }
         catch (Exception ex)
         {

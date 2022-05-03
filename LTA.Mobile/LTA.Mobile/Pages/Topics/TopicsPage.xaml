@@ -18,6 +18,8 @@
 
         <ToolbarItem Text="Сортировка" Order="Secondary" Priority="1" Command="{Binding SortCommand, Mode=OneTime}"/>
         <ToolbarItem Text="Сброс" Order="Secondary" Priority="0" Command="{Binding FilterOptionChangedCommand, Mode=OneTime}"/>
+
+        
     </ContentPage.ToolbarItems>
     <Shell.TitleView>
         <Grid>
@@ -77,6 +79,18 @@
                                                               Command="{Binding OnSearchTextChangedCommand}"
                                                               CommandParameter="{Binding SearchText}"/>
                             </Entry.Behaviors>
+                            <Entry.Triggers>
+                                    <DataTrigger TargetType="Entry"
+                                                 Binding="{Binding IsBusy}"
+                                                 Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                <DataTrigger TargetType="Entry"
+                                                 Binding="{Binding IsBusy}"
+                                                 Value="False">
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                    </DataTrigger>
+                            </Entry.Triggers>
                         </Entry>
 
                         <Label Style="{StaticResource FontAwesomeLabel}"
@@ -135,7 +149,21 @@
 
                     <CollectionView ItemsSource="{Binding TopicList}"
                                     VerticalOptions="StartAndExpand"
-                                    HorizontalOptions="FillAndExpand">
+                                    HorizontalOptions="FillAndExpand"
+                                    >
+
+                        <CollectionView.Triggers>
+                            <DataTrigger TargetType="CollectionView"
+                                         Binding="{Binding IsBusy}"
+                                         Value="True">
+                                <Setter Property="IsVisible" Value="False"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="CollectionView"
+                                         Binding="{Binding IsBusy}"
+                                         Value="False">
+                                <Setter Property="IsVisible" Value="True"/>
+                            </DataTrigger>
+                        </CollectionView.Triggers>
 
                         <CollectionView.ItemTemplate>
 

@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using LTA.Mobile.Domain.Models.BaseModels;
-using Xamarin.Forms;
 
 namespace LTA.Mobile.Domain.Models
 {
     public class User : BaseModel
     {
-        private bool _isOnline;
         private string _code;
-
-        private Color _color;
 
         public string Code
         {
@@ -17,16 +14,10 @@ namespace LTA.Mobile.Domain.Models
             set => SetProperty(ref _code, value);
         }
 
-        public Color Color
+        [NotMapped]
+        public string Alias
         {
-            get => _color;
-            set => SetProperty(ref _color, value);
-        }
-
-        public bool IsOnline
-        {
-            get => _isOnline;
-            set => _isOnline = value;
+            get => _code.Substring(0, 6);
         }
 
         public ICollection<Topic> UserTopics { get; set; }

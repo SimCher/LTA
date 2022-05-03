@@ -1,12 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using LTA.Mobile.Domain.Models.BaseModels;
+using Xamarin.Forms;
 
 namespace LTA.Mobile.Domain.Models
 {
     public class Message : BaseModel
     {
         private string _content;
+        private byte[] _image;
+        private ImageSource _picture;
         private string _userCode;
         private int _topicId;
         private bool _isOwner;
@@ -49,6 +53,12 @@ namespace LTA.Mobile.Domain.Models
             set => SetProperty(ref _sentAt, value);
         }
 
+        public byte[] Image
+        {
+            get => _image;
+            set => SetProperty(ref _image, value);
+        }
+
         [NotMapped]
         public string Time => CreationDate.ToString("HH:mm");
 
@@ -64,6 +74,11 @@ namespace LTA.Mobile.Domain.Models
         {
             get => _replyTo;
             set => SetProperty(ref _replyTo, value);
+        }
+
+        public Message()
+        {
+            
         }
     }
 }

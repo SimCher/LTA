@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Domain.Interfaces;
@@ -12,9 +14,12 @@ using LTA.Mobile.EventHandlers;
 using LTA.Mobile.Helpers;
 using LTA.Mobile.Resources;
 using Newtonsoft.Json;
+using Plugin.Media;
+using Plugin.Media.Abstractions;
 using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services;
+using Prism.Services.Dialogs;
 using ReactiveUI;
 using Xamarin.Forms;
 
@@ -23,24 +28,29 @@ namespace LTA.Mobile.PageModels;
 public class MessagesPageModel : BasePageModel
 {
     public MessagesPageModel([NotNull] INavigationService navigationService, [NotNull] IChatService chatService,
-        ITopicRepository topicRepository, IMessageRepository messageRepository, IPageDialogService dialogService) : base(navigationService, chatService)
+        ITopicRepository topicRepository, IMessageRepository messageRepository, IPageDialogService dialogService,
+        IDialogService popupDialog) : base(navigationService, chatService)
     {
         TopicRepository = topicRepository;
         MessageRepository = messageRepository;
         DialogService = dialogService;
+        DialogPopup = popupDialog;
 
         ReplyMessageSelectedCommand = ReactiveCommand.Create<Message>(ReplyMessageSelected);
         MessageSwippedCommand = ReactiveCommand.Create<Message>(MessageSwiped);
         SendMsgCommand = new DelegateCommand(SendMessage);
         UserTypingCommand = new DelegateCommand(SendTyping);
         CancelReplyCommand = ReactiveCommand.Create(CancelReply);
+        SendPictureCommand = new DelegateCommand(SendPictureMessage);
 
         _messages = new List<Message>();
 
+        NewMessage = new Message();
         //ChatService.NewUserMessage();
     }
 
     public ICommand SendMsgCommand { get; }
+    public IDialogService DialogPopup {get;}
 
     public ICommand MessageSwippedCommand { get; }
 
@@ -49,6 +59,13 @@ public class MessagesPageModel : BasePageModel
     public ICommand ReplyMessageSelectedCommand { get; }
 
     public ICommand UserTypingCommand { get; }
+    public ICommand SendPictureCommand {get;}
+
+    public byte[] Image
+    {
+        get => _image;
+        set => this.RaiseAndSetIfChanged(ref _image, value);
+    }
 
     public Topic CurrentTopic
     {
@@ -67,6 +84,10 @@ public class MessagesPageModel : BasePageModel
         get => _replyMessage;
         set => this.RaiseAndSetIfChanged(ref _replyMessage, value);
     }
+
+    public Message NewMessage { get; private set; }
+
+    private Message _newMessage;
 
     public IPageDialogService DialogService { get; }
 
@@ -93,11 +114,14 @@ public class MessagesPageModel : BasePageModel
     {
         try
         {
+            IsBusy = true;
+            ChatService.AddUserInTopic(AddUser);
             ChatService.ReceiveMessage(GetMessage);
             ChatService.ReceiveTyping(UserTyping);
             ChatService.SetErrorMessage(NewUserMessage);
+            ChatService.Logout(Logout);
             TopicId = parameters.GetValue<int>("TopicId");
-            IsBusy = true;
+            
             CurrentTopic = await TopicRepository.GetAsync(TopicId);
 
             var messages = MessageRepository.GetAllForTopic(TopicId);
@@ -161,10 +185,29 @@ public class MessagesPageModel : BasePageModel
             {
                 ScrollToMessage(Messages?.Last()?.Last());
             }
+
+            
         }
         catch (Exception ex)
         {
             NetworkDisconnected($"{ex.Source}: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public override async void OnNavigatedTo(INavigationParameters parameters)
+    {
+        try
+        {
+            IsBusy = true;
+            await ChatService.LogInChatAsync(Settings.UserCode, CurrentTopic.Id);
+        }
+        catch (Exception ex)
+        {
+            PageMessage = "Ошибка!";
         }
         finally
         {
@@ -190,32 +233,47 @@ public class MessagesPageModel : BasePageModel
             new ScrollToItemEventArgs { Item = message });
     }
 
+    public async void Logout()
+    {
+        Settings.Logout();
+        await NavigationService.NavigateAsync(Settings.LoginPageNavigation);
+    }
+
     private async void SendMessage()
     {
         var isSent = Messages?.Last().Last()?.IsSent;
-        var message = new Message
-        {
-            Content = Message,
-            ReplyTo = ReplyMessage,
-            CreationDate = DateTime.Now,
-            //UserId = int.Parse(Settings.UserId),
-            UserCode = Guid.NewGuid().ToString("D"),
-            IsSentPreviousMessage = isSent != null && (bool)isSent,
-            IsSent = true,
-            TopicId = CurrentTopic.Id
-        };
 
-        await ChatService.SendMessage(message, message.TopicId);
-        AddMessage(message);
+        NewMessage.Content = Message;
+        NewMessage.ReplyTo = ReplyMessage;
+        NewMessage.CreationDate = DateTime.Now;
+        NewMessage.UserCode = Settings.UserCode;
+        NewMessage.IsSentPreviousMessage = isSent != null && (bool)isSent;
+        NewMessage.IsSent = true;
+        NewMessage.TopicId = CurrentTopic.Id;
+        NewMessage.UserCode = Settings.UserCode;
 
+        await ChatService.SendMessage(NewMessage, NewMessage.TopicId);
+        AddMessage(NewMessage);
+
+        Image = null;
         Message = string.Empty;
         ScrollToMessage(Messages.Last().Last());
+        NewMessage = new Message();
     }
 
     private async void AddMessage(Message message)
-    {
+    { 
         Messages.Last().Add(message);
         await MessageRepository.AddMessageAsync(message);
+    }
+
+    private void AddUser(string userCode, DateTime lastEntry, int count)
+    {
+        CurrentTopic.LastEntryDate = lastEntry;
+        CurrentTopic.UsersIn.Add(new User
+        {
+            Code = userCode
+        });
     }
 
     private async void AddMessage(dynamic message)
@@ -226,10 +284,11 @@ public class MessagesPageModel : BasePageModel
             var replyTo = JsonConvert.DeserializeObject<Message>(dynamicMessage.m.replyTo.ToString()) as Message;
 
             var isSent = Messages?.Last().Last()?.IsSent;
-            var messageObject = new Message
+            var NewMessage = new Message
             {
                 Id = (int)dynamicMessage.m.id,
                 Content = (string)dynamicMessage.m.content,
+                Image = dynamicMessage.m.image,
                 ReplyTo = replyTo,
                 CreationDate = (DateTime)dynamicMessage.m.creationDate,
                 UserCode = (string)dynamicMessage.m.userCode,
@@ -237,9 +296,9 @@ public class MessagesPageModel : BasePageModel
                 TopicId = CurrentTopic.Id
             };
 
-            Messages?.Last()?.Add(messageObject);
+            Messages?.Last()?.Add(NewMessage);
 
-            await MessageRepository.AddMessageAsync(messageObject);
+            await MessageRepository.AddMessageAsync(NewMessage);
         }
     }
 
@@ -247,6 +306,39 @@ public class MessagesPageModel : BasePageModel
     {
         AddMessage(message);
         ScrollToMessage(Messages.Last().Last());
+    }
+
+    private async void SendPictureMessage()
+    {
+        await CrossMedia.Current.Initialize();
+
+        if (!CrossMedia.Current.IsTakePhotoSupported)
+        {
+            await DialogService.DisplayAlertAsync("Не поддерживается",
+                "В настоящее время ваше устройство не поддерживает эту функцию", "ОК");
+            return;
+        }
+
+        var mediaOptions = new PickMediaOptions()
+        {
+            PhotoSize = PhotoSize.Medium
+        };
+
+        var selectedImage = await CrossMedia.Current.PickPhotoAsync(mediaOptions);
+        if (selectedImage is null)
+        {
+            await DialogService.DisplayAlertAsync("Ошибка",
+                "Не удалось получить изображение, пожалуйста, попробуйте еще раз.", "ОК");
+            return;
+        }
+
+        var memory = new MemoryStream();
+        var stream = selectedImage.GetStream();
+        await stream.CopyToAsync(memory);
+        NewMessage.Image = memory.ToArray();
+
+        //var parameters = new DialogParameters {{"Image", image}, {"TopicId", CurrentTopic.Id}};
+        //DialogPopup.ShowDialog("SendPicture", parameters);
     }
 
     private void ReplyMessageSelected(Message message)
@@ -294,4 +386,6 @@ public class MessagesPageModel : BasePageModel
     private bool _isTyping;
 
     private Topic _topic;
+
+    private byte[] _image;
 }

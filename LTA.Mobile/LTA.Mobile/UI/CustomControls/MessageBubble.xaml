@@ -55,7 +55,7 @@
             </BoxView>
 
             <StackLayout Grid.Column="1" Margin="-5,0,0,0">
-                <Label FontFamily="{StaticResource QuickSandBold}"
+                <!--<Label FontFamily="{StaticResource QuickSandBold}"
                        LineBreakMode="TailTruncation"
                        Margin="10,3,10,5"
                        TextColor="White">
@@ -73,7 +73,9 @@
                             <Setter Property="Text" Value="{x:Static resources:TextResources.You}" />
                         </DataTrigger>
                     </Label.Triggers>
-                </Label>
+                </Label>-->
+
+                <Image Aspect="AspectFill" Source="{Binding Image, Converter={StaticResource BytesToImageConverter}}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
 
                 <Label Text="{Binding Content}"
                        TextColor="White"
@@ -89,6 +91,8 @@
                 </Label>
             </StackLayout>
         </Grid>
+
+        <Image Aspect="AspectFill" Source="{Binding Image, Source={x:Reference Bubble}}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
 
         <Label Text="{Binding Text, Source={x:Reference Bubble}}"
                Grid.Row="1"

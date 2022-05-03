@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
+using LTA.Mobile.Attributes;
 using LTA.Mobile.Pages.Identity;
 using Prism.Commands;
 using Prism.Navigation;
@@ -13,6 +14,7 @@ namespace LTA.Mobile.PageModels
         private string _phoneOrEmail;
         private string _password;
         private string? _confirm;
+        private bool _isValid;
 
         public RegistrationPageModel(INavigationService navigationService, IRegisterService registerService, IChatService chatService)
             : base(navigationService, chatService)
@@ -27,6 +29,12 @@ namespace LTA.Mobile.PageModels
         {
             get => _phoneOrEmail;
             set => this.RaiseAndSetIfChanged(ref _phoneOrEmail, value);
+        }
+
+        public bool IsValid
+        {
+            get => _isValid;
+            set => this.RaiseAndSetIfChanged(ref _isValid, value);
         }
 
         public string Password
@@ -63,6 +71,16 @@ namespace LTA.Mobile.PageModels
 
         private async void NavigateToLoginPage()
         {
+            if (string.IsNullOrEmpty(PhoneOrEmail) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Confirm))
+            {
+                PageMessage = "Пожалуйста, заполните все поля";
+                return;
+            }
+            if (!IsValid)
+            {
+                PageMessage = PhoneOrEmailAttribute.GetErrorMessageIfIsNotValid(PhoneOrEmail);
+                return;
+            }
             IsBusy = true;
             ShowMessage("Передаю данные...");
             if (await _registerService.RegisterAsync(PhoneOrEmail, Password, Confirm, SetErrorMessage))

@@ -12,6 +12,7 @@
         <ResourceDictionary Source="UI/Styles/ControlStyles.xaml"/>
 
         <valueConverters:IsNullConverter x:Key="IsNullValueConverter"/>
+        <converters:ByteArrayToImageSourceConverter x:Key="BytesToImageConverter"/>
 
         <Style ApplyToDerivedTypes="True" TargetType="NavigationPage">
             <Setter Property="BarBackgroundColor" Value="{StaticResource AccentColor}"/>

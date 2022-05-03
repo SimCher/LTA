@@ -49,6 +49,8 @@
                 </Grid.RowDefinitions>
 
                 <customViews:MessageBubble Text="{Binding Content}"
+                                           Image="{Binding Image,
+                    Converter={StaticResource BytesToImageConverter}}"
                                            Grid.Column="1"
                                            HorizontalOptions="End"
                                            VerticalOptions="Center"

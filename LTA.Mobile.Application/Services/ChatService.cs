@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using LTA.Mobile.Application.EventHandlers;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Domain.Models;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -191,13 +190,13 @@ namespace LTA.Mobile.Application.Services
         /// </summary>
         /// <param name="topicId">Идентификатор темы</param>
         /// <returns></returns>
-        public async Task LogInChatAsync(int topicId)
+        public async Task LogInChatAsync(string userCode, int topicId)
         {
             if (!IsConnected)
             {
                 await ConnectIfNotAsync();
             }
-            await _hubConnection.SendAsync("LogInChatAsync", topicId);
+            await _hubConnection.SendAsync("SubscribeToChat", userCode, topicId);
         }
 
         /// <summary>
@@ -232,6 +231,9 @@ namespace LTA.Mobile.Application.Services
             _hubConnection.On("SetErrorMessage", getErrorMessage);
         }
 
+        public void Logout(Action logoutMethod)
+            => _hubConnection.On("Logout", logoutMethod);
+
         /// <summary>
         /// Логика сообщения, если другой пользователь вышел из темы
         /// </summary>
@@ -243,7 +245,7 @@ namespace LTA.Mobile.Application.Services
         /// Логика добавления пользователя в тему
         /// </summary>
         /// <param name="addUserMethod"></param>
-        public void AddUserInTopic(Func<int, Dictionary<string, Color>, DateTime, Task> addUserMethod)
+        public void AddUserInTopic(Action<string, DateTime, int> addUserMethod)
         {
             _hubConnection.On("AddUser", addUserMethod);
         }

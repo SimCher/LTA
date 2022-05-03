@@ -8,7 +8,9 @@ using LTA.Mobile.PageModels;
 using LTA.Mobile.Pages.Base;
 using LTA.Mobile.Pages.Identity;
 using LTA.Mobile.Pages.Messages;
+using LTA.Mobile.Pages.Messages.Popups;
 using LTA.Mobile.Pages.Settings;
+using LTA.Mobile.Pages.Test;
 using LTA.Mobile.Pages.Topics;
 using LTA.Mobile.Pages.Topics.Popups;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +39,8 @@ namespace LTA.Mobile
         protected override async void OnInitialized()
         {
             InitializeComponent();
+
+            //await NavigationService.NavigateAsync("lta:///NavigationPage/Test");
 
             if (Settings.UserCode.Equals(string.Empty))
             {
@@ -74,9 +78,11 @@ namespace LTA.Mobile
             containerRegistry.RegisterForNavigation<TopicsPage, TopicListPageModel>();
             containerRegistry.RegisterForNavigation<Add, AddTopicPageModel>();
             containerRegistry.RegisterForNavigation<SettingsPage, SettingsPageModel>();
+            containerRegistry.RegisterForNavigation<Test, TestPageModel>();
             //Регистрация модальных окон
             containerRegistry.Register<IPageDialogService, PageDialogService>();
             containerRegistry.RegisterDialog<ReportPopup, ReportDialogPageModel>("Report");
+            containerRegistry.RegisterDialog<SendPicturePopup, SendPicturePopupDialog>("SendPicture");
         }
     }
 }

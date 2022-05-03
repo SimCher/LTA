@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls;assembly=LTA.Mobile"
+             xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects;assembly=LTA.Mobile"
+             xmlns:behaviors="http://prismlibrary.com" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels"
+             x:Class="LTA.Mobile.Pages.Messages.Popups.SendPicturePopup"
+             BackgroundColor="{StaticResource PrimaryColor}">
+    <Label Style="{StaticResource FontAwesomeLabel}"
+           FontSize="Large"
+           TextColor="{StaticResource SecondaryTextColor}"
+           HorizontalOptions="CenterAndExpand"
+           VerticalOptions="CenterAndExpand"/>
+    <Image Source="{Binding Image}" HeightRequest="300" WidthRequest="300" Aspect="AspectFill"/>
+    <customControls:FloatingButton WidthRequest="60" HeightRequest="60"
+                                   HorizontalOptions="Center" VerticalOptions="Center"
+                                   BackgroundColor="{StaticResource AccentColor}"
+                                   PressedCommand="{Binding SendPictureCommand}"
+                                   Icon="{StaticResource FontAwesomePaperPlane}"
+                                   IconColor="{StaticResource PrimaryColor}"
+                                   Style="{StaticResource LightShadowPancakeViewStyle}"
+                                   Margin="5,0,10,0"/>
+    <Editor Placeholder="Подпись..."
+            Margin="10,5,5,10"
+            AutoSize="TextChanges"
+            Text="{Binding Message}"
+            VerticalOptions="Center"
+            FontFamily="{StaticResource QuickSandRegular}"
+            FontAttributes="Bold"
+            x:Name="TextInput">
+        <Editor.Effects>
+            <effects:BorderlessEntryEffect/>
+        </Editor.Effects>
+        <Editor.Behaviors>
+            <behaviors:EventToCommandBehavior EventName="TextChanged"
+                                              Command="{Binding UserTypingCommand}"/>
+        </Editor.Behaviors>
+    </Editor>
+</StackLayout>

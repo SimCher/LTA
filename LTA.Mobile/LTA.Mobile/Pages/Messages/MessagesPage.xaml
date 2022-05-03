@@ -147,6 +147,7 @@
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
+                                        <Image BindingContext="{Binding Image}" Aspect="AspectFill" WidthRequest="200" HeightRequest="300" Source="{Binding Converter={StaticResource BytesToImageConverter}}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
                                         <Label Text="{Binding Content}"
                                                LineBreakMode="TailTruncation" />
                                     </StackLayout>
@@ -192,6 +193,7 @@
                                                                HeightRequest="50"
                                                                WidthRequest="50"
                                                                Margin="5"
+                                                               PressedCommand="{Binding SendPictureCommand}"
                                                                Icon="{StaticResource FontAwesomePaperClip}"
                                                                IconColor="{StaticResource PrimaryTextColor}"
                                                                BackgroundColor="White"/>

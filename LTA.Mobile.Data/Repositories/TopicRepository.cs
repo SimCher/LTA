@@ -21,13 +21,15 @@ public class TopicRepository : ITopicRepository
     {
         Context = context;
         _chatService = chatService;
-
-        InitializeAsync();
     }
 
-    public ICollection<Topic> GetAll()
+    public async Task<ICollection<Topic>> GetAll()
     {
-        var t = Context.Topics.ToList();
+        if (Context.Topics == null || !Context.Topics.Any())
+        {
+            await InitializeAsync();
+        }
+        var t = Context.Topics?.ToList();
         return t;
     }
 
@@ -40,14 +42,16 @@ public class TopicRepository : ITopicRepository
     {
         var topic = await GetAsync(topicId);
 
-        topic.UsersIn[user.Code] = user.Color;
+        topic.UsersIn.Add(user);
     }
 
     public async Task<bool> RemoveUserFromTopicAsync(string userCode, int topicId)
     {
         var topic = await GetAsync(topicId);
 
-        return topic.UsersIn.Remove(userCode);
+        
+
+        return topic.UsersIn.Remove(topic.UsersIn.First(u => u.Code.Equals(userCode)));
     }
 
     private async Task InitializeAsync()
@@ -66,7 +70,7 @@ public class TopicRepository : ITopicRepository
             MaxUsersNumber = 0,
             LastEntryDate = default(DateTime),
             UserNumber = 0,
-            UsersIn = new Dictionary<string, Color>(),
+            UsersIn = new List<User>(),
             Categories = string.Empty
         };
 

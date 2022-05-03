@@ -2,11 +2,8 @@
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Name="SimpleTopicTemplate"
-             xmlns:pageModels="clr-namespace:LTA.Mobile.PageModels"
-             xmlns:prism="http://prismlibrary.com"
              xmlns:lottie="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
              HeightRequest="125"
-             xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls;assembly=LTA.Mobile"
              x:Class="LTA.Mobile.UI.DataTemplates.TopicTemplate">
     <ContentView.Content>
         <Grid Margin="0, 15">

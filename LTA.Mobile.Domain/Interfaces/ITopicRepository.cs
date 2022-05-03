@@ -6,7 +6,7 @@ namespace LTA.Mobile.Domain.Interfaces;
 
 public interface ITopicRepository
 {
-    ICollection<Topic> GetAll();
+    Task<ICollection<Topic>> GetAll();
 
     Task<Topic> GetAsync(int topicId);
 
