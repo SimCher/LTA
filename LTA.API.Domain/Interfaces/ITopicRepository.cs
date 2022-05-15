@@ -4,6 +4,7 @@ namespace LTA.API.Domain.Interfaces;
 
 public interface ITopicRepository
 {
+    Task<int> GetCountAsync();
     IEnumerable<Topic> GetAll();
 
     Task<Topic> AddAsync(Topic topic);

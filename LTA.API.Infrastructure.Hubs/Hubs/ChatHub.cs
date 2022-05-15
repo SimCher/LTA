@@ -1,7 +1,6 @@
 ﻿using LTA.API.Infrastructure.Hubs.Interfaces;
 using LTA.API.Infrastructure.Loggers.Interfaces;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 
 namespace LTA.API.Infrastructure.Hubs.Hubs;
 
@@ -24,7 +23,8 @@ public class ChatHub : Hub
         {
             _loggerService.LogInformation("Try to register new user...");
             await _identityService.RegisterAsync(phoneOrEmail, password, confirm, keyWord);
-            _loggerService.LogInformation($"Profile with phone/email: {phoneOrEmail} has been successfully registered!");
+            _loggerService.LogInformation(
+                $"Profile with phone/email: {phoneOrEmail} has been successfully registered!");
             return true;
         }
         catch (Exception ex)
@@ -42,10 +42,16 @@ public class ChatHub : Hub
             var topic = await _topicService.AddTopic(name, maxUsers, categories, code);
             await Clients.All.SendAsync("UpdateTopic", topic);
         }
+        catch (NullReferenceException ex)
+        {
+            _loggerService.LogError($"{ex.Source}: {ex.Message}");
+            await Clients.Caller.SendAsync("Logout");
+        }
         catch (Exception ex)
         {
             _loggerService.LogError($"{ex.Source}: {ex.Message}");
-            await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
+            await Clients.Caller.SendAsync("Logout");
+
         }
     }
 
@@ -59,6 +65,12 @@ public class ChatHub : Hub
                 ? throw new ArgumentException("User get a empty code.")
                 : userCode ?? throw new NullReferenceException();
         }
+        catch (NullReferenceException ex)
+        {
+            _loggerService.LogError($"{ex.Source}: {ex.Message}");
+            await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
+            return string.Empty;
+        }
         catch (Exception ex)
         {
             _loggerService.LogError($"{ex.Source}: {ex.Message}");
@@ -66,51 +78,7 @@ public class ChatHub : Hub
             return string.Empty;
         }
     }
-
-    //public async Task<ICollection<string>?> LogInChat(string userCode, int topicId)
-    //{
-    //    try
-    //    {
-    //        var topic = _topicService.GetTopic(topicId) ??
-    //                    throw new System.NullReferenceException($"Topic is unavailable");
-    //        if (topic.ContainsUser(userCode))
-    //            throw new ArgumentException($"User {userCode} in topic {topic.Name} already.");
-
-    //        await Groups.AddToGroupAsync(Context.ConnectionId, $"{topic.Id}");
-
-    //        if (!topic.TryAddUser(userCode)) throw new ArgumentException($"{nameof(userCode)} was null or empty.");
-    //        await Clients.OthersInGroup($"{topic.Id}").SendAsync("NewUserMessage");
-
-    //        return topic.UsersIn;
-
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _loggerService.LogError($"{ex.Source}: {ex.Message}");
-    //        await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
-    //        return null;
-    //    }
-    //}
-
-    //public async Task LogInChatAsync(string userCode, int topicId)
-    //{
-    //    try
-    //    {
-    //        await Groups.AddToGroupAsync(Context.ConnectionId, topicId.ToString());
-
-    //        await Clients.Group(topicId.ToString()).SendAsync("SetErrorMessage", "Собеседник вошёл!");
-
-    //        var topic = await _topicService.AddUserAndReturnTopic(topicId, userCode);
-
-    //        await Clients.OthersInGroup(topicId.ToString())
-    //            .SendAsync("AddUser", topic.Id, _topicService.GetChattersAndColors(topic), topic.LastEntryDate);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _loggerService.LogError($"{ex.Source}: {ex.Message}");
-    //    }
-    //}
-
+    
     public async Task LogInChatAsync(int topicId)
     {
         var stringTopicId = topicId.ToString();
@@ -176,44 +144,6 @@ public class ChatHub : Hub
         }
     }
 
-    //public async Task LogOutFromChatAsync(string userCode, int topicId)
-    //{
-    //    try
-    //    {
-    //        await Groups.RemoveFromGroupAsync(Context.ConnectionId, topicId.ToString());
-
-    //        await Clients.Group(topicId.ToString()).SendAsync("SetErrorMessage", "Собеседник вышел!");
-
-    //        var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userCode);
-
-    //        await Clients.OthersInGroup(topicId.ToString()).SendAsync("RemoveUser", topic.Id, userCode);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _loggerService.LogError($"{ex.Source}: {ex.Message}");
-    //        await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
-    //    }
-    //}
-
-    //public async Task LogOutFromChatAsync(string userCode, int topicId)
-    //{
-    //    try
-    //    {
-    //        var topic = await _topicService.RemoveUserAndReturnTopic(topicId, userCode);
-
-    //        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{topic.Id}");
-
-    //        await Clients.OthersInGroup($"{topic.Id}").SendAsync("UserOutMessage");
-
-    //        await Clients.All.SendAsync("UpdateTopic", topic.Id, topic.UsersIn);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _loggerService.LogError($"{ex.Source}: {ex.Message}");
-    //        await Clients.Caller.SendAsync("SetErrorMessage", ex.Message);
-    //    }
-    //}
-
     public async Task SendMessage(dynamic message, int topicId)
     {
         var a = new { m = message };
@@ -227,7 +157,19 @@ public class ChatHub : Hub
 
     public IEnumerable<object> LoadTopicsAsObject()
     {
+        
         return _topicService.GetTopicsObject();
+    }
+
+    public IEnumerable<object> LoadSpecificTopics(IEnumerable<int>? existTopicsIds)
+    {
+        var specificTopics = _topicService.GetTopicsObject(existTopicsIds);
+        return specificTopics;
+    }
+
+    public async Task<int> GetTopicsCount()
+    {
+        return await _topicService.GetCountOfTopics();
     }
 
     public async Task SendTyping(int topicId)

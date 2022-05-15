@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
+using LTA.Mobile.Helpers;
 using Prism.Commands;
 using Prism.Navigation;
 using ReactiveUI;
@@ -45,10 +46,19 @@ public class AddTopicPageModel : BasePageModel
         AddTopicCommand = new DelegateCommand(AddTopic);
     }
 
-    public void AddTopic()
+    public override void OnNavigatedTo(INavigationParameters parameters)
     {
-        ChatService.AddTopicAsync(TopicName, MaxNumbers, Categories, "f6bd3c25-3b1f-4a9e-b1e3-83c879177191");
+        ChatService.Logout(Logout);
     }
 
+    public void AddTopic()
+    {
+        ChatService.AddTopicAsync(TopicName, MaxNumbers, Categories, Settings.UserCode);
+    }
 
+    public async void Logout()
+    {
+        Settings.Logout();
+        await NavigationService.NavigateAsync(Settings.LoginPageNavigation);
+    }
 }

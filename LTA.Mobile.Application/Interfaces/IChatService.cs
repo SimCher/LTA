@@ -23,6 +23,8 @@ namespace LTA.Mobile.Application.Interfaces
         //Topics logic
         Task AddTopicAsync(string name, int maxUsers, string categories, string code);
         Task<IEnumerable<object>> LoadTopicsAsync();
+        Task<IEnumerable<object>> LoadTopicsAsync(IEnumerable<int> existTopicsIds);
+        void UpdateTopic(Action<Topic> updateTopicMethod);
         Task LogInChatAsync(string userCode, int topicId);
         Task LogOutFromChatAsync(int topicId);
         void AddUserInTopic(Action<string, DateTime, int> addUserMethod);
@@ -34,5 +36,7 @@ namespace LTA.Mobile.Application.Interfaces
         Task SendTyping(int topicId);
         void ReceiveTyping(Action setIsTypingMethod);
         void Logout(Action logoutMethod);
+
+        Task<int> GetTopicsCountAsync();
     }
 }

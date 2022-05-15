@@ -10,7 +10,7 @@
              xmlns:xe="clr-namespace:XamEffects;assembly=XamEffects"
              xmlns:prism="http://prismlibrary.com"
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
-             xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels"
+             xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
                      BackgroundColor="{StaticResource PrimaryColor}"
              x:Class="LTA.Mobile.Pages.Topics.TopicsPage"
              TabSelectedIndex="0">
@@ -42,7 +42,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <pancakeView:PancakeView BackgroundGradientStartPoint="0,0" BackgroundGradientEndPoint="1,0"
@@ -102,15 +102,7 @@
                                VerticalOptions="Center"/>
                     </Grid>
                 </pancakeView:PancakeView>
-
-
-                <!--<customControls:ToggleButton HorizontalOptions="Start"
-                                             Margin="15,10,15,10"
-                                             VerticalOptions="Center"
-                                             ToggleOptionTitle="All"
-                                             Grid.Row="1"
-                                             ToggleCommand="{Binding FilterOptionChangedCommand}"
-                                             NotToggledOptionTitle="Saved"/>-->
+                
                 <StackLayout Grid.Row="1" HorizontalOptions="Start"
                              Orientation="Horizontal"
                              VerticalOptions="Center"
@@ -144,26 +136,9 @@
                              Command="{Binding RefreshCommand}"
                              VerticalOptions="FillAndExpand"
                              IsRefreshing="{Binding IsRefreshing}">
-
-
-
                     <CollectionView ItemsSource="{Binding TopicList}"
                                     VerticalOptions="StartAndExpand"
-                                    HorizontalOptions="FillAndExpand"
-                                    >
-
-                        <CollectionView.Triggers>
-                            <DataTrigger TargetType="CollectionView"
-                                         Binding="{Binding IsBusy}"
-                                         Value="True">
-                                <Setter Property="IsVisible" Value="False"/>
-                            </DataTrigger>
-                            <DataTrigger TargetType="CollectionView"
-                                         Binding="{Binding IsBusy}"
-                                         Value="False">
-                                <Setter Property="IsVisible" Value="True"/>
-                            </DataTrigger>
-                        </CollectionView.Triggers>
+                                    HorizontalOptions="FillAndExpand">
 
                         <CollectionView.ItemTemplate>
 
@@ -190,10 +165,10 @@
                                     </SwipeView.LeftItems>
                                     <Grid xe:TouchEffect.Color="{StaticResource SecondaryAccentColor}"
                                           xe:Commands.Tap="{Binding BindingContext.ItemTappedCommand, Source={x:Reference TopicPage}}"
-                                          xe:Commands.TapParameter="{Binding}" HeightRequest="105">
+                                          xe:Commands.TapParameter="{Binding}" HeightRequest="90">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="1*"/>
-                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height=".5*"/>
+                                            <RowDefinition Height=".1*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
@@ -226,8 +201,8 @@
                                             </customControls:FloatingButton.Triggers>
                                         </customControls:FloatingButton>
 
-                                        <CollectionView Grid.Row="1" HorizontalScrollBarVisibility="Never"
-                                                    VerticalScrollBarVisibility="Default"
+                                        <CollectionView Grid.Row="1" HorizontalScrollBarVisibility="Default"
+                                                    VerticalScrollBarVisibility="Never"
                                                     ItemsSource="{Binding Categories}"
                                                     Margin="66,-15,0,0"
                                                     ItemsLayout="HorizontalList"
@@ -292,7 +267,7 @@
 
             <pancakeView:PancakeView HeightRequest="30"
                                      Grid.Row="1"
-                                     IsVisible="False"
+                                     IsVisible="{Binding IsBusy}"
                                      CornerRadius="50"
                                      BackgroundColor="White"
                                      Margin="0,0,0,-15"/>

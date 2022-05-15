@@ -29,6 +29,9 @@
     <x:String x:Key="FontAwesomeRegularHeart">&#x10f004;</x:String>
     <x:String x:Key="FontAwesomeReport">&#xf024;</x:String>
     <x:String x:Key="FontAwesomeLogin">&#xf2f6;</x:String>
+    <x:String x:Key="FontAwesomeCopy">&#xf0c5;</x:String>
+    <x:String x:Key="FontAwesomeEdit">&#xf044;</x:String>
+    <x:String x:Key="FontAwesomeDelete">&#xf1f8;</x:String>
 
     <Style x:Key="FontAwesomeLabel" TargetType="{x:Type Label}">
         <Setter Property="FontFamily"

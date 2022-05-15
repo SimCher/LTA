@@ -109,5 +109,7 @@ public class TopicRepository : ITopicRepository
 
     public Topic? Get(int id) => _context.Topics.Find(id);
 
+    public async Task<int> GetCountAsync() => await _context.Topics.CountAsync();
+
 
 }

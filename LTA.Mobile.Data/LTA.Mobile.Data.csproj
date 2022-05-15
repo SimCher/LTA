@@ -166,6 +166,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\MessageRepository.cs" />
     <Compile Include="Repositories\TopicRepository.cs" />
+    <Compile Include="Repositories\TR.cs" />
+    <Compile Include="Repos\TopicRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LTA.Mobile.Application\LTA.Mobile.Application.csproj">

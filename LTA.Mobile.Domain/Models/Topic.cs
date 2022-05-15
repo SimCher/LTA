@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using LTA.Mobile.Domain.Models.BaseModels;
 using Xamarin.Forms;
@@ -24,7 +25,7 @@ namespace LTA.Mobile.Domain.Models
         public Topic()
         {
             //TODO:: Return observable collection instead dictionary
-            UsersIn = new List<User>();
+            UsersIn = new ObservableCollection<User>();
         }
 
         public string Name
@@ -56,6 +57,14 @@ namespace LTA.Mobile.Domain.Models
             get => UsersIn.Count;
             set => SetProperty(ref _currentUsersNumber, value);
         }
+
+        public string CategoriesArray
+        {
+            get => _categoriesArray;
+            set => SetProperty(ref _categoriesArray, value);
+        }
+
+        private string _categoriesArray;
 
         [NotMapped]
         public bool? IsFull
@@ -107,7 +116,8 @@ namespace LTA.Mobile.Domain.Models
         public bool IsRoomFilled => _currentUsersNumber >= _maxUsersNumber;
 
         [NotMapped]
-        public ICollection<string> Categories { get; set; }
+        public ICollection<string> Categories
+            => !string.IsNullOrEmpty(CategoriesArray) ? CategoriesArray.Split(',') : null;
 
         public ICollection<Message> Messages { get; set; }
 

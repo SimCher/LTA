@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using Xamarin.Forms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +12,7 @@ namespace LTA.Mobile.Application.Services
     //Обслуживающий класс для общения с сервером
     public class ChatService : IChatService
     {
-        private const string GlobalIP = $"http://192.168.0.108:8082/lta";
+        private const string GlobalIP = $"http://192.168.0.105:8082/lta";
 
         private readonly HubConnection _hubConnection;
         private string _currentUserCode;
@@ -43,13 +42,11 @@ namespace LTA.Mobile.Application.Services
 
         public bool IsConnected { get; private set; }
 
-
-        private Dictionary<string, string> ActiveTopics { get; } = new();
 #pragma warning disable CS8618
         public ChatService()
 #pragma warning restore CS8618
         {
-            const string localIP = @"http://10.0.2.2:5240/lta";
+            const string localIP = @"http://10.0.2.2:5000/lta";
             _hubConnection = new HubConnectionBuilder().WithUrl(GlobalIP).Build();
         }
 
@@ -60,8 +57,14 @@ namespace LTA.Mobile.Application.Services
         public async Task Connect()
         {
             if (IsConnected) return;
-            await _hubConnection.StartAsync();
-            IsConnected = true;
+
+            if (_hubConnection.State == HubConnectionState.Disconnected)
+            {
+                Debug.WriteLine("Oops... Disconnected! Trying to connect");
+                await _hubConnection.StartAsync();
+                IsConnected = true;
+                Debug.WriteLine("Is connected now!");
+            }
         }
 
         /// <summary>
@@ -81,7 +84,6 @@ namespace LTA.Mobile.Application.Services
                 Debug.WriteLine(ex);
             }
 
-            ActiveTopics.Clear();
             IsConnected = false;
         }
 
@@ -93,8 +95,7 @@ namespace LTA.Mobile.Application.Services
         /// <returns></returns>
         public async Task SendMessage(Message message, int topicId)
         {
-            if (!IsConnected)
-                await ConnectIfNotAsync();
+            await ConnectIfNotAsync();
 
             await _hubConnection.InvokeAsync("SendMessage", message, topicId);
         }
@@ -129,8 +130,7 @@ namespace LTA.Mobile.Application.Services
         /// <returns></returns>
         public async Task SendTyping(int topicId)
         {
-            if (!IsConnected)
-                await ConnectIfNotAsync();
+            await ConnectIfNotAsync();
 
             await _hubConnection.InvokeAsync("SendTyping", topicId);
         }
@@ -176,40 +176,40 @@ namespace LTA.Mobile.Application.Services
         /// <returns></returns>
         public async Task<IEnumerable<object>> LoadTopicsAsync()
         {
-            if (!IsConnected)
-            {
-                await ConnectIfNotAsync();
-            }
-
-
-            return await _hubConnection.InvokeAsync<IEnumerable<object>>("LoadTopicsAsObject");
+            await ConnectIfNotAsync();
+            var topics = await _hubConnection.InvokeAsync<IEnumerable<object>>("LoadTopicsAsObject");
+            return topics;
         }
 
-        /// <summary>
-        /// Асинхронный вход в чат
-        /// </summary>
-        /// <param name="topicId">Идентификатор темы</param>
-        /// <returns></returns>
+        public async Task<IEnumerable<object>> LoadTopicsAsync(IEnumerable<int> existTopicsIds)
+        {
+            await ConnectIfNotAsync();
+            var topics = await _hubConnection
+                .InvokeAsync<IEnumerable<object>>("LoadSpecificTopics", existTopicsIds);
+            return topics;
+        }
+
+        public async Task<int> GetTopicsCountAsync()
+        {
+            await ConnectIfNotAsync();
+            var topicsCount = await _hubConnection.InvokeAsync<int>("GetTopicsCount");
+            return topicsCount;
+        }
+
+        public void UpdateTopic(Action<Topic> updateTopicMethod)
+        {
+            _hubConnection.On("UpdateTopic", updateTopicMethod);
+        }
+        
         public async Task LogInChatAsync(string userCode, int topicId)
         {
-            if (!IsConnected)
-            {
-                await ConnectIfNotAsync();
-            }
-            await _hubConnection.SendAsync("SubscribeToChat", userCode, topicId);
+            await ConnectIfNotAsync();
+            await _hubConnection.SendAsync("SubscribeToChat", userCode, topicId.ToString());
         }
-
-        /// <summary>
-        /// Асинхронный выход из чата
-        /// </summary>
-        /// <param name="userCode">Идентификатор пользователя</param>
-        /// <param name="topicId">Идентификатор темы</param>
-        /// <returns></returns>
+        
         public async Task LogOutFromChatAsync(int topicId)
         {
-            if (!IsConnected) return;
-
-            await _hubConnection.SendAsync("LogOutFromChatAsync", topicId);
+            await _hubConnection.SendAsync("LogOutFromChatAsync", topicId.ToString());
         }
 
         /// <summary>
@@ -258,19 +258,34 @@ namespace LTA.Mobile.Application.Services
         {
             _hubConnection.On("RemoveUser", removeUserMethod);
         }
-
+        
         /// <summary>
         /// Асинхронное подключение к серверу, если подключение не установлено
         /// </summary>
         /// <returns></returns>
         private async Task ConnectIfNotAsync()
         {
+            if (IsConnected)
+            {
+                Debug.WriteLine("Additional connection is not requred");
+                return;
+            }
+            Debug.WriteLine("Killing the connection...");
             await _hubConnection.StopAsync();
             IsConnected = false;
             if (_hubConnection.State == HubConnectionState.Disconnected)
             {
-                await _hubConnection.StartAsync();
-                IsConnected = true;
+                try
+                {
+                    Debug.WriteLine("Trying to connect...");
+                    await _hubConnection.StartAsync();
+                    IsConnected = true;
+                    Debug.WriteLine("Is connect now!");
+                }
+                catch (InvalidOperationException)
+                {
+                    Debug.WriteLine("Error to connection!");
+                }
             }
         }
     }

@@ -1,140 +1,139 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <base:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             Shell.PresentationMode="ModalAnimated"
-             xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
-             xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
-             xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects"
-             xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
-             xmlns:dataTemplateSelector="clr-namespace:LTA.Mobile.UI.TemplateSelectors"
-             BindingContext="pageModels:MessagesPageModel"
-             xmlns:local="clr-namespace:LTA.Mobile.Pages"
-                x:Class="LTA.Mobile.Pages.Messages.MessagesPage"
-             NavigationPage.HasBackButton="False"
-             BackgroundColor="{StaticResource PrimaryColor}"
-             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
-             xmlns:base="clr-namespace:LTA.Mobile.Pages.Base;assembly=LTA.Mobile"
-             xmlns:behaviors="http://prismlibrary.com"
-             prism:ViewModelLocator.AutowireViewModel="True"
-             x:Name="MessagePage">
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               Shell.PresentationMode="ModalAnimated"
+               xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
+               xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
+               xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects"
+               xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+               xmlns:dataTemplateSelector="clr-namespace:LTA.Mobile.UI.TemplateSelectors"
+               BindingContext="pageModels:MessagesPageModel"
+               x:Class="LTA.Mobile.Pages.Messages.MessagesPage"
+               NavigationPage.HasBackButton="False"
+               BackgroundColor="{StaticResource PrimaryColor}"
+               xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+               xmlns:base="clr-namespace:LTA.Mobile.Pages.Base;assembly=LTA.Mobile"
+               xmlns:behaviors="http://prismlibrary.com"
+               prism:ViewModelLocator.AutowireViewModel="True"
+               Title="Сообщения"
+               x:Name="MessagePage">
     <ContentPage.Content>
-
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
+                <RowDefinition Height=".14*"/>
+                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
+            <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand">
+                <Frame CornerRadius="0"
+                       BackgroundColor="{StaticResource PrimaryColor}"
+                       BorderColor="{StaticResource PrimaryColor}"
+                       Padding="0,10,0,0"
+                       HeightRequest="75"
+                       Margin="0, 0,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <customControls:FloatingButton HeightRequest="40"
+                                                       WidthRequest="40"
+                                                       Margin="5,0,0,25"
+                                                       HorizontalOptions="Start"
+                                                       VerticalOptions="Center"
+                                                       CornerRadius="90"
+                                                       IconSize="25"
+                                                       PressedCommand="{Binding Source={x:Reference MessagePage}, Path=BackCommand}"
+                                                       Icon="{StaticResource FontAwesomeChevronLeft}"
+                                                       BackgroundColor="{StaticResource PrimaryColor}"
+                                                       IconColor="{StaticResource AccentColor}"/>
 
-            <Grid VerticalOptions="Start" Margin="0, -10,0,0">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <customControls:FloatingButton Margin="5,0,0,0"
-                                               HorizontalOptions="Start"
-                                               VerticalOptions="Center"
-                                               CornerRadius="90"
-                                               HeightRequest="40" WidthRequest="40"
-                                               IconSize="25"
-                                               PressedCommand="{Binding Source={x:Reference MessagePage}, Path=BackCommand}"
-                                               Icon="{StaticResource FontAwesomeChevronLeft}"
-                                               BackgroundColor="{StaticResource PrimaryColor}"
-                                               IconColor="{StaticResource AccentColor}"/>
-
-                <dataTemplates:TopicTemplate BindingContext="{Binding CurrentTopic}"
-                                             Grid.Column="1"
-                                             IsInTitle="True"
-                                             IsUsersTyping="{Binding BindingContext.IsTyping, Source={x:Reference MessagePage}}"
-                                             Margin="25,0,0,50"/>
-
-                <Label Grid.Column="1"
-                       HorizontalOptions="CenterAndExpand"
-                       VerticalOptions="Center"
-                       HeightRequest="50"
-                       Text="{Binding PageMessage}"
-                       FontFamily="{StaticResource QuickSandRegular}"
-                       TextColor="{StaticResource SecondaryTextColor}">
-                    <Label.Triggers>
-                        <DataTrigger TargetType="Label"
-                                     Binding="{Binding IsPageMessageSeen}"
+                        <dataTemplates:TopicTemplate Grid.Column="1" BindingContext="{Binding CurrentTopic}"
+                                                     IsInTitle="True"
+                                                     IsUsersTyping="{Binding BindingContext.IsTyping, Source={x:Reference MessagePage}}"
+                                                     Margin="25,0,0,0"/>
+                    </Grid>
+                   </Frame>
+            </StackLayout>
+            
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <StackLayout Orientation="Horizontal" Grid.Row="0">
+                    <StackLayout.Triggers>
+                        <DataTrigger TargetType="StackLayout"
+                                     Binding="{Binding IsMessagesSelected}"
                                      Value="True">
                             <Setter Property="IsVisible" Value="True"/>
                         </DataTrigger>
-                        <DataTrigger TargetType="Label"
-                                     Binding="{Binding IsPageMessageSeen}"
+                        <DataTrigger TargetType="StackLayout"
+                                     Binding="{Binding IsMessagesSelected}"
                                      Value="False">
                             <Setter Property="IsVisible" Value="False"/>
                         </DataTrigger>
-                    </Label.Triggers>
-                </Label>
-
-                <StackLayout Orientation="Horizontal" Grid.Column="2"
-                             VerticalOptions="Center"
-                             HorizontalOptions="End"
-                             Margin="0"/>
-
-            </Grid>
-
-            <Grid Grid.Row="1" x:Name="MessagesGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
+                    </StackLayout.Triggers>
+                    <Button Text="Копировать"/>
+                    
+                </StackLayout>
                 <CollectionView ItemsSource="{Binding Messages}"
-                                IsGrouped="True" Grid.Row="0"
-                                BackgroundColor="{StaticResource PrimaryColor}"
-                                x:Name="MessagesCollectionView">
+                                                    IsGrouped="True"
+                                                    Grid.Row="1"
+                                                    BackgroundColor="{StaticResource PrimaryColor}"
+                                                    x:Name="MessagesCollectionView"
+                                                    SelectionMode="Multiple"
+                                                    SelectedItems="{Binding SelectedMessages}">
                     <CollectionView.GroupHeaderTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Label Text="{Binding GroupHeader}"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       Margin="15"
-                                       FontFamily="{StaticResource QuickSandRegular}"
-                                       TextColor="{StaticResource SecondaryTextColor}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.GroupHeaderTemplate>
-
+                    <DataTemplate>
+                        <Grid>
+                            <Label Text="{Binding GroupHeader}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Margin="15"
+                                   FontFamily="{StaticResource QuickSandRegular}"
+                                   TextColor="{StaticResource SecondaryTextColor}"/>
+                        </Grid>
+                    </DataTemplate>
+                        </CollectionView.GroupHeaderTemplate>
                     <CollectionView.ItemTemplate>
                         <dataTemplateSelector:ChatBubbleTemplateSelector/>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
+                
                 <Grid Grid.Row="2" x:Name="WriteContainerGrid">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-
+                    
                     <pancakeView:PancakeView CornerRadius="20"
                                              Style="{StaticResource LightShadowPancakeViewStyle}"
-                                             BackgroundColor="White" Margin="10,0,0,10">
+                                             BackgroundColor="White"
+                                             Margin="10,0,10,10">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-
-                            <pancakeView:PancakeView Margin="10,10,10,0" IsVisible="{Binding Converter={StaticResource IsNullValueConverter}}"
+                            
+                            <pancakeView:PancakeView Margin="10,10,10,0"
+                                                     IsVisible="{Binding Converter={StaticResource IsNullValueConverter}}"
                                                      BindingContext="{Binding ReplyMessage}">
                                 <Grid HeightRequest="70">
-
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-
+                                    
                                     <BoxView BackgroundColor="{StaticResource PrimaryColor}" Grid.ColumnSpan="3"/>
                                     <BoxView WidthRequest="2" BackgroundColor="{StaticResource AccentColor}"/>
-
+                                    
                                     <StackLayout Grid.Column="1"
                                                  Grid.ColumnSpan="2"
                                                  Margin="1">
@@ -143,15 +142,21 @@
                                                Margin="0,0,0,5">
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="{Binding Sender.Color}"/>
+                                                    <Span Text="{Binding UserCode}"/>
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
-                                        <Image BindingContext="{Binding Image}" Aspect="AspectFill" WidthRequest="200" HeightRequest="300" Source="{Binding Converter={StaticResource BytesToImageConverter}}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+                                        <Image BindingContext="{Binding Image}"
+                                               Aspect="AspectFill"
+                                               WidthRequest="200"
+                                               HeightRequest="300"
+                                               Source="{Binding Converter={StaticResource BytesToImageConverter}}" 
+                                               HorizontalOptions="FillAndExpand" 
+                                               VerticalOptions="FillAndExpand"/>
                                         <Label Text="{Binding Content}"
-                                               LineBreakMode="TailTruncation" />
+                                               LineBreakMode="TailTruncation"/>
                                     </StackLayout>
-
+                                    
                                     <customControls:FloatingButton Grid.Column="2"
                                                                    IconSize="15"
                                                                    HeightRequest="30"
@@ -164,16 +169,17 @@
                                                                    IconColor="{StaticResource PrimaryTextColor}"/>
                                 </Grid>
                             </pancakeView:PancakeView>
-
+                            
                             <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Editor Placeholder="Message"
+                                                                    <ColumnDefinition/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                
+                                <Editor Placeholder="Сообщение"
                                         Margin="10,5,5,10"
                                         AutoSize="TextChanges"
+                                        HeightRequest="50"
                                         Text="{Binding Message}"
                                         VerticalOptions="Center"
                                         FontFamily="{StaticResource QuickSandRegular}"
@@ -187,30 +193,35 @@
                                                                           Command="{Binding UserTypingCommand}"/>
                                     </Editor.Behaviors>
                                 </Editor>
-
+                                
                                 <customControls:FloatingButton CornerRadius="90"
                                                                Grid.Column="1"
-                                                               HeightRequest="50"
-                                                               WidthRequest="50"
+                                                               HeightRequest="30"
+                                                               WidthRequest="30"
                                                                Margin="5"
                                                                PressedCommand="{Binding SendPictureCommand}"
                                                                Icon="{StaticResource FontAwesomePaperClip}"
                                                                IconColor="{StaticResource PrimaryTextColor}"
-                                                               BackgroundColor="White"/>
+                                                               BackgroundColor="{StaticResource PrimaryColor}"/>
                             </Grid>
-                        </Grid>
+                            </Grid>
                     </pancakeView:PancakeView>
-
-                    <customControls:FloatingButton Grid.Column="1" WidthRequest="60" HeightRequest="60"
-                                                   HorizontalOptions="Center" VerticalOptions="Center"
+                    
+                    <customControls:FloatingButton Grid.Column="1"
+                                                   WidthRequest="50"
+                                                   HeightRequest="60"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"
                                                    BackgroundColor="{StaticResource AccentColor}"
                                                    PressedCommand="{Binding SendMsgCommand}"
                                                    Icon="{StaticResource FontAwesomePaperPlane}"
                                                    IconColor="{StaticResource PrimaryColor}"
                                                    Style="{StaticResource LightShadowPancakeViewStyle}"
-                                                   Margin="5,0,10,0"/>
+                                                   Margin="2,0,10,0"/>
+                </Grid>
                 </Grid>
             </Grid>
-        </Grid>
+        
     </ContentPage.Content>
+    
 </base:BasePage>

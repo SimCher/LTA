@@ -7,7 +7,7 @@ public interface ITopicService
 {
     public IEnumerable<dynamic> GetTopicsDynamic();
 
-    public IEnumerable<object> GetTopicsObject();
+    public IEnumerable<object> GetTopicsObject(IEnumerable<int>? existTopicsIds = null);
 
     public Topic? GetTopic(int id);
 
@@ -16,4 +16,6 @@ public interface ITopicService
     public Task<Topic> UpdateTopicAsync(int id, string userCode, bool? isUserBeingAdded);
     public Task<Topic> RemoveUserAndReturnTopic(int topicId, string userCode);
     public Dictionary<string?, Color> GetChattersAndColors(Topic topic);
+
+    Task<int> GetCountOfTopics();
 }

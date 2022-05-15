@@ -89,7 +89,6 @@ namespace LTA.Mobile.PageModels
             }
             catch (Exception ex)
             {
-                Observable.Timer(TimeSpan.FromMilliseconds(1500)).Subscribe(async _ => await TryConnectAsync());
                 PageMessage = "Нет подключения к сети";
                 return $"{ex.Source}: {ex.Message}";
             }

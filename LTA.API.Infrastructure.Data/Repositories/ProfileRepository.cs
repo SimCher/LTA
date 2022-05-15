@@ -17,11 +17,17 @@ public class ProfileRepository : IProfileRepository
     public IEnumerable<Profile> GetAll()
         => _context.Profiles;
 
-    public async Task<Profile?> GetAsync(string phoneOrEmail)
-        => await _context.Profiles.SingleOrDefaultAsync(p =>
-            p.Phone == phoneOrEmail || p.Email == phoneOrEmail);
+    // public async Task<Profile?> GetAsync(string phoneOrEmail)
+    //     => await _context.Profiles.SingleOrDefaultAsync(p =>
+    //         p.Phone == phoneOrEmail || p.Email == phoneOrEmail);
 
-    public async Task CreateAsync(string? phone, string? email, string password, string? confirm)
+    public Task<Profile?> GetAsync(string phoneOrEmail)
+    {
+        return _context.Profiles.SingleOrDefaultAsync( p =>
+            p.Phone.Equals(phoneOrEmail) || p.Email.Equals(phoneOrEmail));
+    }
+
+    public async Task? CreateAsync(string? phone, string? email, string password, string? confirm)
     {
         if (phone == null && email == null)
         {
@@ -54,9 +60,9 @@ public class ProfileRepository : IProfileRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Profile?>? IsDataValidAsync(string phoneOrEmail, string password)
-        => await _context.Profiles.FirstOrDefaultAsync(p =>
-            (p.Phone == phoneOrEmail || p.Email == phoneOrEmail) && p.Password == password);
+    public Task<Profile?>? IsDataValidAsync(string phoneOrEmail, string password)
+        => _context.Profiles.FirstOrDefaultAsync(p =>
+            (p.Phone.Equals(phoneOrEmail) || p.Email.Equals(phoneOrEmail)) && p.Password.Equals(password));
 
     public async Task<bool> TryDeleteAsync(int id)
     {

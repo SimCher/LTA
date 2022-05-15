@@ -14,9 +14,7 @@ public sealed class LtaClientContext : DbContext, IDbContextable
     public LtaClientContext()
     {
         SQLitePCL.Batteries_V2.Init();
-        //Database.EnsureDeleted();
         Database.EnsureCreated();
-
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,7 +26,8 @@ public sealed class LtaClientContext : DbContext, IDbContextable
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Topic>().ToTable("topics");
+        modelBuilder.Entity<Topic>().ToTable("topics").Property(t => t.Id).
+            ValueGeneratedNever();
 
         modelBuilder.Entity<Message>().ToTable("messages")
             .HasOne(m => m.Topic)

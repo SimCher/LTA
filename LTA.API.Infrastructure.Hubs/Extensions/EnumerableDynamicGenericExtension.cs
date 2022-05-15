@@ -28,9 +28,7 @@ public static class CollectopnDynamicGenericExtension
             topic.MaxUsersNumber,
             topic.LastEntryDate,
             topic.UserNumber,
-            UsersIn = TopicService.GetTopicChattersAndColors(topic),
             Categories = topic.GetCategoryNames()
-
         };
 
         return objectTopic;
@@ -48,7 +46,6 @@ public static class CollectopnDynamicGenericExtension
             topic.MaxUsersNumber,
             topic.LastEntryDate,
             topic.UserNumber,
-            UsersIn = TopicService.GetTopicChattersAndColors(topic),
             Categories = topic.GetCategoryNames()
         };
 

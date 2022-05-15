@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Domain.Interfaces;
@@ -44,9 +43,16 @@ public class MessagesPageModel : BasePageModel
         SendPictureCommand = new DelegateCommand(SendPictureMessage);
 
         _messages = new List<Message>();
+        _selectedMessages = new ObservableCollection<MessageGroup>();
 
         NewMessage = new Message();
         //ChatService.NewUserMessage();
+    }
+
+    public ObservableCollection<MessageGroup> SelectedMessages
+    {
+        get => _selectedMessages;
+        set => this.RaiseAndSetIfChanged(ref _selectedMessages, value);
     }
 
     public ICommand SendMsgCommand { get; }
@@ -84,6 +90,8 @@ public class MessagesPageModel : BasePageModel
         get => _replyMessage;
         set => this.RaiseAndSetIfChanged(ref _replyMessage, value);
     }
+
+    public bool IsMessagesSelected => SelectedMessages.Count != 0;
 
     public Message NewMessage { get; private set; }
 
@@ -142,7 +150,6 @@ public class MessagesPageModel : BasePageModel
                     TopicId = CurrentTopic.Id,
                     IsSentPreviousMessage = false
                 }
-
             );
 
             _messages.Add(
@@ -376,6 +383,8 @@ public class MessagesPageModel : BasePageModel
     private IMessageRepository MessageRepository { get; }
 
     private string _message;
+
+    private ObservableCollection<MessageGroup> _selectedMessages;
 
     private readonly List<Message> _messages;
 

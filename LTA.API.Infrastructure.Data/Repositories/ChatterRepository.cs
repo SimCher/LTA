@@ -14,7 +14,8 @@ public class ChatterRepository : IChatterRepository
     }
     public async Task<Chatter?> GetAsync(int id)
     {
-        return await Context.Chatters.FindAsync(id);
+        var chatter = await Context.Chatters.FindAsync(id.ToString());
+        return chatter;
     }
 
     public async Task AddAsync(User user)

@@ -14,24 +14,19 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public Task<User> GetAsync(int id)
+    public ValueTask<User?> GetAsync(int id)
     {
-        var user = _context.Users.Find(id);
-
-        return Task.FromResult(user);
+        return _context.Users.FindAsync(id);
     }
 
-    public Task<User> GetAsync(string userCode)
+    public User Get(string userCode)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Code != null && u.Code.Equals(userCode)) ??
-                   throw new NullReferenceException($"Cannot user with code: {userCode}");
-
-        return Task.FromResult(user);
+        return _context.Users.First(u => u.Code != null && u.Code.Equals(userCode));
     }
 
-    public async Task<int> GetIdAsync(string code)
+    public int GetIdAsync(string code)
     {
-        var user = await GetAsync(code);
+        var user = Get(code);
 
         return user.Id;
     }
@@ -60,15 +55,19 @@ public class UserRepository : IUserRepository
     public async Task UpdateAsync(int id)
     {
         var userToUpdate = await GetAsync(id);
-
+        
+        if (userToUpdate != null)
+        {
         _context.Attach(userToUpdate).State = EntityState.Modified;
 
-        userToUpdate.Code = Guid.NewGuid().ToString("D");
-        userToUpdate.IsAuth = true;
-        userToUpdate.LastEntryDate = DateTime.Now;
+        
+            userToUpdate.Code = Guid.NewGuid().ToString("D");
+            userToUpdate.IsAuth = true;
+            userToUpdate.LastEntryDate = DateTime.Now;
 
-        userToUpdate.Chatter ??= _context.Chatters.First(c => c.Id == userToUpdate.Id);
-        userToUpdate.Chatter.User = userToUpdate;
+            userToUpdate.Chatter ??= _context.Chatters.First(c => c.Id == userToUpdate.Id);
+            userToUpdate.Chatter.User = userToUpdate;
+        }
 
         await _context.SaveChangesAsync();
     }
@@ -78,12 +77,12 @@ public class UserRepository : IUserRepository
         await UpdateAsync(id);
 
         return await _context.Users.FindAsync(id) ??
-               throw new NullReferenceException($"Cannot find the user with id {id}");
+               throw new NullReferenceException($"Cannon find a user with id: {id}");
     }
 
     public async Task<bool> TryDeleteAsync(int id)
     {
-        var userToDelete = await _context.Users.FindAsync(id);
+        var userToDelete = await GetAsync(id);
 
         if (userToDelete == null)
         {

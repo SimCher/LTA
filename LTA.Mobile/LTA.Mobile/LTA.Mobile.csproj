@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="PageModels\Partial" />
     <Folder Include="UI\Effects\" />
     <Folder Include="UI\TemplateSelectors\" />
     <Folder Include="EventHandlers\" />
@@ -51,6 +52,9 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>TextResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="UI\CustomControls\BindableViewCell.xaml.cs">
+      <DependentUpon>BindableViewCell.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -88,6 +92,9 @@
     <EmbeddedResource Update="Resources\TextResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TextResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\CustomControls\BindableViewCell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="UI\CustomControls\FloatingButton.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>

@@ -30,9 +30,21 @@ public class TopicService : ITopicService
     public IEnumerable<dynamic> GetTopicsDynamic()
         => _topicRepository.GetAll().ToDynamicEnumerable();
 
-    public IEnumerable<object> GetTopicsObject()
-        => _topicRepository.GetAll().ToObjectEnumerable();
+    public IEnumerable<object> GetTopicsObject(IEnumerable<int>? existTopicsIds = null)
+    {
+        if (existTopicsIds == null)
+        {
+            return  _topicRepository.GetAll().ToObjectEnumerable();
+        }
 
+        var topics = _topicRepository.GetAll();
+
+        var needTopics =
+            (from topicId in existTopicsIds from topic in topics where topicId != topic.Id select topic);
+
+        return needTopics.ToObjectEnumerable();
+    }
+    
     public Topic? GetTopic(int id)
     {
         try
@@ -52,14 +64,13 @@ public class TopicService : ITopicService
 
     public async Task<Topic> AddTopic(string name, int maxUsers, string categories, string code)
     {
-
         if (_topicRepository.GetAll().FirstOrDefault(t => t.Name == name) != null)
         {
             throw new Exception($"Topic with name {name} exists already!");
         }
 
         var categoriesObjects = await _categoryRepository.GetAll(categories.Split(' '));
-        var userId = await _userRepository.GetIdAsync(code);
+        var userId =  _userRepository.GetIdAsync(code);
 
         var newTopic = new Topic
         {
@@ -79,7 +90,7 @@ public class TopicService : ITopicService
         var topicToUpdate = _topicRepository.Get(id) ??
                             throw new NullReferenceException($"cannot find a topic with id: {id}");
 
-        var user = await _userRepository.GetAsync(userCode) ??
+        var user = _userRepository.Get(userCode) ??
                    throw new NullReferenceException($"cannot find chatter for user: {userCode}");
 
         var chatter = await _chatterRepository.GetAsync(user.Id) ??
@@ -191,4 +202,6 @@ public class TopicService : ITopicService
                 }
         }
     }
+
+    public async Task<int> GetCountOfTopics() => await _topicRepository.GetCountAsync();
 }

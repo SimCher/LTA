@@ -1,6 +1,8 @@
-﻿using LTA.Mobile.Application.Interfaces;
+﻿using System.Diagnostics;
+using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Application.Services;
 using LTA.Mobile.Data.Context;
+using LTA.Mobile.Data.Repos;
 using LTA.Mobile.Data.Repositories;
 using LTA.Mobile.Domain.Interfaces;
 using LTA.Mobile.Helpers;
@@ -48,7 +50,9 @@ namespace LTA.Mobile
             }
             else
             {
+                Debug.WriteLine("In topic branch");
                 await NavigationService.NavigateAsync(Settings.TopicsPageNavigation);
+
             }
         }
 
@@ -61,7 +65,7 @@ namespace LTA.Mobile
             //Регистрация файла приложения
             containerRegistry.RegisterSingleton<IAppInfo, AppInfoImplementation>();
             //Регистрация контекста базы данных
-            containerRegistry.Register<DbContext, LtaClientContext>();
+            containerRegistry.RegisterSingleton<DbContext, LtaClientContext>();
             //Регистрация сервисов
             containerRegistry.RegisterSingleton<IUserService, UserService>();
             containerRegistry.RegisterSingleton<IChatService, ChatService>();
