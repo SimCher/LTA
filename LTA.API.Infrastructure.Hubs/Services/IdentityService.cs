@@ -66,8 +66,6 @@ public class IdentityService : IIdentityService
 
             await _userRepository.CreateAsync(profile);
 
-            user = await _userRepository.GetAsync(profile.Id);
-
             return user?.Code;
         }
         catch (Exception ex)

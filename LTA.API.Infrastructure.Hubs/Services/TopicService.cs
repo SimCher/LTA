@@ -4,6 +4,7 @@ using LTA.API.Infrastructure.Hubs.Extensions;
 using LTA.API.Infrastructure.Hubs.Interfaces;
 using LTA.API.Infrastructure.Loggers.Interfaces;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace LTA.API.Infrastructure.Hubs.Services;
 
@@ -32,20 +33,22 @@ public class TopicService : ITopicService
 
     public IEnumerable<object> GetTopicsObject(IEnumerable<int>? existTopicsIds = null)
     {
-        if (existTopicsIds == null)
+        if (existTopicsIds is null)
         {
             return  _topicRepository.GetAll().ToObjectEnumerable();
         }
 
         var topics = _topicRepository.GetAll();
 
-        var needTopics =
-            (from topicId in existTopicsIds from topic in topics where topicId != topic.Id select topic);
+        var needTopics = from topic in topics
+            let isNeed = existTopicsIds.Any(id => topic.Id == id)
+            where !isNeed
+            select topic;
 
         return needTopics.ToObjectEnumerable();
     }
     
-    public Topic? GetTopic(int id)
+    public Topic? GetTopic(int id) 
     {
         try
         {
@@ -162,8 +165,6 @@ public class TopicService : ITopicService
                 $"Chatter with id: {chatter.Id} is already in topic with id: {topic.Id}");
         }
 
-        chatter.Color = topic.GetAvailableColor();
-
         if (!await _topicRepository.AddChatterInTopic(topic.Id, chatter))
         {
             throw new InvalidOperationException($"Cannot add chatter in topic!");
@@ -176,9 +177,7 @@ public class TopicService : ITopicService
         {
             return false;
         }
-
-        chatter.Color = default;
-        topic.ReleaseColor(chatter.Color);
+        
         return await _topicRepository.RemoveChatterFromTopic(topic.Id, chatter);
     }
 

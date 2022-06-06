@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Data.Context;
 using LTA.Mobile.Domain.Interfaces;
 using LTA.Mobile.Domain.Models;
-using Newtonsoft.Json;
 
 namespace LTA.Mobile.Data.Repos;
 
@@ -27,101 +27,120 @@ public class TopicRepository : ITopicRepository
     }
 
     public Task<int> GetCount()
-    {
-        return ChatService.GetTopicsCountAsync();
-    }
+        => ChatService.GetTopicsCountAsync();
 
-    public async Task<bool> RemoveUserFromTopicAsync(string userCode, int topicId)
+    public async Task<bool> RemoveAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ICollection<Topic>> GetAll()
+    public async Task<bool> RemoveAsync(Topic topic)
     {
         throw new NotImplementedException();
     }
+
+    public async Task<bool> UpdateAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> UpdateAsync(Topic topic)
+    {
+        throw new NotImplementedException();
+    }
+
+    // public async Task<ICollection<Topic>> GetAllAsync()
+    // {
+    //     DW("Trying to get count from server");
+    //     var count = await GetCount();
+    //     DW($"Count from server:{count.ToString()}");
+    //     var currentCount = Context.Topics.Count();
+    //
+    //     DW($"Current count is: {currentCount.ToString()}");
+    //     if (count == currentCount)
+    //     {
+    //         DW("Current count is equal to server count. Return topics from context.");
+    //         return Context.Topics.ToList();
+    //     }
+    //     
+    //     DW("Done! Adding topics from server in context");
+    //     Context.Topics.AddRange(topics);
+    //     DW("Done! Asynchronously saving changes");
+    //     await Context.SaveChangesAsync();
+    //     DW("Task is complete. Return topics from context");
+    //     return Context.Topics.ToList();
+    //
+    // }
 
     public async Task<ICollection<Topic>> GetAllAsync()
     {
-        var count = await GetCount();
-
-        if (count != Context.Topics.Count())
+        if (!ChatService.IsConnected)
         {
-            await InitializeAsync();
+            return Context.Topics.ToList();
+        }
+        var currentCount = Context.Topics.Count();
+        DW($"Current count: {currentCount.ToString()}");
+
+        IEnumerable<Topic> topics;
+
+        if (currentCount == 0)
+        {
+            try
+            {
+                DW("Trying to load all topics from server.");
+                topics = await ChatService.LoadTopicsAsync();
+                DW("Adding topics from server into context...");
+                Context.Topics.AddRange(topics);
+                DW("Done! Saving changes...");
+                await Context.SaveChangesAsync();
+                DW("Saved! Return topics from context");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"{ex.Source}: {ex.Message}");
+            }
+            return Context.Topics.ToList();
+            
+        }
+        
+        DW("Trying to get count of topics from server...");
+        var realCount = await GetCount();
+        DW($"Count of topics on server:{realCount.ToString()}");
+
+        if (currentCount == realCount)
+        {
+            return Context.Topics.ToList();
         }
 
+        try
+        {
+            DW("The counts is not equals. Get the topic IDs from context");
+            var currentTopicsIdList = Context.Topics.Select(t => t.Id);
+            DW($"Trying to fetch specific topics from the server.");
+            topics = await ChatService.LoadTopicsAsync(currentTopicsIdList.ToList());
+            DW($"Done! Received {topics.Count().ToString()} topics from server.");
+            DW("Adding topics from server into context...");
+            Context.Topics.AddRange(topics);
+            DW("Done! Saving changes...");
+            await Context.SaveChangesAsync();
+            DW("Saved! Return topics from context");
+        }
+        catch (Exception ex)
+        {
+            DW($"{ex.Source}:{ex.Message}");
+        }
+       
+        
         return Context.Topics.ToList();
+    }
+
+    private void DW(string message)
+    {
+        Debug.WriteLine(message);
     }
 
     public ValueTask<Topic> GetAsync(int topicId)
     {
         return Context.Topics.FindAsync(topicId);
-    }
-
-    public async Task AddUserInTopicAsync(User user, int topicId)
-    {
-        throw new NotImplementedException();
-    }
-
-    private async Task InitializeAsync()
-    {
-        var topics = await GetTopicsAsync();
-
-        var definition = new
-        {
-            Id = 0,
-            UserId = 0,
-            Name = string.Empty,
-            Rating = .0f,
-            MaxUsersNumber = 0,
-            LastEntryDate = default(DateTime),
-            UserNumber = 0,
-            Categories = string.Empty
-        };
-
-        var enumerable = topics.ToList();
-        if (enumerable.Any())
-        {
-            var topicsObject = enumerable.Select(topic =>
-                    JsonConvert.DeserializeAnonymousType(topic.ToString(), definition))
-                .Select(anonTopic =>
-                {
-                    if (anonTopic == null)
-                    {
-                        throw new NullReferenceException("anonTopic was null");
-                    }
-                    return new Topic
-                    {
-                        Id = anonTopic.Id,
-                        OwnerUserId = anonTopic.UserId,
-                        Name = anonTopic.Name,
-                        Rating = anonTopic.Rating,
-                        MaxUsersNumber = anonTopic.MaxUsersNumber,
-                        LastEntryDate = anonTopic.LastEntryDate,
-                        CurrentUsersNumber = anonTopic.UserNumber,
-                        CategoriesArray = anonTopic.Categories
-                    };
-                });
-
-            await Task.WhenAll
-            (
-                Context.Topics.AddRangeAsync(topicsObject),
-                Context.SaveChangesAsync()
-            );
-        }
-    }
-
-    private Task<IEnumerable<object>> GetTopicsAsync()
-    {
-        if (!ChatService.IsConnected)
-        {
-            ChatService.Connect();
-        }
-
-        if (!Context.Topics.Any()) return ChatService.LoadTopicsAsync();
-        var idList = Context.Topics.Select(t => t.Id);
-
-        return ChatService.LoadTopicsAsync(idList);
-
     }
 }

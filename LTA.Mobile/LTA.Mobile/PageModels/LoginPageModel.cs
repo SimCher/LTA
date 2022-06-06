@@ -3,7 +3,6 @@ using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Helpers;
 using Prism.Commands;
 using Prism.Navigation;
-using ReactiveUI;
 
 namespace LTA.Mobile.PageModels;
 
@@ -22,9 +21,9 @@ public class LoginPageModel : BasePageModel
         NavigateToRegisterCommand = new DelegateCommand(NavigateToRegister);
     }
 
-    public string PhoneOrEmail { get => _phoneOrEmail; set => this.RaiseAndSetIfChanged(ref _phoneOrEmail, value); }
+    public string PhoneOrEmail { get => _phoneOrEmail; set => SetProperty(ref _phoneOrEmail, value); }
 
-    public string Password { get => _password; set => this.RaiseAndSetIfChanged(ref _password, value); }
+    public string Password { get => _password; set => SetProperty(ref _password, value); }
 
     public ICommand TryLoginCommand { get; private set; }
     public ICommand NavigateToRegisterCommand { get; }

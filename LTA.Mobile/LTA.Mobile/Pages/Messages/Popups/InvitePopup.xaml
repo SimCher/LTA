@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LTA.Mobile.Pages.Messages.Popups.InvitePopup"
+             BackgroundColor="{StaticResource PrimaryColor}"
+             HeightRequest="300"
+             WidthRequest="300">
+    <Label Style="{StaticResource FontAwesomeLabel}"
+           FontSize="Large"
+           TextColor="{StaticResource SecondaryTextColor}"
+           HorizontalOptions="CenterAndExpand"
+           VerticalOptions="CenterAndExpand">
+        <Label.FormattedText>
+            <FormattedString>
+                <Span Text="Приглашение в "/>
+                <Span Text="{Binding TopicName}"/>
+            </FormattedString>
+        </Label.FormattedText>
+
+    </Label>
+    <Entry Placeholder="Введите номер телефона или E-Mail"
+            Text="{Binding PhoneOrEmail}"
+            VerticalOptions="CenterAndExpand"
+            FontFamily="{StaticResource QuickSandRegular}"
+            FontAttributes="Bold"/>
+    <StackLayout Orientation="Horizontal"
+                 VerticalOptions="EndAndExpand">
+        <Button TextColor="{StaticResource PrimaryTextColor}"
+                Text="Отправить"
+                Command="{Binding SendSmsCommand}"
+                FontFamily="{StaticResource QuickSandRegular}"
+                HorizontalOptions="Start"/>
+        <Button TextColor="{StaticResource PrimaryTextColor}"
+                Text="Отмена"
+                FontFamily="{StaticResource QuickSandRegular}"
+                Command="{Binding CloseCommand}"
+                HorizontalOptions="Start"/>
+    </StackLayout>
+</StackLayout>

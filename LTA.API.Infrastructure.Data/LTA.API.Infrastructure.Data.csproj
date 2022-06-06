@@ -16,4 +16,8 @@
       <ProjectReference Include="..\LTA.API.Domain\LTA.API.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Helpers" />
+    </ItemGroup>
+
 </Project>

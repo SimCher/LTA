@@ -1,5 +1,6 @@
 ﻿using LTA.API.Domain.Models;
 using LTA.API.Infrastructure.Data.Context;
+using LTA.API.Infrastructure.Data.Helpers.Static;
 
 namespace LTA.API.Infrastructure.Data.Migrations;
 
@@ -50,6 +51,7 @@ public static class DatabaseInitializer
                 MaxUsersNumber = 2,
                 LastEntryDate = DateTime.Now,
                 UserId = 1,
+                InviteCode = CodeGeneratorService.GenerateCode(null),
                 Categories = new List<Category>() {categories[0]}
             },
             new()
@@ -58,12 +60,13 @@ public static class DatabaseInitializer
                 MaxUsersNumber = 16,
                 LastEntryDate = DateTime.Now - TimeSpan.FromDays(144),
                 UserId = 1,
+                InviteCode = CodeGeneratorService.GenerateCode(null),
                 Categories = new List<Category>() {categories[1]}
             }
         };
 
 
-        context.Topics.AddRange(topics);
+        context.Topics?.AddRange(topics);
 
         await context.SaveChangesAsync();
     }

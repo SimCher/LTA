@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LTA.API.Domain\LTA.API.Domain.csproj" />
+      <ProjectReference Include="..\LTA.API.Infrastructure.Data\LTA.API.Infrastructure.Data.csproj" />
       <ProjectReference Include="..\LTA.API.Infrastructure.Loggers\LTA.API.Infrastructure.Loggers.csproj" />
     </ItemGroup>
 

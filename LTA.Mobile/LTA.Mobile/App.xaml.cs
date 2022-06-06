@@ -67,8 +67,10 @@ namespace LTA.Mobile
             //Регистрация контекста базы данных
             containerRegistry.RegisterSingleton<DbContext, LtaClientContext>();
             //Регистрация сервисов
-            containerRegistry.RegisterSingleton<IUserService, UserService>();
+            containerRegistry.Register<IMessageService, MessageService>();
+            containerRegistry.Register<IUserService, UserService>();
             containerRegistry.RegisterSingleton<IChatService, ChatService>();
+            // containerRegistry.Register<ICryptoService, CryptoService>();
             containerRegistry.Register<IRegisterService, RegisterService>();
             //Регистрация репозиториев
             containerRegistry.RegisterSingleton<ITopicRepository, TopicRepository>();
@@ -83,9 +85,11 @@ namespace LTA.Mobile
             containerRegistry.RegisterForNavigation<Add, AddTopicPageModel>();
             containerRegistry.RegisterForNavigation<SettingsPage, SettingsPageModel>();
             containerRegistry.RegisterForNavigation<Test, TestPageModel>();
+            containerRegistry.RegisterForNavigation<MenuPage, TopicsMenuPageModel>();
             //Регистрация модальных окон
             containerRegistry.Register<IPageDialogService, PageDialogService>();
             containerRegistry.RegisterDialog<ReportPopup, ReportDialogPageModel>("Report");
+            containerRegistry.RegisterDialog<InvitePopup, InviteDialogPageModel>("Invite");
             containerRegistry.RegisterDialog<SendPicturePopup, SendPicturePopupDialog>("SendPicture");
         }
     }

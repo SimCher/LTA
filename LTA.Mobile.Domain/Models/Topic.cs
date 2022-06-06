@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using LTA.Mobile.Domain.Models.BaseModels;
 using Xamarin.Forms;
 
@@ -26,6 +27,7 @@ namespace LTA.Mobile.Domain.Models
         {
             //TODO:: Return observable collection instead dictionary
             UsersIn = new ObservableCollection<User>();
+            Messages = new HashSet<Message>();
         }
 
         public string Name
@@ -86,9 +88,7 @@ namespace LTA.Mobile.Domain.Models
             get => _isFavorite;
             set => SetProperty(ref _isFavorite, value);
         }
-
-
-
+        
         private bool _isFavorite;
 
         private Color _onlineColor;
@@ -104,9 +104,7 @@ namespace LTA.Mobile.Domain.Models
             };
             set => SetProperty(ref _onlineColor, value);
         }
-
-
-
+        
         public int OwnerUserId { get; set; }
 
         [NotMapped]
@@ -119,9 +117,23 @@ namespace LTA.Mobile.Domain.Models
         public ICollection<string> Categories
             => !string.IsNullOrEmpty(CategoriesArray) ? CategoriesArray.Split(',') : null;
 
-        public ICollection<Message> Messages { get; set; }
+        public ICollection<Message>? Messages { get; set; }
 
         [NotMapped]
         public ICollection<User> UsersIn { get; set; }
+
+        public override string ToString()
+        {
+            return $"---------------------\n" +
+                   $"ID: {Id.ToString()}\n" +
+                   $"Name: {Name}\n" +
+                   $"Max users: {MaxUsersNumber.ToString()}\n" +
+                   $"Last entry: {LastEntryDate.ToString(CultureInfo.CurrentCulture)}\n" +
+                   $"Current users: {CurrentUsersNumber.ToString()}\n" +
+                   $"Categories: {CategoriesArray}\n" +
+                   $"Owner user id: {OwnerUserId.ToString()}\n" +
+                   $"Hash code: {GetHashCode().ToString()}\n" +
+                   $"--------------------------------------\n";
+        }
     }
 }

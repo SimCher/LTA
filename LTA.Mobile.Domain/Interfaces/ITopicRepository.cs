@@ -6,16 +6,17 @@ namespace LTA.Mobile.Domain.Interfaces;
 
 public interface ITopicRepository
 {
-    Task<ICollection<Topic>> GetAll();
     Task<ICollection<Topic>> GetAllAsync();
 
     ValueTask<Topic> GetAsync(int topicId);
-
-    Task AddUserInTopicAsync(User user, int topicId);
 
     Task AddAsync(Topic topic);
 
     Task<int> GetCount();
 
-    Task<bool> RemoveUserFromTopicAsync(string userCode, int topicId);
+    Task<bool> RemoveAsync(int id);
+    Task<bool> RemoveAsync(Topic topic);
+
+    Task<bool> UpdateAsync(int id);
+    Task<bool> UpdateAsync(Topic topic);
 }

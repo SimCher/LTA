@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:LTA.Mobile.Resources;assembly=LTA.Mobile"
+             x:Class="LTA.Mobile.Pages.Topics.MenuPage"
+             Title="{Binding Title}"
+             x:Name="TopicMenu">
+    <Shell.TitleView>
+        <Grid>
+            <Label Text="{Binding Title, Source={x:Reference TopicMenu}}"
+                   Style="{StaticResource PageTitleLabel}"/>
+        </Grid>
+    </Shell.TitleView>
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical"
+                     VerticalOptions="CenterAndExpand"
+                     WidthRequest="300"
+                     HorizontalOptions="CenterAndExpand">
+            <Button BackgroundColor="{StaticResource PrimaryColor}" VerticalOptions="CenterAndExpand"
+                    BorderWidth="2" BorderColor="{StaticResource AccentColor}"
+                    Text="{x:Static resources:TextResources.Private}"
+                    FontFamily="{StaticResource QuickSandRegular}"
+                    CornerRadius="7"
+                    FontSize="18"/>
+            <Button BackgroundColor="{StaticResource PrimaryColor}" VerticalOptions="CenterAndExpand"
+                    BorderWidth="2" BorderColor="{StaticResource AccentColor}"
+                    Text="{x:Static resources:TextResources.Group}"
+                    FontFamily="{StaticResource QuickSandRegular}"
+                    CornerRadius="7"
+                    FontSize="18"/>
+            <Button BackgroundColor="{StaticResource PrimaryColor}" VerticalOptions="CenterAndExpand"
+                    BorderWidth="2" BorderColor="{StaticResource AccentColor}"
+                    Text="{x:Static resources:TextResources.Forum}"
+                    FontFamily="{StaticResource QuickSandRegular}"
+                    CornerRadius="7"
+                    FontSize="18"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

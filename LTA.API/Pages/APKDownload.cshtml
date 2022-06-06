@@ -1,0 +1,33 @@
+﻿@page
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
+@model LTA.API.Pages.APKDownload
+@using LTA.API.Domain.Models.Web
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <title>APKDownload</title>
+</head>
+<body>
+<table>
+    <tr>
+        <th>File Name</th>
+        <th></th>
+    </tr>
+    @foreach (var file in Model.Files)
+    {
+        <tr>
+            <td>@file.FileName</td>
+            <td><a href="@Url.Page("APKDownload", "DownloadFile", new{fileName = file.FileName})">Download</a></td>
+        </tr>
+    }
+</table>
+
+</body>
+</html>

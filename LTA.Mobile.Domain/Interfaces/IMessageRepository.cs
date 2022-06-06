@@ -6,9 +6,10 @@ namespace LTA.Mobile.Domain.Interfaces;
 
 public interface IMessageRepository
 {
-    IEnumerable<Message> GetAllForUser(string userCode);
+    ValueTask<Message> GetAsync(int id);
+    IEnumerable<Message> GetAll();
 
-    IEnumerable<Message> GetAllForTopic(int topicId);
+    IEnumerable<Message> GetAllMessagesForTopic(int topicId);
 
     Task AddMessageAsync(Message message);
 

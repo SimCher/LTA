@@ -14,6 +14,7 @@ public sealed class LtaClientContext : DbContext, IDbContextable
     public LtaClientContext()
     {
         SQLitePCL.Batteries_V2.Init();
+        // Database.EnsureDeleted();
         Database.EnsureCreated();
     }
 
@@ -32,7 +33,5 @@ public sealed class LtaClientContext : DbContext, IDbContextable
         modelBuilder.Entity<Message>().ToTable("messages")
             .HasOne(m => m.Topic)
             .WithMany(t => t.Messages);
-
-
     }
 }

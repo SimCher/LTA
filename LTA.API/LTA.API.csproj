@@ -25,4 +25,8 @@
     <ProjectReference Include="..\LTA.API.Infrastructure.Ioc\LTA.API.Infrastructure.Ioc.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Storage" />
+  </ItemGroup>
+
 </Project>

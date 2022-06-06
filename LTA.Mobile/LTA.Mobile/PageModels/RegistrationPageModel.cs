@@ -4,7 +4,6 @@ using LTA.Mobile.Attributes;
 using LTA.Mobile.Pages.Identity;
 using Prism.Commands;
 using Prism.Navigation;
-using ReactiveUI;
 
 namespace LTA.Mobile.PageModels
 {
@@ -28,25 +27,25 @@ namespace LTA.Mobile.PageModels
         public string PhoneOrEmail
         {
             get => _phoneOrEmail;
-            set => this.RaiseAndSetIfChanged(ref _phoneOrEmail, value);
+            set => SetProperty(ref _phoneOrEmail, value);
         }
 
         public bool IsValid
         {
             get => _isValid;
-            set => this.RaiseAndSetIfChanged(ref _isValid, value);
+            set => SetProperty(ref _isValid, value);
         }
 
         public string Password
         {
             get => _password;
-            set => this.RaiseAndSetIfChanged(ref _password, value);
+            set => SetProperty(ref _password, value);
         }
 
         public string Confirm
         {
             get => _confirm;
-            set => this.RaiseAndSetIfChanged(ref _confirm, value);
+            set => SetProperty(ref _confirm, value);
         }
 
         public ICommand TryRegisterCommand { get; private set; }

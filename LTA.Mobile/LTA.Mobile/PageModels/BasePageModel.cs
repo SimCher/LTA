@@ -2,16 +2,18 @@
 using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using LTA.Mobile.Application.EventHandlers;
 using LTA.Mobile.Application.Interfaces;
+using LTA.Mobile.Resources;
+using Prism.Mvvm;
 using Prism.Navigation;
-using ReactiveUI;
 
 namespace LTA.Mobile.PageModels
 {
     /// <summary>
     /// Абстрактный базовый класс PageModel
     /// </summary>
-    public abstract class BasePageModel : ReactiveObject, IInitialize, INavigationAware, IDestructible
+    public abstract class BasePageModel : BindableBase, IInitialize, INavigationAware, IDestructible
     {
         /// <summary>
         /// Сервис реализующий навигацию в приложении
@@ -39,7 +41,7 @@ namespace LTA.Mobile.PageModels
         public string Title
         {
             get => _title;
-            set => this.RaiseAndSetIfChanged(ref _title, value);
+            set => SetProperty(ref _title, value);
         }
 
         /// <summary>
@@ -48,7 +50,7 @@ namespace LTA.Mobile.PageModels
         public bool IsBusy
         {
             get => _isBusy;
-            set => this.RaiseAndSetIfChanged(ref _isBusy, value);
+            set => SetProperty(ref _isBusy, value);
         }
 
         /// <summary>
@@ -57,7 +59,7 @@ namespace LTA.Mobile.PageModels
         public string PageMessage
         {
             get => _pageMessage;
-            protected set => this.RaiseAndSetIfChanged(ref _pageMessage, value);
+            protected set => SetProperty(ref _pageMessage, value);
         }
 
         /// <summary>
@@ -66,14 +68,16 @@ namespace LTA.Mobile.PageModels
         public bool IsPageMessageSeen
         {
             get => _isPageMessageSeen;
-            protected set => this.RaiseAndSetIfChanged(ref _isPageMessageSeen, value);
+            protected set => SetProperty(ref _isPageMessageSeen, value);
         }
 
         public BasePageModel(INavigationService navigationService, IChatService chatService)
         {
             NavigationService = navigationService;
             ChatService = chatService;
-            NotBusyObservable = this.WhenAnyValue(vm => vm.IsBusy, isBusy => !isBusy);
+            
+            ChatService.ConnectionMessage += ChatService_ConnectionMessage;
+            // NotBusyObservable = this.WhenAnyValue(vm => vm.IsBusy, isBusy => !isBusy);
         }
 
         /// <summary>
@@ -89,7 +93,7 @@ namespace LTA.Mobile.PageModels
             }
             catch (Exception ex)
             {
-                PageMessage = "Нет подключения к сети";
+
                 return $"{ex.Source}: {ex.Message}";
             }
         }
@@ -118,6 +122,11 @@ namespace LTA.Mobile.PageModels
         {
             IsPageMessageSeen = true;
             PageMessage = message;
+        }
+        
+        protected virtual void ChatService_ConnectionMessage(object sender, ConnectionMessageEventArgs e)
+        {
+            Title = e.Message;
         }
 
         public virtual void Initialize(INavigationParameters parameters)

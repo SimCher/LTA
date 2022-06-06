@@ -1,38 +1,87 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" xmlns:pagemodels="clr-namespace:LTA.Mobile.PageModels"
            x:Class="LTA.Mobile.Pages.Topics.Popups.ReportPopup"
              BackgroundColor="{StaticResource PrimaryColor}"
-             HeightRequest="300"
+             HeightRequest="600"
              WidthRequest="300">
-    <Label Style="{StaticResource FontAwesomeLabel}"
-           FontSize="Large"
-           TextColor="{StaticResource SecondaryTextColor}"
-           HorizontalOptions="CenterAndExpand"
-           VerticalOptions="CenterAndExpand">
-        <Label.FormattedText>
-            <FormattedString>
-                <Span Text="Жалоба на "/>
-                <Span Text="{Binding TopicName}"/>
-            </FormattedString>
-        </Label.FormattedText>
-    </Label>
-    <Editor Placeholder="Ваша жалоба"
-                AutoSize="TextChanges"
-                Text="{Binding ReportText}"
-                VerticalOptions="CenterAndExpand"
-                FontFamily="{StaticResource QuickSandRegular}"
-                FontAttributes="Bold"/>
-    <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand">
-        <Button TextColor="{StaticResource PrimaryTextColor}"
-                    Text="Отправить"
-                    FontFamily="{StaticResource QuickSandRegular}"
-                    HorizontalOptions="Start"/>
-        <Button TextColor="{StaticResource PrimaryTextColor}"
-                    Text="Отмена"
-                    FontFamily="{StaticResource QuickSandRegular}"
-                    Command="{Binding CloseCommand}"
-                    HorizontalOptions="Start"/>
-    </StackLayout>
+    <Label Style="{StaticResource FontAwesomeLabel}" 
+           FontSize="Large" 
+           TextColor="{StaticResource SecondaryTextColor}" 
+           HorizontalOptions="CenterAndExpand" 
+           VerticalOptions="CenterAndExpand"> 
+         <Label.FormattedText> 
+             <FormattedString> 
+                 <Span Text="Жалоба на "/> 
+                 <Span Text="{Binding TopicName}"/> 
+             </FormattedString> 
+         </Label.FormattedText> 
+     </Label> 
+     <Editor Placeholder="Ваша жалоба" 
+                 AutoSize="TextChanges" 
+                 Text="{Binding ReportText}" 
+                 VerticalOptions="CenterAndExpand" 
+                 FontFamily="{StaticResource QuickSandRegular}" 
+                 FontAttributes="Bold"/> 
+     <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand"> 
+         <Button TextColor="{StaticResource PrimaryTextColor}" 
+                     Text="Отправить" 
+                     FontFamily="{StaticResource QuickSandRegular}" 
+                     HorizontalOptions="Start"/> 
+         <Button TextColor="{StaticResource PrimaryTextColor}" 
+                     Text="Отмена" 
+                     FontFamily="{StaticResource QuickSandRegular}" 
+                     Command="{Binding CloseCommand}" 
+                     HorizontalOptions="Start"/> 
+     </StackLayout> 
 </StackLayout>
+
+<!--<Label Style="{StaticResource FontAwesomeLabel}" 
+                FontSize="Large" 
+                TextColor="{StaticResource SecondaryTextColor}" 
+                HorizontalOptions="CenterAndExpand" 
+                Text="ЦИТ ХПК"
+                Margin="0,10,0,0"
+               VerticalOptions="Start" />
+    <Label Style="{StaticResource FontAwesomeLabel}"
+           FontSize="Small"
+           HorizontalOptions="CenterAndExpand"
+           Text="Подключено 2/3"
+           TextColor="{StaticResource SecondaryTextColor}"
+    FontFamily="{StaticResource QuickSandRegular}"/>
+    
+    <StackLayout Orientation="Vertical">
+        <Frame BorderColor="{StaticResource AccentColor}"
+               BackgroundColor="Transparent"
+               HorizontalOptions="CenterAndExpand"
+               WidthRequest="300">
+            <StackLayout Orientation="Horizontal">
+            <Label Text="(Создатель) Дмитрий Сергеевич" HorizontalOptions="Start"/>
+            </StackLayout>
+        </Frame>
+        <Frame BorderColor="{StaticResource AccentColor}"
+                       BackgroundColor="Transparent"
+                       HorizontalOptions="CenterAndExpand"
+                       WidthRequest="300">
+                    <StackLayout Orientation="Horizontal">
+                    <Label Text="Павел Дмитриевич" HorizontalOptions="Start"/>
+                    <Label Style="{StaticResource FontAwesomeLabel}"
+                           FontSize="Small"
+                           HorizontalOptions="Start"
+                           VerticalOptions="Center"
+                           Margin="0,3,0,0"
+                           Text="Не подключен"
+                           TextColor="{StaticResource SecondaryTextColor}"
+                           FontFamily="{StaticResource QuickSandRegular}"/>
+                    <Button Text=""/>
+                    </StackLayout>
+                </Frame>
+                <Frame BorderColor="{StaticResource AccentColor}"
+                               BackgroundColor="Transparent"
+                               HorizontalOptions="CenterAndExpand"
+                               WidthRequest="300">
+                            <StackLayout Orientation="Horizontal">
+                            <Label Text="Родион" HorizontalOptions="Start"/>
+                            </StackLayout>
+                        </Frame>
+    </StackLayout>-->

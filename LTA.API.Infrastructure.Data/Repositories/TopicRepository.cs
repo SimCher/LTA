@@ -1,6 +1,7 @@
 ﻿using LTA.API.Domain.Interfaces;
 using LTA.API.Domain.Models;
 using LTA.API.Infrastructure.Data.Context;
+using LTA.API.Infrastructure.Data.Helpers.Static;
 using Microsoft.EntityFrameworkCore;
 
 namespace LTA.API.Infrastructure.Data.Repositories;
@@ -28,6 +29,7 @@ public class TopicRepository : ITopicRepository
 
     public async Task<Topic> AddAsync(Topic topic)
     {
+        topic.InviteCode = CodeGeneratorService.GenerateCode(_context.Topics);
         _context.Topics.Add(topic);
 
         await _context.SaveChangesAsync();

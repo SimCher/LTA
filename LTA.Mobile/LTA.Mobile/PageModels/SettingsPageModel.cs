@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Helpers;
 using MvvmHelpers;

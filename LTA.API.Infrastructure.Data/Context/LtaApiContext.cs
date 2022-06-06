@@ -14,7 +14,7 @@ public class LtaApiContext : DbContext
     public DbSet<Chatter> Chatters { get; set; }
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<Report> Reports { get; set; }
-    public DbSet<Topic> Topics { get; set; }
+    public DbSet<Topic>? Topics { get; set; }
     public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

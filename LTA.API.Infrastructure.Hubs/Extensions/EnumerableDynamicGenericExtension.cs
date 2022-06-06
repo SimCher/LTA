@@ -11,6 +11,7 @@ public static class CollectopnDynamicGenericExtension
 
     public static IEnumerable<object> ToObjectEnumerable(this IEnumerable<Topic> topicList)
     {
+      
         var topics = topicList.Select(GetNewObjectTopic);
 
         return topics;

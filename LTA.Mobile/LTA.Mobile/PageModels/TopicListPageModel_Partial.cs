@@ -6,7 +6,6 @@ using LTA.Mobile.Helpers;
 using MvvmHelpers;
 using Prism.Navigation;
 using Prism.Services.Dialogs;
-using Xamarin.Forms;
 
 namespace LTA.Mobile.PageModels;
 
@@ -17,10 +16,11 @@ public partial class TopicListPageModel
         try
         {
             IsBusy = true;
+            await RefreshTopics();
+            IsBusy = false;
             Settings.CurrentPage = PageNames.Topics;
-            PageMessage = await TryConnectAsync();
+            await TryConnectAsync();
             ChatService.UpdateTopic(AddTopicAsync);
-            ChatService.RemoveUserFromTopic(RemoveUser);
             await RefreshTopics();
             LoadFavorites();
         }
@@ -36,13 +36,9 @@ public partial class TopicListPageModel
 
     private async Task RefreshTopics()
     {
-        if (IsRefreshing) return;
-
-        IsRefreshing = true;
         var topics = await _topicRepository.GetAllAsync();
         Debug.WriteLine("Refreshing...");
         TopicList = new ObservableRangeCollection<Topic>(topics);
-        Debug.WriteLine("Refresh is done!");
         IsRefreshing = false;
         
     }

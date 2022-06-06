@@ -34,11 +34,11 @@ namespace LTA.Mobile.Pages.Messages
 
             NavigationService = navigationService;
 
-            ViewModel = (MessagesPageModel)this.BindingContext;
+            ViewModel = (MessagesPageModel)BindingContext;
 
-            BackCommand = new Command(_ =>
+            BackCommand = new Command(async _ =>
             {
-                Navigation.PopModalAsync();
+                await Navigation.PopModalAsync();
             });
         }
 
@@ -58,8 +58,8 @@ namespace LTA.Mobile.Pages.Messages
 
         protected override void OnAppearing()
         {
-            //MessagingCenter.Subscribe<BasePageModel, LTAFocusEventArgs>(this, "ShowKeyboard", (s, args) =>
-            //    IsFocusOnKeyBoardChanged(args.IsFocused));
+            // MessagingCenter.Subscribe<BasePageModel, LTAFocusEventArgs>(this, "ShowKeyboard", (s, args) =>
+            //     IsFocusOnKeyBoardChanged(args.IsFocused));
 
             MessagingCenter.Subscribe<BasePageModel, ScrollToItemEventArgs>(this, "ScrollToItem",
                 (s, eargs) =>
@@ -71,23 +71,23 @@ namespace LTA.Mobile.Pages.Messages
 
         protected override async void OnDisappearing()
         {
-            await ViewModel.ChatService.LogOutFromChatAsync(ViewModel.CurrentTopic.Id);
-            //MessagingCenter.Unsubscribe<BasePageModel, LTAFocusEventArgs>(this, "ShowKeyboard");
+            // await ViewModel.ChatService.LogOutFromChatAsync(ViewModel.CurrentTopic.Id);
+            MessagingCenter.Unsubscribe<BasePageModel, LTAFocusEventArgs>(this, "ShowKeyboard");
             MessagingCenter.Unsubscribe<BasePageModel, ScrollToItemEventArgs>(this, "ScrollToItem");
             base.OnDisappearing();
         }
 
-        //private void IsFocusOnKeyBoardChanged(bool newIsFocusOnKeyBoard)
-        //{
-        //    if (newIsFocusOnKeyBoard)
-        //        TextInput.Focus();
-        //    else TextInput.Unfocus();
-        //}
-
-        //private void TextInput_Focused(object sender, LTAFocusEventArgs e)
-        //{
-        //    if (!e.IsFocused)
-        //        VisualStateManager.GoToState(TextInput, "Unfocused");
-        //}
+        // private void IsFocusOnKeyBoardChanged(bool newIsFocusOnKeyBoard)
+        // {
+        //     if (newIsFocusOnKeyBoard)
+        //         TextInput.Focus();
+        //     else TextInput.Unfocus();
+        // }
+        //
+        // private void TextInput_Focused(object sender, LTAFocusEventArgs e)
+        // {
+        //     if (!e.IsFocused)
+        //         VisualStateManager.GoToState(TextInput, "Unfocused");
+        // }
     }
 }

@@ -15,9 +15,15 @@
                xmlns:base="clr-namespace:LTA.Mobile.Pages.Base;assembly=LTA.Mobile"
                xmlns:behaviors="http://prismlibrary.com"
                prism:ViewModelLocator.AutowireViewModel="True"
-               Title="Сообщения"
+               Title="{Binding Title}"
                x:Name="MessagePage">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Пригласить" Order="Secondary" Priority="1" Command="{Binding InviteCommand, Mode=OneTime}"
+                     CommandParameter="{Binding CurrentTopic.Name}"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
+
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height=".14*"/>
@@ -53,6 +59,7 @@
                                                      IsInTitle="True"
                                                      IsUsersTyping="{Binding BindingContext.IsTyping, Source={x:Reference MessagePage}}"
                                                      Margin="25,0,0,0"/>
+                        
                     </Grid>
                    </Frame>
             </StackLayout>
@@ -87,7 +94,9 @@
                                                     BackgroundColor="{StaticResource PrimaryColor}"
                                                     x:Name="MessagesCollectionView"
                                                     SelectionMode="Multiple"
-                                                    SelectedItems="{Binding SelectedMessages}">
+                                                    SelectionChangedCommand="{Binding SelectionChangedCommand}"
+                                                    SelectionChangedCommandParameter="{Binding SelectedMessages,
+                                                    Source={x:Reference MessagesCollectionView}}">
                     <CollectionView.GroupHeaderTemplate>
                     <DataTemplate>
                         <Grid>

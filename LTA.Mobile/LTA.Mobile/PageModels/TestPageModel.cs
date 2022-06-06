@@ -6,7 +6,6 @@ using Plugin.Media.Abstractions;
 using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services;
-using ReactiveUI;
 using Xamarin.Forms;
 
 namespace LTA.Mobile.PageModels;
@@ -19,7 +18,7 @@ public class TestPageModel : BasePageModel
     public byte[] Bytes
     {
         get => _bytes;
-        set => this.RaiseAndSetIfChanged(ref _bytes, value);
+        set => SetProperty(ref _bytes, value);
     }
 
     public ImageSource Image
@@ -33,7 +32,7 @@ public class TestPageModel : BasePageModel
 
             return null;
         }
-        set => this.RaiseAndSetIfChanged(ref _image, value);
+        set => SetProperty(ref _image, value);
     }
     public ICommand PickPhotoCommand {get;}
     public IPageDialogService PageDialog;

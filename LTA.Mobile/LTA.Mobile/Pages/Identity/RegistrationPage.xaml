@@ -10,8 +10,8 @@
              Title="Регистрация"
 >
     <ContentPage.Content>
-        <StackLayout Orientation="Vertical">
-            <dataTemplates:ErrorTemplate ErrorMessage="lol"/>
+        <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+            <!-- <dataTemplates:ErrorTemplate ErrorMessage="lol"/> -->
             <Frame CornerRadius="10"
                    BorderColor="{StaticResource AccentColor}"
                    Padding="0"
@@ -99,7 +99,7 @@
 
                             </StackLayout>
                         </StackLayout>
-                        <Line BackgroundColor="{StaticResource AccentColor}" HeightRequest="3"/>
+                        <!-- <Line BackgroundColor="{StaticResource AccentColor}" HeightRequest="3"/> -->
 
                         <Button BackgroundColor="{StaticResource PrimaryColor}" VerticalOptions="EndAndExpand"  BorderWidth="2" BorderColor="{StaticResource AccentColor}" Text="Зарегистрироваться" FontFamily="{StaticResource QuickSandBold}" Margin="10, 0, 10, 0" CornerRadius="10"
                         Command="{Binding TryRegisterCommand}"/>

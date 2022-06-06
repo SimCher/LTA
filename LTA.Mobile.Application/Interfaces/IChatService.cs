@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LTA.Mobile.Application.EventHandlers;
 using LTA.Mobile.Domain.Models;
 using Xamarin.Forms;
 
@@ -22,8 +23,8 @@ namespace LTA.Mobile.Application.Interfaces
         void UserOutMessage(Action<string> showUserOutMessage);
         //Topics logic
         Task AddTopicAsync(string name, int maxUsers, string categories, string code);
-        Task<IEnumerable<object>> LoadTopicsAsync();
-        Task<IEnumerable<object>> LoadTopicsAsync(IEnumerable<int> existTopicsIds);
+        Task<IEnumerable<Topic>> LoadTopicsAsync();
+        Task<IEnumerable<Topic>> LoadTopicsAsync(IEnumerable<int> existTopicsIds);
         void UpdateTopic(Action<Topic> updateTopicMethod);
         Task LogInChatAsync(string userCode, int topicId);
         Task LogOutFromChatAsync(int topicId);
@@ -36,6 +37,8 @@ namespace LTA.Mobile.Application.Interfaces
         Task SendTyping(int topicId);
         void ReceiveTyping(Action setIsTypingMethod);
         void Logout(Action logoutMethod);
+        event EventHandler<ConnectionMessageEventArgs> ConnectionMessage;
+        event EventHandler<ConnectionMessageEventArgs> OnConnecionClosed;
 
         Task<int> GetTopicsCountAsync();
     }

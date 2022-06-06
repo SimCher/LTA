@@ -147,4 +147,19 @@
   <data name="You" xml:space="preserve">
     <value>Вы</value>
   </data>
+  <data name="Connection..." xml:space="preserve">
+    <value>Подключение...</value>
+  </data>
+  <data name="Disconnection..." xml:space="preserve">
+    <value>Нет подключения</value>
+  </data>
+  <data name="Private" xml:space="preserve">
+    <value>Личные беседы</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Групповые беседы</value>
+  </data>
+  <data name="Forum" xml:space="preserve">
+    <value>Форум</value>
+  </data>
 </root>

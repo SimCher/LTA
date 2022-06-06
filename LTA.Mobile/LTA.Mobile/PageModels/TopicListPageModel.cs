@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using LTA.Mobile.Application.EventHandlers;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Domain.Interfaces;
 using LTA.Mobile.Domain.Models;
 using LTA.Mobile.Helpers;
 using LTA.Mobile.Pages.Topics;
+using LTA.Mobile.Resources;
 using Prism.Navigation;
 using MvvmHelpers;
 using Prism;
 using Prism.Commands;
 using Prism.Services.Dialogs;
-using ReactiveUI;
 using Xamarin.Forms;
-using NavigationParameters = Prism.Navigation.NavigationParameters;
 
 namespace LTA.Mobile.PageModels;
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "AsyncVoidLambda")]
 public partial class TopicListPageModel : BasePageModel
 {
     private readonly ITopicRepository _topicRepository;
@@ -33,16 +36,21 @@ public partial class TopicListPageModel : BasePageModel
         Debug.WriteLine("In topiclist constructor");
         _topicRepository = topicRepository;
 
-        NavigateToAddCommand = ReactiveCommand.CreateFromTask(NavigateToAdd, NotBusyObservable);
-        ItemTappedCommand = ReactiveCommand.CreateFromTask<Topic>(OnItemTappedAsync);
-        FilterOptionChangedCommand = ReactiveCommand.CreateFromTask<string>(FilterOptionChanged);
-        RefreshCommand = ReactiveCommand.CreateFromTask(RefreshTopics);
+        NavigateToAddCommand = new DelegateCommand(async () => await NavigateToAdd());
+        ItemTappedCommand = new DelegateCommand<Topic>(async (topic) => await OnItemTappedAsync(topic));
+        FilterOptionChangedCommand =
+            new DelegateCommand<string>(async (filterName) => await FilterOptionChanged(filterName));
+        RefreshCommand = new DelegateCommand(async () => await RefreshTopics());
+        // FilterOptionChangedCommand = ReactiveCommand.CreateFromTask<string>(FilterOptionChanged);
+        // RefreshCommand = ReactiveCommand.CreateFromTask(RefreshTopics);
         OnSearchTextChangedCommand = new DelegateCommand(OnSearchTextChanged);
         FilterChangedCommand = new DelegateCommand<string>(FilterChanged);
         SortCommand = new DelegateCommand(ExecuteSortAsync);
         SetIsFavoriteCommand = new DelegateCommand<string>(SetIsFavorite);
 
         DialogService = pageDialogService;
+
+
 
         SendReportCommand = new DelegateCommand<string>((topicName) =>
         {
@@ -57,19 +65,19 @@ public partial class TopicListPageModel : BasePageModel
     public bool IsRefreshing
     {
         get => _isRefreshing;
-        set => this.RaiseAndSetIfChanged(ref _isRefreshing, value);
+        set => SetProperty(ref _isRefreshing, value);
     }
 
     public Topic Topic
     {
         get => _topic;
-        set => this.RaiseAndSetIfChanged(ref _topic, value);
+        set => SetProperty(ref _topic, value);
     }
 
     public ObservableRangeCollection<Topic> TopicList
     {
         get => _topicList;
-        set => this.RaiseAndSetIfChanged(ref _topicList, value);
+        set => SetProperty(ref _topicList, value);
     }
 
     public string SearchText { get; set; }
@@ -80,7 +88,7 @@ public partial class TopicListPageModel : BasePageModel
         get => _selectedFilter;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedFilter, value);
+            SetProperty(ref _selectedFilter, value);
             ChangeFilter(value);
         }
     }
@@ -110,9 +118,14 @@ public partial class TopicListPageModel : BasePageModel
                 break;
             case "My":
                 return;
+            case "Приватные":
+                    TopicList = new ObservableRangeCollection<Topic>(TopicList.Where(t =>
+                        t.Categories.Contains("Приватный")));
+                    break;
         }
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void GetTopics(Topic topic)
     {
         AddTopic(topic);
@@ -124,32 +137,13 @@ public partial class TopicListPageModel : BasePageModel
         TopicList = new ObservableRangeCollection<Topic>(topics);
     }
 
-    private async Task AddUser(int topicId, Dictionary<string, Color> users, DateTime lastEntry)
-    {
-        foreach (var (key, value) in users)
-        {
-            await _topicRepository.AddUserInTopicAsync(new User
-            {
-                Code = key
-            }, topicId);
-        }
-
-        TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAllAsync());
-    }
-
-    private async void RemoveUser(int topicId, string userCode)
-    {
-        await _topicRepository.RemoveUserFromTopicAsync(userCode, topicId);
-
-        TopicList = new ObservableRangeCollection<Topic>(await _topicRepository.GetAllAsync());
-    }
-
     private async void OnSearchTextChanged()
     {
         var topics = await _topicRepository.GetAllAsync();
         TopicList = string.IsNullOrWhiteSpace(SearchText)
             ? new ObservableRangeCollection<Topic>(topics)
-            : new ObservableRangeCollection<Topic>(TopicList.Where(t => t.Name.ToLower().Contains(SearchText.ToLower())));
+            : new ObservableRangeCollection<Topic>(
+                TopicList.Where(t => t.Name.ToLower().Contains(SearchText.ToLower())));
     }
 
     private void AddTopic(Topic topic)
@@ -172,18 +166,22 @@ public partial class TopicListPageModel : BasePageModel
         IsNavigate = false;
     }
 
-    public void UpdateTopic(int topicId, int countUsers, System.DateTime lastEntry)
+    public void UpdateTopic(int topicId, int countUsers, DateTime lastEntry)
     {
+        
         if (Topic.Id != topicId)
         {
             ShowMessage("Something wrong with topic updating...");
         }
 
         var tempTopicList = TopicList;
-
+        
         Topic = tempTopicList.SingleOrDefault(t => t.Id == topicId);
-        Topic.CurrentUsersNumber = countUsers;
-        Topic.LastEntryDate = lastEntry;
+        if (Topic != null)
+        {
+            Topic.CurrentUsersNumber = countUsers;
+            Topic.LastEntryDate = lastEntry;
+        }
 
         TopicList = new ObservableRangeCollection<Topic>(tempTopicList);
     }
@@ -284,10 +282,20 @@ public partial class TopicListPageModel : BasePageModel
         IsBusy = false;
     }
 
+    protected override void ChatService_ConnectionMessage(object sender, ConnectionMessageEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.Message))
+        {
+            e.Message = TextResources.Messages;
+        }
+        
+        base.ChatService_ConnectionMessage(sender, e);
+    }
+
     private string SortBy
     {
         get => _sortBy;
-        set => this.RaiseAndSetIfChanged(ref _sortBy, value);
+        set => SetProperty(ref _sortBy, value);
     }
 
     public ICommand SortCommand { get; }

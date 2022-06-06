@@ -2,7 +2,6 @@
 using LTA.Mobile.Application.Interfaces;
 using Prism.Navigation;
 using Prism.Services.Dialogs;
-using ReactiveUI;
 
 namespace LTA.Mobile.PageModels;
 
@@ -20,13 +19,13 @@ public class ReportDialogPageModel : BasePageModel, IDialogAware
     public string ReportText
     {
         get => _reportText;
-        set => this.RaiseAndSetIfChanged(ref _reportText, value);
+        set => SetProperty(ref _reportText, value);
     }
 
     public string TopicName
     {
         get => _topicName;
-        set => this.RaiseAndSetIfChanged(ref _topicName, value);
+        set => SetProperty(ref _topicName, value);
     }
 
     public bool CanCloseDialog() => true;

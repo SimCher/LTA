@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using LTA.Mobile.Data.Context;
@@ -18,15 +19,20 @@ public class MessageRepository : IMessageRepository
         Context = context;
     }
 
-    public IEnumerable<Message> GetAllForUser(string userCode)
+    public ValueTask<Message> GetAsync(int id)
     {
-        return Context.Messages.Where(m => m.UserCode == userCode);
+        return Context.Messages.FindAsync(id);
     }
 
-    public IEnumerable<Message> GetAllForTopic(int topicId)
+    public IEnumerable<Message> GetAll()
     {
-        return Context.Messages.Where(m => m.TopicId == topicId);
+        return Context.Messages.Include(m => m.ReplyTo).ToList();
     }
+
+    // public IEnumerable<Message> GetAllForTopic(int topicId)
+    // {
+    //     return Context.Messages.Where(m => m.TopicId == topicId);
+    // }
 
     public async Task AddMessageAsync(Message message)
     {
@@ -34,9 +40,18 @@ public class MessageRepository : IMessageRepository
         {
             throw new ArgumentException($"Error with message: Equals:{message}. Topic id: {message?.TopicId}");
         }
-        Context.Messages.Add(message);
 
-        await Context.SaveChangesAsync();
+        try
+        {
+            Context.Messages.Add(message);
+
+            await Context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"{ex.Source}: {ex.Message}");
+        }
+        
     }
 
     public async Task UpdateMessageAsync(int id, Message message)
@@ -74,5 +89,10 @@ public class MessageRepository : IMessageRepository
 
         await Context.SaveChangesAsync();
         return true;
+    }
+    
+    public IEnumerable<Message> GetAllMessagesForTopic(int topicId)
+    {
+        return GetAll().Where(m => m.TopicId == topicId);
     }
 }

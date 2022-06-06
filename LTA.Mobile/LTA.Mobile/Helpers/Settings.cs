@@ -10,10 +10,17 @@ public static class Settings
 {
     public const string TopicsPageNavigation = "lta:///NavigationPage/TopicsPage";
     public const string MessagesPageNavigation = "lta:///NavigationPage/MessagesPage";
+    public const string TopicsMenuNavigation = "lta:///NavigationPage/MenuPage";
     public const string MessagesPageModal = "NavigationPage/MessagesPage";
     public const string AddTopicNavigation = "lta:///NavigationPage/Add";
     public const string RegistrationPageNavigation = "lta:///NavigationPage/RegistrationPage";
     public const string LoginPageNavigation = "lta:///NavigationPage/LoginPage";
+
+    public static int UserId
+    {
+        get => Preferences.Get(nameof(UserId), 0);
+        set => Preferences.Set(nameof(UserId), value);
+    }
 
     public static string UserCode
     {

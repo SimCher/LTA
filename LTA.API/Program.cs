@@ -15,7 +15,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSignalR(hubOptions =>
 {
     hubOptions.MaximumReceiveMessageSize = 2000000;
+    hubOptions.HandshakeTimeout = TimeSpan.FromSeconds(5);
 });
+// builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo() { Title = "LTA.API", Version = "v1" });
@@ -49,6 +51,7 @@ app.UseRouting();
 
 app.UseEndpoints(endpoints =>
 {
+    // endpoints.MapRazorPages();
     endpoints.MapHub<ChatHub>("/lta");
 });
 

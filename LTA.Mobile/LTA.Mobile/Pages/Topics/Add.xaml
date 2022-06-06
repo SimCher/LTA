@@ -26,6 +26,7 @@
                    Margin="10,0,0,5" Text="Название"/>
             <Entry Placeholder="Название"
                    Margin="10,5,5,10"
+                   WidthRequest="300"
                    Text="{Binding TopicName}"
                    MaxLength="150"
                    Keyboard="Text"
@@ -39,6 +40,7 @@
             <Entry
                     Margin="10,5,5,10"
                     MaxLength="2"
+                    WidthRequest="300"
                     Text="{Binding MaxNumbers}"
                     HorizontalOptions="StartAndExpand"
                     VerticalOptions="Center"
@@ -52,19 +54,56 @@
                    Margin="10,5,5,10"
                    Text="{Binding Categories}"
                    MaxLength="100"
+                   WidthRequest="300"
                    HorizontalOptions="StartAndExpand"
                    VerticalOptions="Center"
                    Keyboard="Text"
                    FontFamily="{StaticResource QuickSandRegular}"/>
-            <customControls:FloatingButton MinimumHeightRequest="65"
-                                           HeightRequest="65"
-                                           IconSize="17"
-                                           BackgroundColor="{StaticResource AccentColor}"
-                                           PressedCommand="{Binding AddTopicCommand}"
-                                           Icon="{StaticResource FontAwesomePlus}"
-                                           IconColor="{StaticResource PrimaryColor}"
-                                           Style="{StaticResource LightShadowPancakeViewStyle}"
-                                           Margin="5,0,10,0">
+            <StackLayout Orientation="Horizontal">
+                <CheckBox Color="{StaticResource AccentColor}" Grid.Column="0" Margin="10,0"/>
+                <Label FontFamily="{StaticResource QuickSandBold}"
+                       LineBreakMode="TailTruncation"
+                       Margin="10,0,0,5" Text="Приватная беседа"/>
+                
+
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <CheckBox Color="{StaticResource AccentColor}" Grid.Column="0" Margin="10,0"/>
+                <Label FontFamily="{StaticResource QuickSandBold}"
+                       LineBreakMode="TailTruncation"
+                       Margin="10,0,0,5" Text="Хранить сообщения на сервере"/>
+                
+
+            </StackLayout>
+            <StackLayout Orientation="Horizontal">
+                <Label FontFamily="{StaticResource QuickSandBold}"
+                       LineBreakMode="TailTruncation"
+                       Margin="10,0,0,5" Text="Время уничтожения"/>
+                <Picker  Margin="10,0" WidthRequest="100"/>
+                
+                
+
+            </StackLayout>
+            <Label FontFamily="{StaticResource QuickSandBold}"
+                   LineBreakMode="TailTruncation"
+                   Margin="10,0,0,5" Text="Никнейм в приватной беседе"/>
+            <Entry IsEnabled="True" Placeholder="Никнейм"
+                   Margin="10,5,5,10"
+                   MaxLength="100"
+                   WidthRequest="300"
+                   HorizontalOptions="StartAndExpand"
+                   VerticalOptions="Center"
+                   Keyboard="Text"
+                   FontFamily="{StaticResource QuickSandRegular}"/>
+                <customControls:FloatingButton MinimumHeightRequest="65"
+                                               HeightRequest="65"
+                                               IconSize="17"
+                                               BackgroundColor="{StaticResource AccentColor}"
+                                               PressedCommand="{Binding AddTopicCommand}"
+                                               Icon="{StaticResource FontAwesomePlus}"
+                                               IconColor="{StaticResource PrimaryColor}"
+                                               Style="{StaticResource LightShadowPancakeViewStyle}"
+                                               Margin="5,0,10,0">
                 <customControls:FloatingButton.Triggers>
                     <DataTrigger TargetType="customControls:FloatingButton"
                                  Binding="{Binding IsValidate}">

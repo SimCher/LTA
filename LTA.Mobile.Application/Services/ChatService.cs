@@ -2,20 +2,32 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using LTA.Mobile.Application.EventHandlers;
 using LTA.Mobile.Application.Interfaces;
+using LTA.Mobile.Application.Resources;
 using LTA.Mobile.Domain.Models;
 using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 
 namespace LTA.Mobile.Application.Services
 {
     //Обслуживающий класс для общения с сервером
     public class ChatService : IChatService
     {
-        private const string GlobalIP = $"http://192.168.0.105:8082/lta";
-
-        private readonly HubConnection _hubConnection;
+        private readonly string GlobalIP;
+        private readonly string LocalIP = @"http://10.0.2.2:5000/lta";
+        private string _connectionIP;
+        
+        private HubConnection _hubConnection;
         private string _currentUserCode;
+
+        public event EventHandler<ConnectionMessageEventArgs> ConnectionMessage;
+        public event EventHandler<ConnectionMessageEventArgs>? OnConnecionClosed;
+        
 
         //Текущий идентификатор пользователя
         public string CurrentUserCode
@@ -46,10 +58,42 @@ namespace LTA.Mobile.Application.Services
         public ChatService()
 #pragma warning restore CS8618
         {
-            const string localIP = @"http://10.0.2.2:5000/lta";
-            _hubConnection = new HubConnectionBuilder().WithUrl(GlobalIP).Build();
+            GlobalIP = $"http://192.168.0.106:8082/lta";
+            
+            InitializeServer(GlobalIP);
         }
 
+        private void InitializeServer(string ip)
+        {
+            _hubConnection = new HubConnectionBuilder().WithUrl(ip).Build();
+
+            _hubConnection.Closed += async (exception) =>
+            {
+                var args = new ConnectionMessageEventArgs
+                {
+                    Message = StringResources.Disconnected
+                };
+                
+                OnConnectionMessage(args);
+
+                IsConnected = false;
+                await Task.Delay(new Random().Next(0, 5) * 1000);
+                try
+                {
+                    await Connect();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+            };
+        }
+
+        private ValueTask DestroyServer()
+        {
+            return _hubConnection.DisposeAsync();
+        }
+        
         /// <summary>
         /// Подключение к серверу
         /// </summary>
@@ -57,14 +101,40 @@ namespace LTA.Mobile.Application.Services
         public async Task Connect()
         {
             if (IsConnected) return;
-
-            if (_hubConnection.State == HubConnectionState.Disconnected)
+            try
             {
-                Debug.WriteLine("Oops... Disconnected! Trying to connect");
-                await _hubConnection.StartAsync();
-                IsConnected = true;
-                Debug.WriteLine("Is connected now!");
+                if (_hubConnection.State == HubConnectionState.Disconnected)
+                {
+
+                    var args = new ConnectionMessageEventArgs
+                    {
+                        Message = StringResources.Connection
+                    };
+                    OnConnectionMessage(args);
+
+                    Debug.WriteLine("Oops... Disconnected! Trying to connect");
+                    await _hubConnection.StartAsync();
+                    IsConnected = true;
+
+                    args.Message = string.Empty;
+                    OnConnectionMessage(args);
+
+
+                }
             }
+            catch (Exception ex)
+            {
+                var args = new ConnectionMessageEventArgs
+                {
+                    Message = StringResources.Disconnected
+                };
+                
+                OnConnectionMessage(args);
+                
+                Observable.Timer(TimeSpan.FromMilliseconds(3000)).Subscribe(async t => await Connect());
+            }
+
+            
         }
 
         /// <summary>
@@ -74,10 +144,13 @@ namespace LTA.Mobile.Application.Services
         public async Task Disconnect()
         {
             if (!IsConnected) return;
-
+            var args = new ConnectionMessageEventArgs();
+            
             try
             {
                 await _hubConnection.DisposeAsync();
+                args.Message = StringResources.Disconnected;
+                OnConnectionMessage(args);
             }
             catch (Exception ex)
             {
@@ -95,7 +168,7 @@ namespace LTA.Mobile.Application.Services
         /// <returns></returns>
         public async Task SendMessage(Message message, int topicId)
         {
-            await ConnectIfNotAsync();
+            await Connect();
 
             await _hubConnection.InvokeAsync("SendMessage", message, topicId);
         }
@@ -110,7 +183,7 @@ namespace LTA.Mobile.Application.Services
         /// <returns></returns>
         public async Task AddTopicAsync(string name, int maxUsers, string categories, string code)
         {
-            await ConnectIfNotAsync();
+            await Connect();
             await _hubConnection.InvokeAsync("AddTopicAsync", name, maxUsers, categories, code);
         }
 
@@ -130,7 +203,7 @@ namespace LTA.Mobile.Application.Services
         /// <returns></returns>
         public async Task SendTyping(int topicId)
         {
-            await ConnectIfNotAsync();
+            await Connect();
 
             await _hubConnection.InvokeAsync("SendTyping", topicId);
         }
@@ -154,7 +227,7 @@ namespace LTA.Mobile.Application.Services
         /// <returns></returns>
         public async Task<bool> RegisterAsync(string phoneOrEmail, string password, string confirm, string keyword)
         {
-            await ConnectIfNotAsync();
+            await Connect();
             return await _hubConnection.InvokeAsync<bool>("RegisterAsync", phoneOrEmail, password, confirm, keyword);
         }
 
@@ -166,32 +239,80 @@ namespace LTA.Mobile.Application.Services
         /// <returns></returns>
         public async Task LoginAsync(string phoneOrEmail, string password)
         {
-            await ConnectIfNotAsync();
+            await Connect();
             CurrentUserCode = await _hubConnection.InvokeAsync<string>("LoginAsync", phoneOrEmail, password);
+        }
+
+        private IEnumerable<Topic> DeserializeTopics(IEnumerable<object> topicsDefinition)
+        {
+            var definitions = topicsDefinition.ToList();
+            var definition = new
+            {
+                Id = 0,
+                UserId = 0,
+                Name = string.Empty,
+                Rating = .0f,
+                MaxUsersNumber = 0,
+                LastEntryDate = default(DateTime),
+                UserNumber = 0,
+                Categories = string.Empty
+            };
+            
+            var topics = new List<Topic>();
+
+            if (definitions.Count != 0)
+            {
+                for (int i = 0; i < definitions.Count; i++)
+                {
+                    var anonTopic = JsonConvert.DeserializeAnonymousType(definitions[i].ToString(), definition)
+                                    ?? throw new NullReferenceException("AnonTopic was null");
+
+                    topics.Add(new Topic
+                    {
+                        Id = anonTopic.Id,
+                        OwnerUserId = anonTopic.UserId,
+                        Name = anonTopic.Name,
+                        Rating = anonTopic.Rating,
+                        MaxUsersNumber = anonTopic.MaxUsersNumber,
+                        LastEntryDate = anonTopic.LastEntryDate,
+                        CurrentUsersNumber = anonTopic.UserNumber,
+                        CategoriesArray = anonTopic.Categories
+                    });
+                }
+                
+            }
+
+            return topics;
         }
 
         /// <summary>
         /// Асинхронная загрузка тем
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<object>> LoadTopicsAsync()
+        public async Task<IEnumerable<Topic>> LoadTopicsAsync()
         {
-            await ConnectIfNotAsync();
-            var topics = await _hubConnection.InvokeAsync<IEnumerable<object>>("LoadTopicsAsObject");
-            return topics;
+            await Connect();
+
+            var topicsDefinitionEnum = await _hubConnection.InvokeAsync<IEnumerable<object>>("LoadTopicsAsObject") ??
+                                       throw new NullReferenceException("Server returns null instead topics");
+
+            return DeserializeTopics(topicsDefinitionEnum);
         }
 
-        public async Task<IEnumerable<object>> LoadTopicsAsync(IEnumerable<int> existTopicsIds)
+        public async Task<IEnumerable<Topic>> LoadTopicsAsync(IEnumerable<int> existTopicsIds)
         {
-            await ConnectIfNotAsync();
-            var topics = await _hubConnection
-                .InvokeAsync<IEnumerable<object>>("LoadSpecificTopics", existTopicsIds);
-            return topics;
+            await Connect();
+            Debug.WriteLine("ChatService: speak to the server.");
+            var topicsDefinitionEnum =
+                await _hubConnection.InvokeAsync<IEnumerable<object>>("LoadSpecificTopics", existTopicsIds) ??
+                throw new NullReferenceException("Server returns null instead topics");
+            Debug.WriteLine("Deserializing topics...");
+            return DeserializeTopics(topicsDefinitionEnum);
         }
 
         public async Task<int> GetTopicsCountAsync()
         {
-            await ConnectIfNotAsync();
+            await Connect();
             var topicsCount = await _hubConnection.InvokeAsync<int>("GetTopicsCount");
             return topicsCount;
         }
@@ -203,8 +324,8 @@ namespace LTA.Mobile.Application.Services
         
         public async Task LogInChatAsync(string userCode, int topicId)
         {
-            await ConnectIfNotAsync();
-            await _hubConnection.SendAsync("SubscribeToChat", userCode, topicId.ToString());
+            await Connect();
+            await _hubConnection.SendAsync("SubscribeToChat", userCode, topicId);
         }
         
         public async Task LogOutFromChatAsync(int topicId)
@@ -258,33 +379,23 @@ namespace LTA.Mobile.Application.Services
         {
             _hubConnection.On("RemoveUser", removeUserMethod);
         }
-        
-        /// <summary>
-        /// Асинхронное подключение к серверу, если подключение не установлено
-        /// </summary>
-        /// <returns></returns>
-        private async Task ConnectIfNotAsync()
+
+        protected virtual void OnConnectionMessage(ConnectionMessageEventArgs e)
         {
-            if (IsConnected)
+            var handler = ConnectionMessage;
+            handler?.Invoke(this, e);
+        }
+
+        private void GetConnectionIP()
+        {
+            var addresses = Dns.GetHostAddresses(Dns.GetHostName());
+
+            for (int i = 0; i < addresses.Length; i++)
             {
-                Debug.WriteLine("Additional connection is not requred");
-                return;
-            }
-            Debug.WriteLine("Killing the connection...");
-            await _hubConnection.StopAsync();
-            IsConnected = false;
-            if (_hubConnection.State == HubConnectionState.Disconnected)
-            {
-                try
+                var stringAddress = addresses[i].ToString();
+                if (stringAddress.Substring(0, 7).Equals("192.168"))
                 {
-                    Debug.WriteLine("Trying to connect...");
-                    await _hubConnection.StartAsync();
-                    IsConnected = true;
-                    Debug.WriteLine("Is connect now!");
-                }
-                catch (InvalidOperationException)
-                {
-                    Debug.WriteLine("Error to connection!");
+                    _connectionIP = stringAddress;
                 }
             }
         }

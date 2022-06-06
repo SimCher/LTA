@@ -161,10 +161,9 @@ public class ChatHub : Hub
         return _topicService.GetTopicsObject();
     }
 
-    public IEnumerable<object> LoadSpecificTopics(IEnumerable<int>? existTopicsIds)
+    public IEnumerable<object> LoadSpecificTopics(IEnumerable<int> existTopicsIds)
     {
-        var specificTopics = _topicService.GetTopicsObject(existTopicsIds);
-        return specificTopics;
+        return _topicService.GetTopicsObject(existTopicsIds);
     }
 
     public async Task<int> GetTopicsCount()

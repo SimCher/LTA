@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using LTA.Mobile.Application.EventHandlers;
 using LTA.Mobile.Application.Interfaces;
 using LTA.Mobile.Domain.Interfaces;
 using LTA.Mobile.Domain.Models;
@@ -19,15 +22,16 @@ using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services;
 using Prism.Services.Dialogs;
-using ReactiveUI;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace LTA.Mobile.PageModels;
 
 public class MessagesPageModel : BasePageModel
 {
     public MessagesPageModel([NotNull] INavigationService navigationService, [NotNull] IChatService chatService,
-        ITopicRepository topicRepository, IMessageRepository messageRepository, IPageDialogService dialogService,
+        ITopicRepository topicRepository, IMessageRepository messageRepository,
+        IPageDialogService dialogService,
         IDialogService popupDialog) : base(navigationService, chatService)
     {
         TopicRepository = topicRepository;
@@ -35,28 +39,43 @@ public class MessagesPageModel : BasePageModel
         DialogService = dialogService;
         DialogPopup = popupDialog;
 
-        ReplyMessageSelectedCommand = ReactiveCommand.Create<Message>(ReplyMessageSelected);
-        MessageSwippedCommand = ReactiveCommand.Create<Message>(MessageSwiped);
+        // ReplyMessageSelectedCommand =
+        //     new DelegateCommand<Message>(ReplyMessageSelected);
+        MessageSwippedCommand =
+            new DelegateCommand<Message>(MessageSwiped);
         SendMsgCommand = new DelegateCommand(SendMessage);
         UserTypingCommand = new DelegateCommand(SendTyping);
-        CancelReplyCommand = ReactiveCommand.Create(CancelReply);
+        CancelReplyCommand = new DelegateCommand(CancelReply);
         SendPictureCommand = new DelegateCommand(SendPictureMessage);
+        SelectionChangedCommand = new DelegateCommand<List<Message>>(SelectionChanged);
 
+        if (string.IsNullOrEmpty(Title))
+        {
+            Title = TextResources.Chat;
+        }
+
+        ReplyMessageSelectedCommand = new DelegateCommand<Message>(ScrollToMessage);
         _messages = new List<Message>();
-        _selectedMessages = new ObservableCollection<MessageGroup>();
+        _selectedMessages = new List<Message>();
 
         NewMessage = new Message();
         //ChatService.NewUserMessage();
+
+        InviteCommand = new DelegateCommand<string>((topicName) =>
+        {
+            var parameters = new DialogParameters {{"topicName", topicName}};
+            DialogPopup.ShowDialog("Invite", parameters);
+        });
     }
 
-    public ObservableCollection<MessageGroup> SelectedMessages
+    public List<Message> SelectedMessages
     {
         get => _selectedMessages;
-        set => this.RaiseAndSetIfChanged(ref _selectedMessages, value);
+        set => SetProperty(ref _selectedMessages, value);
     }
 
     public ICommand SendMsgCommand { get; }
-    public IDialogService DialogPopup {get;}
+    public IDialogService DialogPopup { get; }
 
     public ICommand MessageSwippedCommand { get; }
 
@@ -65,30 +84,38 @@ public class MessagesPageModel : BasePageModel
     public ICommand ReplyMessageSelectedCommand { get; }
 
     public ICommand UserTypingCommand { get; }
-    public ICommand SendPictureCommand {get;}
+    public ICommand SendPictureCommand { get; }
+    public ICommand InviteCommand { get; }
 
     public byte[] Image
     {
         get => _image;
-        set => this.RaiseAndSetIfChanged(ref _image, value);
+        set => SetProperty(ref _image, value);
     }
 
     public Topic CurrentTopic
     {
         get => _topic;
-        set => this.RaiseAndSetIfChanged(ref _topic, value);
+        set => SetProperty(ref _topic, value);
     }
 
     public bool IsTyping
     {
         get => _isTyping;
-        set => this.RaiseAndSetIfChanged(ref _isTyping, value);
+        set => SetProperty(ref _isTyping, value);
     }
+
+    public ICommand SelectionChangedCommand { get; }
 
     public Message ReplyMessage
     {
         get => _replyMessage;
-        set => this.RaiseAndSetIfChanged(ref _replyMessage, value);
+        set => SetProperty(ref _replyMessage, value);
+    }
+
+    public void SelectionChanged(List<Message> sender)
+    {
+        SelectedMessages = new(sender);
     }
 
     public bool IsMessagesSelected => SelectedMessages.Count != 0;
@@ -102,20 +129,20 @@ public class MessagesPageModel : BasePageModel
     public ObservableCollection<MessageGroup> Messages
     {
         get => _messagesGroups;
-        set => this.RaiseAndSetIfChanged(ref _messagesGroups, value);
+        set => SetProperty(ref _messagesGroups, value);
     }
 
     public string Message
     {
         get => _message;
-        set => this.RaiseAndSetIfChanged(ref _message, value);
+        set => SetProperty(ref _message, value);
     }
 
     public void CancelReply()
     {
         ReplyMessage = null;
         MessagingCenter.Send<BasePageModel, LTAFocusEventArgs>(this, "ShowKeyboard",
-            new LTAFocusEventArgs { IsFocused = false });
+            new LTAFocusEventArgs {IsFocused = false});
     }
 
     public override async void Initialize(INavigationParameters parameters)
@@ -129,43 +156,25 @@ public class MessagesPageModel : BasePageModel
             ChatService.SetErrorMessage(NewUserMessage);
             ChatService.Logout(Logout);
             TopicId = parameters.GetValue<int>("TopicId");
-            
+
             CurrentTopic = await TopicRepository.GetAsync(TopicId);
 
-            var messages = MessageRepository.GetAllForTopic(TopicId);
+            var messages = MessageRepository.GetAllMessagesForTopic(CurrentTopic.Id);
 
             if (messages != null)
                 _messages.AddRange(messages);
 
-            _messages.Add(
-
-                new Message()
+            if (_messages.Count == 0)
+            {
+                _messages.Add(new Message
                 {
-                    Id = 1,
-                    CreationDate = DateTime.Now.AddDays(-1),
-                    Topic = CurrentTopic,
-                    UserCode = Guid.NewGuid().ToString("D"),
-                    IsSent = false,
-                    Content = "privet",
-                    TopicId = CurrentTopic.Id,
-                    IsSentPreviousMessage = false
-                }
-            );
-
-            _messages.Add(
-
-                new Message()
-                {
-                    Id = 1,
-                    CreationDate = DateTime.Now,
-                    Topic = CurrentTopic,
-                    UserCode = Guid.NewGuid().ToString("D"),
-                    IsSent = true,
-                    Content = "hello",
-                    TopicId = CurrentTopic.Id,
-                    IsSentPreviousMessage = false
-                }
-            );
+                    Id = 0,
+                    Content = string.Empty,
+                    TopicId= CurrentTopic.Id,
+                    UserCode = Settings.UserCode
+                });
+            }
+                    
 
             var messagesGroups = _messages.GroupBy(m => m.CreationDate.Day)
                 .Select(group =>
@@ -192,8 +201,6 @@ public class MessagesPageModel : BasePageModel
             {
                 ScrollToMessage(Messages?.Last()?.Last());
             }
-
-            
         }
         catch (Exception ex)
         {
@@ -231,13 +238,13 @@ public class MessagesPageModel : BasePageModel
     {
         ReplyMessage = message;
         MessagingCenter.Send<BasePageModel, LTAFocusEventArgs>(this, "ShowKeyboard",
-            new LTAFocusEventArgs { IsFocused = true });
+            new LTAFocusEventArgs {IsFocused = true});
     }
 
     private void ScrollToMessage(Message message)
     {
         MessagingCenter.Send<BasePageModel, ScrollToItemEventArgs>(this, "ScrollToItem",
-            new ScrollToItemEventArgs { Item = message });
+            new ScrollToItemEventArgs {Item = message});
     }
 
     public async void Logout()
@@ -248,32 +255,26 @@ public class MessagesPageModel : BasePageModel
 
     private async void SendMessage()
     {
-        var isSent = Messages?.Last().Last()?.IsSent;
 
+        // // NewMessage.EncryptedContent = await CryptoService.EncryptAsync(CryptoService.PublicKey, Message);
         NewMessage.Content = Message;
-        NewMessage.ReplyTo = ReplyMessage;
         NewMessage.CreationDate = DateTime.Now;
         NewMessage.UserCode = Settings.UserCode;
-        NewMessage.IsSentPreviousMessage = isSent != null && (bool)isSent;
+        NewMessage.IsSentPreviousMessage = true;
         NewMessage.IsSent = true;
         NewMessage.TopicId = CurrentTopic.Id;
-        NewMessage.UserCode = Settings.UserCode;
+        NewMessage.ReplyTo = ReplyMessage;
 
         await ChatService.SendMessage(NewMessage, NewMessage.TopicId);
         AddMessage(NewMessage);
-
+        
         Image = null;
         Message = string.Empty;
+        ReplyMessage = null;
         ScrollToMessage(Messages.Last().Last());
         NewMessage = new Message();
     }
-
-    private async void AddMessage(Message message)
-    { 
-        Messages.Last().Add(message);
-        await MessageRepository.AddMessageAsync(message);
-    }
-
+    
     private void AddUser(string userCode, DateTime lastEntry, int count)
     {
         CurrentTopic.LastEntryDate = lastEntry;
@@ -282,37 +283,58 @@ public class MessagesPageModel : BasePageModel
             Code = userCode
         });
     }
-
-    private async void AddMessage(dynamic message)
-    {
-        var dynamicMessage = JsonConvert.DeserializeObject(message.ToString());
-        if (dynamicMessage != null)
-        {
-            var replyTo = JsonConvert.DeserializeObject<Message>(dynamicMessage.m.replyTo.ToString()) as Message;
-
-            var isSent = Messages?.Last().Last()?.IsSent;
-            var NewMessage = new Message
-            {
-                Id = (int)dynamicMessage.m.id,
-                Content = (string)dynamicMessage.m.content,
-                Image = dynamicMessage.m.image,
-                ReplyTo = replyTo,
-                CreationDate = (DateTime)dynamicMessage.m.creationDate,
-                UserCode = (string)dynamicMessage.m.userCode,
-                IsSent = false,
-                TopicId = CurrentTopic.Id
-            };
-
-            Messages?.Last()?.Add(NewMessage);
-
-            await MessageRepository.AddMessageAsync(NewMessage);
-        }
-    }
-
-    private void GetMessage(dynamic message)
+    
+    private async void GetMessage(dynamic message)
     {
         AddMessage(message);
         ScrollToMessage(Messages.Last().Last());
+    }
+
+    private async void AddMessage(Message message)
+    {
+        Messages.Last().Add(message);
+        try
+        {
+            await MessageRepository.AddMessageAsync(message);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"{ex.Source}: {ex.Message}");
+        }
+        
+    }
+    private async void AddMessage(dynamic message)
+    {
+        var dynamicMessage = JsonConvert.DeserializeObject(message.ToString());
+
+        if (dynamicMessage is not null)
+        {
+            var replyTo = JsonConvert.DeserializeObject<Message>(dynamicMessage.m.replyTo.ToString()) as Message;
+
+            var newMessage = new Message
+            {
+                Id = (int) dynamicMessage.m.id,
+                Content = (string) dynamicMessage.m.content,
+                Image = dynamicMessage.m.image,
+                ReplyTo = replyTo,
+                CreationDate = (DateTime) dynamicMessage.m.creationDate,
+                UserCode = (string) dynamicMessage.m.userCode,
+                IsSent = false,
+                TopicId = CurrentTopic.Id
+            };
+            
+            Messages?.Last()?.Add(newMessage);
+
+            try
+            {
+                await MessageRepository.AddMessageAsync(newMessage);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"{ex.Source}: {ex.Message}");
+            }
+            
+        }
     }
 
     private async void SendPictureMessage()
@@ -377,14 +399,25 @@ public class MessagesPageModel : BasePageModel
         }
     }
 
+    protected override void ChatService_ConnectionMessage(object sender, ConnectionMessageEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.Message))
+        {
+            e.Message = TextResources.Users;
+        }
+
+        base.ChatService_ConnectionMessage(sender, e);
+    }
+
     private int TopicId { get; set; }
 
     private ITopicRepository TopicRepository { get; }
     private IMessageRepository MessageRepository { get; }
+    private ICryptoService CryptoService { get; }
 
     private string _message;
 
-    private ObservableCollection<MessageGroup> _selectedMessages;
+    private List<Message> _selectedMessages;
 
     private readonly List<Message> _messages;
 

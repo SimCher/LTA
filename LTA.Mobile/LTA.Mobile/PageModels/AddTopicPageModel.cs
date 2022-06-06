@@ -1,9 +1,10 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using LTA.Mobile.Application.Interfaces;
+using LTA.Mobile.Domain.Models;
 using LTA.Mobile.Helpers;
 using Prism.Commands;
 using Prism.Navigation;
-using ReactiveUI;
 
 namespace LTA.Mobile.PageModels;
 
@@ -17,25 +18,25 @@ public class AddTopicPageModel : BasePageModel
     public string TopicName
     {
         get => _topicName;
-        set => this.RaiseAndSetIfChanged(ref _topicName, value);
+        set => SetProperty(ref _topicName, value);
     }
 
     public int MaxNumbers
     {
         get => _maxNumbers;
-        set => this.RaiseAndSetIfChanged(ref _maxNumbers, value);
+        set => SetProperty(ref _maxNumbers, value);
     }
 
     public bool IsValidate
     {
         get => _isValidate;
-        set => this.RaiseAndSetIfChanged(ref _isValidate, value);
+        set => SetProperty(ref _isValidate, value);
     }
 
     public string Categories
     {
         get => _categories;
-        set => this.RaiseAndSetIfChanged(ref _categories, value);
+        set => SetProperty(ref _categories, value);
     }
 
     public ICommand AddTopicCommand { get; private set; }
@@ -43,6 +44,7 @@ public class AddTopicPageModel : BasePageModel
     public AddTopicPageModel(INavigationService navigationService, IChatService chatService) : base(navigationService,
         chatService)
     {
+
         AddTopicCommand = new DelegateCommand(AddTopic);
     }
 

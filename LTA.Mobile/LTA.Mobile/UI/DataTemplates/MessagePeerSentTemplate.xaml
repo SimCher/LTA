@@ -11,10 +11,10 @@
              x:Name="LeftMessageTemplate"
              x:Class="LTA.Mobile.UI.DataTemplates.MessagePeerSentTemplate"
              BackgroundColor="{StaticResource PrimaryColor}"
-             Scale=".7">
+             Scale=".1">
     <ContentView.Content>
         <SwipeView BackgroundColor="{StaticResource PrimaryColor}" x:DataType="models:Message"
-                   Margin="0,0,0,2">
+                   Margin="0,0,10,2">
             <SwipeView.Triggers>
                 <DataTrigger TargetType="SwipeView"
                              Binding="{Binding IsSentPreviousMessage}"
@@ -22,11 +22,10 @@
                     <Setter Property="Margin" Value="0, 10,0,0"/>
                 </DataTrigger>
             </SwipeView.Triggers>
-
             <SwipeView.LeftItems>
-                <SwipeItems SwipeBehaviorOnInvoked="Close"
-                            Mode="Execute">
-                    <SwipeItemView Command="{Binding Source={x:Reference LeftMessageTemplate}, Path=ParentContext.MessageSwippedCommand}"
+                <SwipeItems SwipeBehaviorOnInvoked="Close" Mode="Execute">
+                    <SwipeItemView Command="{Binding Source={x:Reference LeftMessageTemplate}, 
+                    Path=ParentContext.MessageSwippedCommand}"
                                    CommandParameter="{Binding}">
                         <pancakeView:PancakeView BackgroundColor="{StaticResource PrimaryColor}">
                             <Label Style="{StaticResource FontAwesomeLabel}"
@@ -38,13 +37,12 @@
                     </SwipeItemView>
                 </SwipeItems>
             </SwipeView.LeftItems>
-
+            
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="6*"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -55,14 +53,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-
-
-                    <Ellipse Grid.Row="0" HeightRequest="10"
-                         WidthRequest="10"
-                         HorizontalOptions="Start"
-                         VerticalOptions="Center"
-                         Margin="7,0,0,0"/>
-
+                    
                     <customViews:MessageBubble Grid.Row="0" Text="{Binding Content}"
                                                Image="{Binding Image,
                     Converter={StaticResource BytesToImageConverter}}"
@@ -95,9 +86,9 @@
                                TextColor="{StaticResource SecondaryTextColor}"
                         />
                     </StackLayout>
-                    
                 </Grid>
-            </Grid>
+                </Grid>
         </SwipeView>
     </ContentView.Content>
+  
 </dataTemplates:BaseTemplate>

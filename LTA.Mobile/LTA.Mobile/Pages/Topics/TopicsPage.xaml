@@ -4,20 +4,20 @@
              xmlns:resources="clr-namespace:LTA.Mobile.Resources"
              xmlns:base="clr-namespace:LTA.Mobile.Pages.Base"
              xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
-             Title="{x:Static resources:TextResources.Messages}"
              xmlns:effects="clr-namespace:LTA.Mobile.UI.Effects"
              x:Name="TopicPage"
              xmlns:xe="clr-namespace:XamEffects;assembly=XamEffects"
              xmlns:prism="http://prismlibrary.com"
              xmlns:customControls="clr-namespace:LTA.Mobile.UI.CustomControls"
              xmlns:dataTemplates="clr-namespace:LTA.Mobile.UI.DataTemplates"
-                     BackgroundColor="{StaticResource PrimaryColor}"
+             BackgroundColor="{StaticResource PrimaryColor}"
+             Title="{Binding Title}"
              x:Class="LTA.Mobile.Pages.Topics.TopicsPage"
              TabSelectedIndex="0">
     <ContentPage.ToolbarItems>
-
         <ToolbarItem Text="Сортировка" Order="Secondary" Priority="1" Command="{Binding SortCommand, Mode=OneTime}"/>
         <ToolbarItem Text="Сброс" Order="Secondary" Priority="0" Command="{Binding FilterOptionChangedCommand, Mode=OneTime}"/>
+        <ToolbarItem Text="Ввести код приглашения" Order="Secondary" Priority="2"/>
 
         
     </ContentPage.ToolbarItems>
@@ -118,6 +118,7 @@
                             <x:String>All</x:String>
                             <x:String>Favorites</x:String>
                             <x:String>My</x:String>
+                            <x:String>Приватные</x:String>
                         </Picker.Items>
                     </Picker>
                 </StackLayout>
@@ -138,7 +139,8 @@
                              IsRefreshing="{Binding IsRefreshing}">
                     <CollectionView ItemsSource="{Binding TopicList}"
                                     VerticalOptions="StartAndExpand"
-                                    HorizontalOptions="FillAndExpand">
+                                    HorizontalOptions="FillAndExpand"
+                                    EmptyView="Нет доступных бесед">
 
                         <CollectionView.ItemTemplate>
 
